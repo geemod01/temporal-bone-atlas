@@ -10,8 +10,8 @@ on:
         default: "delta"
         required: true
       spacing:
-        description: "Voxel size of the pack in mm (0.3 is a good default; 0.2 is sharper and ~3x larger)"
-        default: "0.3"
+        description: "Voxel size of the pack in mm. 0.15 keeps nearly all of the 0.125 mm CBCT detail (~30 MB per ear); 0.2 is ~13 MB; 0.125 is native (~55 MB)"
+        default: "0.15"
         required: true
       full_download:
         description: "Download the whole archive instead of using range requests (slower, needs disk)"

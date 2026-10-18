@@ -33,8 +33,9 @@ API = 'https://zenodo.org/api/records/' + RECORD
 SPECIMENS = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta']
 HERE = os.path.dirname(os.path.abspath(__file__))
 
-VOLUME_EXT = re.compile(r'\.(dcm|dicom|ima|nrrd|nhdr|nii|nii\.gz|mha|mhd|raw|vti)$', re.I)
+VOLUME_EXT = re.compile(r'\.(dcm|dicom|ima|nrrd|nhdr|nii|nii\.gz|mha|mhd|raw|vti|seg\.nrrd)$', re.I)
 MESH_EXT = re.compile(r'\.(stl|obj|ply|off|vtk|vtp)$', re.I)
+RAW_DIR = re.compile(r'(raw|dicom|tiff?)', re.I)
 META_EXT = re.compile(r'\.(txt|md|json|csv|xml|pdf|rtf)$', re.I)
 # folders that are clearly the colour micro-slicing stacks (the bulk of every archive)
 SKIP_DIR = re.compile(r'(micro.?slic|microsection|slic(e|ing).?image|histolog|photo|png|jpg|tif)', re.I)
@@ -145,8 +146,12 @@ def pick(files, specimen):
 def classify(name):
     low = name.lower()
     parts = low.split('/')
-    if any(SKIP_DIR.search(p) for p in parts[:-1]):
+    if any(SKIP_DIR.search(p) for p in parts[:-1]) and not re.search(r'\.(nrrd|nhdr)$', low):
         return None
+    if re.search(r'\.(tiff?|png|jpe?g)$', low):
+        return None                      # raw micro-slicing images: never needed
+    if re.search(r'\.(dcm|dicom|ima)$', low) and NRRD_PRESENT.get('yes'):
+        return None                      # raw DICOM is redundant when a final NRRD exists
     if VOLUME_EXT.search(low):
         return 'volume'
     if MESH_EXT.search(low):
@@ -154,6 +159,9 @@ def classify(name):
     if META_EXT.search(low) and len(parts) <= 3:
         return 'meta'
     return None
+
+
+NRRD_PRESENT = {}
 
 
 def summarize(zf):
@@ -171,6 +179,7 @@ def summarize(zf):
 
 
 def extract_needed(zf, dest):
+    NRRD_PRESENT['yes'] = any(re.search(r'\.(nrrd|nhdr)$', zi.filename, re.I) for zi in zf.infolist())
     chosen = []
     for zi in zf.infolist():
         if zi.is_dir():
@@ -197,8 +206,28 @@ def extract_needed(zf, dest):
     return chosen
 
 
+def is_label_volume(path):
+    """A segmentation NRRD: integer type with few distinct values, or a Slicer .seg.nrrd, or named like one."""
+    base = os.path.basename(path).lower()
+    if base.endswith('.seg.nrrd') or re.search(r'(segment|label|mask)', base):
+        return True
+    try:
+        import SimpleITK as sitk
+        r = sitk.ImageFileReader(); r.SetFileName(path); r.ReadImageInformation()
+        pid = r.GetPixelIDTypeAsString()
+        if 'float' in pid:
+            return False
+        img = sitk.ReadImage(path)
+        import numpy as np
+        a = sitk.GetArrayViewFromImage(img)
+        sample = a[::8, ::8, ::8]
+        return len(np.unique(sample)) <= 64
+    except Exception:
+        return False
+
+
 def find_inputs(dest):
-    """Locate the volume (DICOM folder or volume file) and the folder with the meshes."""
+    """Locate the CT volume, the segmentation label volume (if any) and the folder with the surfaces."""
     vol_dirs, vol_files, mesh_dirs = {}, [], {}
     for root, _, files in os.walk(dest):
         for f in files:
@@ -209,15 +238,32 @@ def find_inputs(dest):
                 vol_files.append(p)
             elif MESH_EXT.search(f):
                 mesh_dirs[root] = mesh_dirs.get(root, 0) + 1
+    labels = [p for p in vol_files if is_label_volume(p)]
+    cts = [p for p in vol_files if p not in labels and not re.search(r'(micro|slic|histo|color|colour|rgb)', p, re.I)]
     volume = None
-    if vol_dirs:
+    if cts:
+        # prefer the high-resolution CBCT: name hints first, then finest spacing, then size
+        def key(p):
+            name = os.path.basename(p).lower()
+            hint = 0 if re.search(r'(hires|hi-res|high|cbct|ct)', name) else 1
+            try:
+                import SimpleITK as sitk
+                r = sitk.ImageFileReader(); r.SetFileName(p); r.ReadImageInformation(); sp = min(r.GetSpacing())
+            except Exception:
+                sp = 9
+            return (hint, sp, -os.path.getsize(p))
+        cts.sort(key=key)
+        volume = cts[0]
+    elif vol_dirs:
         volume = max(vol_dirs.items(), key=lambda kv: kv[1])[0]
-    elif vol_files:
-        # prefer something that looks like CT/CBCT over label maps
-        vol_files.sort(key=lambda p: (0 if re.search(r'(cbct|ct|volume|scan)', os.path.basename(p), re.I) else 1, -os.path.getsize(p)))
-        volume = vol_files[0]
-    meshes = max(mesh_dirs.items(), key=lambda kv: kv[1])[0] if mesh_dirs else None
-    return volume, meshes, vol_files
+    meshes = None
+    if mesh_dirs:
+        # prefer PLY folders (OpenEar's native format) then the folder with the most files
+        meshes = max(mesh_dirs.items(), key=lambda kv: (any(f.lower().endswith('.ply') for f in os.listdir(kv[0])), kv[1]))[0]
+    label_vol = labels[0] if labels else None
+    if len(labels) > 1:
+        labels.sort(key=lambda p: -os.path.getsize(p)); label_vol = labels[0]
+    return volume, meshes, label_vol
 
 
 def main():
@@ -225,7 +271,7 @@ def main():
     ap.add_argument('--specimen', default='delta', help='alpha..theta, or all')
     ap.add_argument('--out', default='data', help='output folder for packs and datasets.json')
     ap.add_argument('--work', default='work', help='scratch folder for extracted files')
-    ap.add_argument('--spacing', type=float, default=0.3)
+    ap.add_argument('--spacing', type=float, default=0.15, help='pack voxel size in mm (OpenEar CBCT is 0.125 mm)')
     ap.add_argument('--list', action='store_true', help='only print the archive structure')
     ap.add_argument('--full', action='store_true', help='download the whole archive instead of using range requests')
     ap.add_argument('--side', default='auto', help='R, L, or auto (from metadata if present)')
@@ -270,8 +316,9 @@ def main():
         if a.list:
             continue
         extract_needed(zf, dest)
-        volume, meshes, vol_files = find_inputs(dest)
+        volume, meshes, label_vol = find_inputs(dest)
         log('volume input: %s' % volume)
+        log('label volume: %s' % label_vol)
         log('mesh folder : %s' % meshes)
         if not volume:
             raise SystemExit('no CBCT/volume found; run with --list and extend VOLUME_EXT / classify()')
@@ -286,9 +333,11 @@ def main():
                '--out', out_pack]
         if meshes:
             cmd += ['--meshes', meshes]
-            if not a.no_labels:
-                cmd.append('--labels')
-        else:
+        if label_vol:
+            cmd += ['--label-volume', label_vol]
+        elif meshes and not a.no_labels:
+            cmd.append('--labels')
+        if not meshes and not label_vol:
             cmd += ['--crop', 'none']
         log('running:', ' '.join(cmd))
         subprocess.run(cmd, check=True)

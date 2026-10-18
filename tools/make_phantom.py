@@ -28,7 +28,7 @@ import numpy as np
 from scipy import ndimage as ndi
 
 sys.path.insert(0, os.path.dirname(__file__))
-from tbapack import write_pack  # noqa: E402
+from tbapack import write_pack, delta_encode_int16  # noqa: E402
 
 try:
     import nibabel as nib
@@ -619,7 +619,7 @@ def main(out_phantom="phantom", out_pack="dist/phantom.tba"):
     # landmarks: mesh centroids + explicit points
     landmarks = {k: [float(x) for x in v] for k, v in LANDMARKS.items()}
     mesh_table = []
-    blobs = [("volume", ct.astype("<i2").tobytes()), ("labels", L128.astype(np.uint8).tobytes())]
+    blobs = [("volume", delta_encode_int16(ct).astype("<i2").tobytes()), ("labels", L128.astype(np.uint8).tobytes())]
     for sid, (v, f) in meshes.items():
         cen = v.mean(0).tolist()
         bb = [float(v[:, 0].min()), float(v[:, 1].min()), float(v[:, 2].min()), float(v[:, 0].max()), float(v[:, 1].max()), float(v[:, 2].max())]
@@ -643,7 +643,7 @@ def main(out_phantom="phantom", out_pack="dist/phantom.tba"):
         "kind": "phantom",
         "side": "R",
         "notes": "Procedurally generated. Correct topology and relationships, not patient anatomy. Replace with an OpenEar specimen or an institutional CT for real imaging.",
-        "volume": {"blob": "volume", "dims": [N_CT, N_CT, N_CT], "spacing": [H_CT, H_CT, H_CT], "origin": [float(x) for x in ORIGIN], "dtype": "int16", "units": "HU"},
+        "volume": {"blob": "volume", "dims": [N_CT, N_CT, N_CT], "spacing": [H_CT, H_CT, H_CT], "origin": [float(x) for x in ORIGIN], "dtype": "int16", "units": "HU", "encoding": "delta-x"},
         "labels": {"blob": "labels", "dims": [N_CT, N_CT, N_CT], "spacing": [H_CT, H_CT, H_CT], "origin": [float(x) for x in ORIGIN], "dtype": "uint8"},
         "labelIds": {str(lab): sid for sid, lab in LABEL_OF.items()},
         "meshes": mesh_table,

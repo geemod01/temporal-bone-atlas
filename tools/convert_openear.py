@@ -42,7 +42,7 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(__file__))
-from tbapack import write_pack  # noqa: E402
+from tbapack import write_pack, delta_encode_int16  # noqa: E402
 
 try:
     import SimpleITK as sitk
@@ -266,6 +266,112 @@ def voxelize(mesh_v, mesh_f, origin, spacing, dims, max_voxels=None):
     return mask
 
 
+def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping):
+    """Resample a label map onto the pack grid (nearest neighbour) and map its values to atlas ids.
+
+    Value -> name comes from (in order): --label-names JSON, Slicer .seg.nrrd header fields
+    (SegmentN_Name / SegmentN_LabelValue), 'labelN=name'-style header keys, or, failing all,
+    the mesh whose surface best overlaps each label value.
+    """
+    log('reading label volume', path)
+    img = sitk.ReadImage(path)
+    names = {}
+    if names_json and os.path.exists(names_json):
+        with open(names_json) as f:
+            names = {int(k): v for k, v in json.load(f).items()}
+    else:
+        keys = img.GetMetaDataKeys()
+        seg = {}
+        for k in keys:
+            m = re.match(r'Segment(\d+)_(Name|LabelValue)$', k)
+            if m:
+                seg.setdefault(int(m.group(1)), {})[m.group(2)] = img.GetMetaData(k)
+        for d in seg.values():
+            if 'Name' in d and 'LabelValue' in d:
+                try:
+                    names[int(d['LabelValue'])] = d['Name']
+                except ValueError:
+                    pass
+        if not names:
+            for k in keys:
+                m = re.match(r'(?:label|value)[_ ]?(\d+)$', k, re.I)
+                if m:
+                    names[int(m.group(1))] = img.GetMetaData(k)
+    # resample onto the pack grid: build the reference image in LPS matching our RAS grid
+    nx, ny, nz = dims
+    ox, oy, oz = origin
+    lo_lps = [-(ox + (nx - 1) * spacing[0]), -(oy + (ny - 1) * spacing[1]), oz]
+    ref = sitk.Image([int(nx), int(ny), int(nz)], sitk.sitkUInt16)
+    ref.SetSpacing([float(x) for x in spacing]); ref.SetOrigin([float(x) for x in lo_lps]); ref.SetDirection([1, 0, 0, 0, 1, 0, 0, 0, 1])
+    if 'vector' in img.GetPixelIDTypeAsString().lower():
+        img = sitk.VectorIndexSelectionCast(img, 0)
+    img = sitk.Cast(img, sitk.sitkUInt16)
+    out = sitk.Resample(img, ref, sitk.Transform(), sitk.sitkNearestNeighbor, 0, sitk.sitkUInt16)
+    arr = sitk.GetArrayFromImage(out)[:, ::-1, ::-1]
+    values = [int(v) for v in np.unique(arr) if v != 0]
+    log('label volume: %d non-zero values%s' % (len(values), (' with names: ' + ', '.join('%d=%s' % (v, names.get(v, '?')) for v in values)) if names else ''))
+    # value -> atlas id
+    id_of = {}
+    unmatched = []
+    for v in values:
+        nm = names.get(v)
+        if nm:
+            sid, ok = match_id(nm + '.x', mapping)
+            id_of[v] = sid
+            if not ok:
+                unmatched.append((v, nm, sid))
+    if meshes and len(id_of) < len(values):
+        # overlap-based matching for unnamed values: which mesh's vertices fall inside each label
+        for v in values:
+            if v in id_of:
+                continue
+            best, best_frac = None, 0.0
+            for m in meshes:
+                pts = m['v'][::max(1, len(m['v']) // 4000)]
+                idx = np.round((pts - origin) / spacing).astype(int)
+                ok = np.all((idx >= 0) & (idx < np.array(dims)), axis=1)
+                if not ok.any():
+                    continue
+                idx = idx[ok]
+                # surfaces sit on the boundary: look at the label 1 voxel inward along the vertex normal is overkill; use a small neighbourhood
+                hits = 0
+                for dz, dy, dx in ((0, 0, 0), (0, 0, 1), (0, 0, -1), (0, 1, 0), (0, -1, 0), (1, 0, 0), (-1, 0, 0)):
+                    j = idx + np.array([dx, dy, dz]); j = np.clip(j, 0, np.array(dims) - 1)
+                    hits += (arr[j[:, 2], j[:, 1], j[:, 0]] == v).sum()
+                frac = hits / (7.0 * len(idx))
+                if frac > best_frac:
+                    best, best_frac = m['id'], frac
+            if best and best_frac > 0.05:
+                id_of[v] = best
+                log('  label %d -> %s (by overlap %.0f%%)' % (v, best, best_frac * 100))
+            else:
+                id_of[v] = 'label_%d' % v
+                unmatched.append((v, None, id_of[v]))
+    # merge values that map to the same id, renumber 1..n, drop to uint8
+    ids = []
+    for v in values:
+        sid = id_of.get(v, 'label_%d' % v)
+        if sid not in ids:
+            ids.append(sid)
+    if len(ids) > 255:
+        log('WARNING: more than 255 labels; keeping the first 255')
+        ids = ids[:255]
+    lut = np.zeros(int(arr.max()) + 1, np.uint8)
+    for v in values:
+        sid = id_of.get(v, 'label_%d' % v)
+        if sid in ids:
+            lut[v] = ids.index(sid) + 1
+    labels = lut[arr]
+    label_ids = {str(i + 1): sid for i, sid in enumerate(ids)}
+    for v, nm, sid in unmatched:
+        log('  unmatched label value %d (%s) kept as %s' % (v, nm, sid))
+    for sid in ids:
+        if sid == 'bone_shell' or sid == 'bone':
+            # bone is background in the atlas; keep it only if the user wants it (rarely useful as a label)
+            pass
+    return labels, label_ids
+
+
 # --------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -280,6 +386,8 @@ def main():
     ap.add_argument('--margin', type=float, default=6.0, help='margin around the mesh bbox for auto crop (mm)')
     ap.add_argument('--intensity', default='auto', help="'auto', 'hu', or 'scale:a,b' (HU = a*value + b)")
     ap.add_argument('--labels', action='store_true', help='voxelise meshes into a label volume (enables outlines, click-to-select and quiz checks)')
+    ap.add_argument('--label-volume', help='segmentation volume (NRRD/NIfTI label map, e.g. OpenEar segmentation) resampled onto the pack grid; preferred over --labels')
+    ap.add_argument('--label-names', help='JSON {value: name} for --label-volume when the file carries no names')
     ap.add_argument('--landmarks', help='landmarks.json (from the app or hand-written) to merge')
     ap.add_argument('--name', default=None)
     ap.add_argument('--side', default='R', choices=['R', 'L'])
@@ -370,10 +478,12 @@ def main():
     dims = [arr.shape[2], arr.shape[1], arr.shape[0]]
     log('output volume %s voxels at %.3f mm, %.1f MB' % (dims, a.spacing, arr.nbytes / 1e6))
 
-    # --- labels ---
+    # --- labels from a segmentation volume (preferred) ---
     label_ids = {}
     labels = None
-    if a.labels and meshes:
+    if a.label_volume:
+        labels, label_ids = labels_from_volume(a.label_volume, a.label_names, origin, spacing, dims, meshes, load_map(a.map) if os.path.exists(a.map) else {})
+    if labels is None and a.labels and meshes:
         labels = np.zeros(arr.shape, np.uint8)
         # bigger meshes first so small ones override
         order = sorted(meshes, key=lambda m: -float(np.prod(m['v'].max(0) - m['v'].min(0))))
@@ -402,14 +512,14 @@ def main():
         landmarks.update(j.get('landmarks', j))
 
     # --- pack ---
-    blobs = [('volume', arr.astype('<i2').tobytes())]
+    blobs = [('volume', delta_encode_int16(arr).astype('<i2').tobytes())]
     header = {
         'format': 'tba', 'version': 1,
         'name': a.name or os.path.basename(a.out).replace('.tba', ''),
         'kind': 'openear' if 'openear' in (a.name or '').lower() else 'clinical',
         'side': a.side,
         'notes': a.notes,
-        'volume': {'blob': 'volume', 'dims': dims, 'spacing': [float(a.spacing)] * 3, 'origin': [float(x) for x in origin], 'dtype': 'int16', 'units': 'HU'},
+        'volume': {'blob': 'volume', 'dims': dims, 'spacing': [float(a.spacing)] * 3, 'origin': [float(x) for x in origin], 'dtype': 'int16', 'units': 'HU', 'encoding': 'delta-x'},
         'labelIds': label_ids,
         'meshes': [],
         'landmarks': landmarks,

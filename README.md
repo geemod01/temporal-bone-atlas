@@ -52,7 +52,7 @@ Nobody needs the 4-14 GB archives on their computer.
 2. In the repository settings, Pages -> Build and deployment -> Source: **GitHub Actions** (one click).
 3. Actions -> **Build OpenEar packs** -> Run workflow -> choose a specimen (start with `delta`) -> Run.
 
-The runner reads the Zenodo archive with HTTP range requests, so only the CBCT and the surfaces come down (hundreds of MB, not gigabytes), converts them to a ~10-15 MB pack, commits it to `data/`, and deploys the site. Open the Pages URL; the dataset menu now lists *OpenEar Delta* under "Real imaging". The first open downloads the pack once and keeps it in the browser (Cache Storage), so later visits load instantly and offline; Settings has a button to remove saved packs. Run the workflow again for the other specimens or with `all`.
+The runner reads the Zenodo archive with HTTP range requests, so only the 125 µm CBCT, the segmentation and the surfaces come down (hundreds of MB, not gigabytes), converts them to a ~30 MB pack at 0.15 mm (lossless delta-encoded CT, label volume, decimated surfaces), commits it to `data/`, and deploys the site. Open the Pages URL; the dataset menu now lists *OpenEar Delta* under "Real imaging". The first open downloads the pack once and keeps it in the browser (Cache Storage), so later visits load instantly and offline; Settings has a button to remove saved packs. Run the workflow again for the other specimens or with `all`.
 
 If Zenodo ever refuses range requests, run the workflow with "full download" ticked; the runner then downloads the whole archive (fine for the specimens under ~10 GB).
 
@@ -71,7 +71,7 @@ python3 tools/convert_openear.py --volume Delta/CBCT --meshes Delta/Models \
 
    * `--mesh-frame`: STL files exported from 3D Slicer are in LPS; most research datasets are RAS. If the surfaces land mirrored or displaced relative to the CT in the app, switch this flag.
    * `--intensity auto` rescales CBCT grey values to a HU-like range when they are not HU already.
-   * `--labels` voxelises the meshes into a label volume (outlines on slices, click-to-select, quiz checks). It needs closed meshes.
+   * `--label-volume seg.nrrd` resamples a real segmentation (OpenEar ships one at 125 µm; 3D Slicer exports `.seg.nrrd`) onto the pack grid and reads structure names from its header. Prefer it over `--labels`, which voxelises meshes and needs closed surfaces.
    * Unmatched file names are listed at the end; add them to `tools/openear_map.json` so they map onto atlas cards. Datasets that segment the whole facial nerve or the whole labyrinth as one surface map onto the *Facial nerve (whole course)* and *Bony labyrinth* overview cards, and the per-segment cards fall back to those surfaces for *Locate*.
 4. Open the pack from the dataset menu. The pack round-trips exactly: the phantom's NIfTI + STL export converted with this script reproduces the built-in pack (volume identical, labels Dice > 0.95 for closed meshes).
 

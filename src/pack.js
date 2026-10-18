@@ -37,7 +37,17 @@ export async function parsePack(bytes) {
     return new Ctor(bodyAligned.buffer, bodyAligned.byteOffset + b.offset, n);
   };
   const vmeta = header.volume;
-  const volume = new Volume({ dims: vmeta.dims, spacing: vmeta.spacing, origin: vmeta.origin, data: blob(vmeta.blob, DTYPES[vmeta.dtype] || Int16Array), dtype: vmeta.dtype });
+  let vdata = blob(vmeta.blob, DTYPES[vmeta.dtype] || Int16Array);
+  if (vmeta.encoding === 'delta-x') {
+    // lossless: cumulative sum along x with 16-bit wrap-around
+    const out = new Int16Array(vdata.length), nx = vmeta.dims[0];
+    for (let row = 0; row < vdata.length; row += nx) {
+      let acc = 0;
+      for (let i = 0; i < nx; i++) { acc = (acc + vdata[row + i]) & 0xffff; out[row + i] = acc; }
+    }
+    vdata = out; // Int16Array view reinterprets the uint16 bits as signed
+  }
+  const volume = new Volume({ dims: vmeta.dims, spacing: vmeta.spacing, origin: vmeta.origin, data: vdata, dtype: vmeta.dtype });
   let labels = null;
   if (header.labels) {
     const l = header.labels;

@@ -17,6 +17,20 @@ import gzip
 import json
 import struct
 
+import numpy as np
+
+
+def delta_encode_int16(arr):
+    """Lossless: differences along the fastest axis (x), stored as int16 (wraps mod 2^16, reversible)."""
+    a = np.asarray(arr, dtype=np.int16)
+    d = np.diff(a.astype(np.int32), axis=-1, prepend=0)
+    return d.astype(np.int16)  # wraps safely; decoder accumulates with wrap-around
+
+
+def delta_decode_int16(d):
+    d = np.asarray(d, dtype=np.int16)
+    return np.cumsum(d.astype(np.uint16), axis=-1, dtype=np.uint16).astype(np.int16)
+
 
 def _pad4(n):
     return (4 - (n % 4)) % 4
