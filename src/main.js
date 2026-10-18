@@ -44,6 +44,7 @@ app.innerHTML = `
     <aside class="panel"></aside>
   </main>
   <div class="toast" hidden></div>
+  <div class="phantom-banner" hidden>This is the <b>synthetic phantom</b>: computer-generated, not patient anatomy. Use it to learn the controls; open real imaging from the dataset menu. <button class="btn-link" data-act="open-real">Open real imaging</button></div>
   <div class="loading"><div class="loading-box"><div class="spinner"></div><div class="loading-text">Decoding the built-in phantom</div></div></div>
   <input type="file" class="file-input" multiple accept=".tba,.nii,.nii.gz,.gz,.json,.stl" hidden>`;
 
@@ -198,6 +199,9 @@ function setDataset(ds) {
   chip.classList.toggle('warn', ds.kind === 'phantom');
   chip.title = ds.kind === 'phantom' ? 'Synthetic phantom: correct relationships, not patient anatomy. Open a data pack for real imaging.' : ds.name;
   store.emit('toast', ds.kind === 'phantom' ? 'Synthetic phantom loaded (not patient anatomy). Click any structure; press ? for help.' : `Loaded ${ds.name}`);
+  const banner = app.querySelector('.phantom-banner');
+  banner.hidden = ds.kind !== 'phantom';
+  banner.querySelector('[data-act="open-real"]').onclick = () => { if (library.length) loadLibraryEntry(library[0]); else { store.emit('toast', 'No real imaging is published for this site yet.'); } };
   hideLoading();
 }
 async function loadEmbedded() {
@@ -289,6 +293,7 @@ async function loadLibraryEntry(e) {
     const ds = await parsePack(bytes);
     ds.name = ds.name || e.name; ds.libraryId = e.id;
     setDataset(ds);
+    try { localStorage.setItem('tba.lastDataset', e.id); } catch (err) { /* ignore */ }
     if (e.cached) store.emit('toast', `${e.name} is saved on this device; it opens offline from now on.`);
   } catch (err) { hideLoading(); console.error(err); store.emit('toast', `Could not load ${e.name}: ${err.message}`); }
 }
@@ -302,6 +307,13 @@ async function boot() {
   await loadLibrary();
   const url = params.get('data');
   if (url && library.find(e => e.id === url)) { await loadLibraryEntry(library.find(e => e.id === url)); return; }
+  if (!url && url !== 'phantom' && library.length) {
+    // real imaging available: open it by default (last used if remembered, else the first entry)
+    let pick = null;
+    try { const last = localStorage.getItem('tba.lastDataset'); pick = library.find(e => e.id === last) || null; } catch (e) { /* ignore */ }
+    await loadLibraryEntry(pick || library[0]);
+    if (store.get('dataset')) return;
+  }
   if (url) {
     showLoading('Fetching ' + url);
     try { const r = await fetch(url); const bytes = new Uint8Array(await r.arrayBuffer()); const ds = url.toLowerCase().includes('.nii') ? buildDataset({ name: url, kind: 'volume', side: 'R', notes: '', volume: await parseNifti(bytes), labels: null, labelIds: {}, meshes: [], landmarks: {} }) : await parsePack(bytes); setDataset(ds); return; }

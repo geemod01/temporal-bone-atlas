@@ -269,3 +269,8 @@ ul.pitfalls li { border-left: 2px solid rgba(224,122,95,0.5); list-style: none; 
   .tourbar { left: 6px; right: 6px; bottom: 6px; padding: 8px 10px; }
   :root { --panel-w: 100%; }
 }
+
+/* phantom notice */
+.phantom-banner { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 9; background: rgba(224,122,95,0.14); border: 1px solid rgba(224,122,95,0.6); color: var(--text); padding: 8px 14px; border-radius: 8px; max-width: min(720px, 92vw); font-size: calc(var(--fs) - 0.5px); backdrop-filter: blur(6px); }
+.phantom-banner b { color: var(--warn); }
+.phantom-banner .btn-link { margin-left: 6px; }
