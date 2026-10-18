@@ -1,0 +1,38 @@
+name: Converter self-test (no Zenodo)
+
+# Converts the repository's own phantom (NIfTI + STL) on the runner. Separates "the converter cannot
+# run on GitHub's machines" from "something about the OpenEar download/data kills it".
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install numpy scipy scikit-image nibabel SimpleITK trimesh fast-simplification requests
+      - name: Build the phantom (NIfTI + STL + pack)
+        run: |
+          python3 tools/make_phantom.py 2>&1 | tail -5
+          ls -la phantom | head; du -sh phantom
+      - name: Convert the phantom with the OpenEar converter (0.15 mm, labels from meshes)
+        run: |
+          python3 -u tools/convert_openear.py --volume phantom/volume.nii.gz --meshes phantom/meshes --spacing 0.15 --labels --name "selftest" --out /tmp/selftest.tba 2>&1 | tail -40
+          ls -la /tmp/selftest.tba
+      - name: Convert a gzip NRRD through the lazy reader (like OpenEar)
+        run: |
+          python3 - <<'PY'
+          import SimpleITK as sitk
+          img = sitk.ReadImage('phantom/volume.nii.gz')
+          sitk.WriteImage(img, '/tmp/cbct.nrrd', useCompression=True)
+          print('nrrd written', img.GetSize())
+          PY
+          python3 -u tools/convert_openear.py --volume /tmp/cbct.nrrd --meshes phantom/meshes --spacing 0.15 --labels --name "selftest-nrrd" --out /tmp/selftest2.tba 2>&1 | tail -20
+          ls -la /tmp/selftest2.tba
