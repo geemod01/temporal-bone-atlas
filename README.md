@@ -56,6 +56,24 @@ The runner reads the Zenodo archive with HTTP range requests, so only the 125 µ
 
 If Zenodo ever refuses range requests, run the workflow with "full download" ticked; the runner then downloads the whole archive (fine for the specimens under ~10 GB).
 
+### If GitHub's runners refuse the job: build the pack elsewhere (Colab or a laptop)
+
+`tools/publish_openear_anywhere.py` does the whole thing from any machine that can reach Zenodo and
+GitHub: fetch the needed members, convert, upload the pack to the repository's `data` release, and
+register it in `data/datasets.json` (the site redeploys itself).
+
+Google Colab (free, nothing to install): open https://colab.research.google.com, New notebook, paste
+
+```
+!git clone https://github.com/geemod01/temporal-bone-atlas
+%cd temporal-bone-atlas
+!python3 tools/publish_openear_anywhere.py --specimen delta --token PASTE_YOUR_TOKEN
+```
+
+and run the cell (about 10 minutes). The token is a GitHub personal access token with **Contents:
+read and write** on the repository (https://github.com/settings/tokens). Repeat with `--specimen all`
+for every specimen.
+
 ### OpenEar on your own machine
 
 1. Download a specimen archive from Zenodo (record 1473724; 4-14 GB each; CC BY). Unpack it.
