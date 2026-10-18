@@ -81,7 +81,7 @@ def log(*a):
 class HttpFile(io.RawIOBase):
     """A seekable, read-only file over HTTP using Range requests, with a small chunk cache."""
 
-    def __init__(self, url, session=None, chunk=4 * 1024 * 1024):
+    def __init__(self, url, session=None, chunk=8 * 1024 * 1024):
         self.url = url
         self.s = session or requests.Session()
         self.chunk = chunk
@@ -130,8 +130,6 @@ class HttpFile(io.RawIOBase):
                     raise
                 time.sleep(2 * (attempt + 1))
         self.bytes_fetched += len(data)
-        if (self.bytes_fetched // (50 << 20)) != ((self.bytes_fetched - len(data)) // (50 << 20)):
-            log('  %s fetched %.0f MB so far' % (time.strftime('%H:%M:%S'), self.bytes_fetched / 1e6))
         if len(self.cache) > 16:
             self.cache.pop(next(iter(self.cache)))
         self.cache[idx] = data
@@ -268,25 +266,61 @@ def choose_members(zf, prefer='embedded'):
     return vols + seg[:1] + ply + meta
 
 
-def extract_needed(zf, dest, budget_bytes=9 * 1024 ** 3, prefer='embedded'):
+def _stream_member(hf, zi, target):
+    """Stream one zip member from the remote archive with a single HTTP range request.
+
+    The central directory (already read) gives the local header offset and the compressed size; the
+    local header is read to find where the data begins, then the member body is streamed in one
+    request through a persistent connection and inflated on the fly. One request per file instead
+    of thousands of small range reads.
+    """
+    import struct as st
+    # local file header: 30 bytes + name + extra
+    hf.seek(zi.header_offset)
+    hdr = hf.read(30)
+    if hdr[:4] != b'PK\x03\x04':
+        raise IOError('bad local header for ' + zi.filename)
+    name_len, extra_len = st.unpack('<HH', hdr[26:30])
+    data_start = zi.header_offset + 30 + name_len + extra_len
+    data_end = data_start + zi.compress_size - 1
+    url = hf.url
+    with hf.s.get(url, headers={'Range': 'bytes=%d-%d' % (data_start, data_end)}, stream=True, timeout=300) as r:
+        if r.status_code != 206:
+            raise IOError('range request refused (%d) for %s' % (r.status_code, zi.filename))
+        if zi.compress_type == zipfile.ZIP_STORED:
+            with open(target, 'wb') as dst:
+                for chunk in r.iter_content(4 << 20):
+                    dst.write(chunk)
+        elif zi.compress_type == zipfile.ZIP_DEFLATED:
+            import zlib
+            d = zlib.decompressobj(-15)
+            with open(target, 'wb') as dst:
+                for chunk in r.iter_content(4 << 20):
+                    dst.write(d.decompress(chunk))
+                dst.write(d.flush())
+        else:
+            raise IOError('unsupported compression %d for %s' % (zi.compress_type, zi.filename))
+    hf.bytes_fetched += zi.compress_size
+
+
+def extract_needed(zf, dest, budget_bytes=9 * 1024 ** 3, prefer='embedded', hf=None):
     chosen = choose_members(zf, prefer)
     total = sum(zi.file_size for zi in chosen)
     log('extracting %d files (%.1f MB uncompressed)' % (len(chosen), total / 1e6))
-    if total > budget_bytes:
-        log('WARNING: selection exceeds the disk budget (%.1f GB); dropping meshes/metadata beyond the volume and segmentation' % (budget_bytes / 1e9))
-    done = 0
     for zi in chosen:
         target = os.path.join(dest, zi.filename)
         os.makedirs(os.path.dirname(target), exist_ok=True)
-        with zf.open(zi) as src, open(target, 'wb') as dst:
-            while True:
-                b = src.read(1 << 20)
-                if not b:
-                    break
-                dst.write(b)
-        done += zi.file_size
-        log('  %s extracted %s (%.0f MB)' % (time.strftime('%H:%M:%S'), zi.filename, zi.file_size / 1e6))
-        _post_progress(force=True)
+        t0 = time.time()
+        if hf is not None:
+            _stream_member(hf, zi, target)
+        else:
+            with zf.open(zi) as src, open(target, 'wb') as dst:
+                while True:
+                    b = src.read(1 << 20)
+                    if not b:
+                        break
+                    dst.write(b)
+        log('  %s extracted %s (%.0f MB in %.0fs)' % (time.strftime('%H:%M:%S'), zi.filename, zi.file_size / 1e6, time.time() - t0))
     return chosen
 
 
@@ -396,6 +430,7 @@ def main():
             log('archive %s (%.1f GB)' % (f['key'], (f['size'] or 0) / 1e9))
         dest = os.path.join(a.work, spec)
         os.makedirs(dest, exist_ok=True)
+        hf = None
         if os.path.exists(src):
             zf = zipfile.ZipFile(src)
         elif a.full:
@@ -410,7 +445,7 @@ def main():
             zf = zipfile.ZipFile(local)
         else:
             try:
-                hf = HttpFile(src)
+                hf = HttpFile(src, session=requests.Session())
                 zf = zipfile.ZipFile(hf)
                 log('remote zip opened with range requests (%.1f GB total, central directory read with %.1f MB)' % (hf.size / 1e9, hf.bytes_fetched / 1e6))
             except Exception as e:
@@ -419,7 +454,7 @@ def main():
         summarize(zf)
         if a.list:
             continue
-        extract_needed(zf, dest, prefer=a.volume_choice)
+        extract_needed(zf, dest, prefer=a.volume_choice, hf=hf)
         _post_progress(force=True)
         volume, meshes, label_vol = find_inputs(dest)
         log('volume input: %s' % volume)
