@@ -1,0 +1,19 @@
+{
+  "name": "temporal-bone-atlas",
+  "version": "0.1.0",
+  "description": "Tri-planar CT + 3D temporal bone atlas for otolaryngology training (single-file web app).",
+  "private": true,
+  "scripts": {
+    "build": "python3 build.py",
+    "build:dev": "python3 build.py --dev",
+    "phantom": "python3 tools/make_phantom.py"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@fontsource/ibm-plex-sans": "^5.0.0",
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0"
+  }
+}

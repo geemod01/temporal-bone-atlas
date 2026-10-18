@@ -1,0 +1,892 @@
+[
+  {
+    "id": "cochlea",
+    "name": "Cochlea",
+    "group": "inner",
+    "level": 1,
+    "color": "#52c7bd",
+    "aliases": [
+      "basal turn",
+      "middle turn",
+      "apical turn",
+      "scala tympani",
+      "scala vestibuli",
+      "modiolus"
+    ],
+    "summary": "A 2.5-turn spiral anterior to the vestibule, coiled around the modiolus with its apex pointing anterolaterally. The basal turn is the largest; its lateral wall is the promontory and its posterior end carries the round window.",
+    "find": {
+      "axial": "At the level of the IAC the basal turn appears as a crescent anterior and slightly lateral to the vestibule; scroll up one or two slices for the middle and apical turns stacked on it. The round window niche is at the posterior end of the basal turn, opening posteroinferiorly.",
+      "coronal": "Anterior to the oval window the turns stack like a snail shell with the modiolus as a central density; the basal turn is lowest and the apex points up and lateral.",
+      "sagittal": "Rarely the best plane; the basal turn is seen as an oval lucency anterior to the vestibule and inferior to the labyrinthine facial nerve."
+    },
+    "relations": [
+      "Vestibule posteriorly (the scala vestibuli of the basal turn opens into it).",
+      "Carotid genu anteriorly, separated by a thin bony plate.",
+      "Labyrinthine facial nerve and geniculate ganglion superiorly.",
+      "IAC fundus medially; the cochlear nerve enters the modiolus through the cochlear aperture.",
+      "Middle ear laterally; the promontory is the basal turn's lateral wall."
+    ],
+    "surgical": [
+      "Cochlear implantation enters the scala tympani of the basal turn through the round window or a cochleostomy anteroinferior to it.",
+      "The cochlea is the anterior limit of labyrinthectomy dissection; the facial nerve labyrinthine segment lies just above its middle turn.",
+      "Promontory drilling (e.g. in petrous apex approaches) risks the basal turn.",
+      "Otosclerosis involves the fissula ante fenestram just anterior to the oval window, above the basal turn."
+    ],
+    "variants": [
+      {
+        "name": "Incomplete partition type II (Mondini)",
+        "note": "1.5 turns with a cystic apex, usually with an enlarged vestibular aqueduct and normal basal turn.",
+        "prevalence": "most common cochlear malformation in CI candidates"
+      },
+      {
+        "name": "Incomplete partition type I",
+        "note": "Cystic cochlea without a modiolus, with a dilated vestibule; CSF gusher risk.",
+        "prevalence": "uncommon"
+      },
+      {
+        "name": "Incomplete partition type III",
+        "note": "X-linked (POU3F4); absent modiolus with a bulbous IAC communicating directly with the cochlea; very high gusher risk.",
+        "prevalence": "rare"
+      },
+      {
+        "name": "Cochlear hypoplasia",
+        "note": "Small cochlea with fewer turns; several subtypes (Sennaroglu).",
+        "prevalence": "uncommon"
+      },
+      {
+        "name": "Common cavity / cochlear aplasia / Michel",
+        "note": "Progressively severe; Michel is complete labyrinthine aplasia.",
+        "prevalence": "rare"
+      }
+    ],
+    "pitfalls": [
+      "A partial-volume apical turn can look like a lucent lesion; confirm on the adjacent slice.",
+      "Fenestral otosclerosis is a small lucency anterior to the oval window and is easily missed at a narrow window; look at the fissula ante fenestram on every pre-stapedectomy scan.",
+      "Retrofenestral (cochlear) otosclerosis produces a lucent halo around the cochlea on CT and can cause a 'double ring' sign."
+    ],
+    "measurements": [
+      {
+        "label": "Turns",
+        "value": "2.5 (2.25-2.75)"
+      },
+      {
+        "label": "Basal turn 'A' value (round window to opposite lateral wall through the modiolus)",
+        "value": "about 9 mm (range roughly 8-10 mm)"
+      },
+      {
+        "label": "Cochlear duct length",
+        "value": "about 31-35 mm, range roughly 25-38 mm"
+      },
+      {
+        "label": "Height (base to apex)",
+        "value": "about 5 mm"
+      }
+    ],
+    "classification": [
+      {
+        "name": "Sennaroglu classification of inner ear malformations",
+        "note": "Michel, cochlear aplasia, common cavity, cochlear hypoplasia (I-IV), incomplete partition (I-III), enlarged vestibular aqueduct; decides implant feasibility, electrode choice and gusher risk."
+      }
+    ],
+    "fellow": [
+      "Cochlear duct length can be estimated from the A value (Escude or Alexiades formulas) to choose electrode length for hearing preservation.",
+      "On the pre-CI CT, record cochlear patency (obliteration after meningitis/otosclerosis), the round window overhang, and the facial recess width; the 'cochlear view' reformat shows the basal turn in full.",
+      "Scala tympani entry through the round window gives the least intracochlear trauma; an anteroinferior cochleostomy is used when the niche is inaccessible."
+    ],
+    "pathology": [
+      "Labyrinthitis ossificans after meningitis obliterates the basal turn first; MRI (loss of T2 fluid signal) shows fibrosis before CT shows bone.",
+      "Cochlear otosclerosis: lucent pericochlear halo; correlate with sensorineural loss."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Sennaroglu L, Saatci I. A new classification for cochleovestibular malformations. Laryngoscope 2002.",
+      "Escude B et al. The size of the cochlea and predictions of insertion depth angles for cochlear implant electrodes. Audiol Neurotol 2006.",
+      "Swartz JD, Loevner LA. Imaging of the Temporal Bone."
+    ],
+    "curriculum": [
+      "Otology: inner ear anatomy",
+      "Otology: cochlear implantation",
+      "Radiology: temporal bone CT"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "vestibule",
+    "name": "Vestibule",
+    "group": "inner",
+    "level": 1,
+    "color": "#52c7bd",
+    "aliases": [
+      "utricle",
+      "saccule",
+      "elliptical recess",
+      "spherical recess"
+    ],
+    "summary": "The central chamber of the bony labyrinth, between the cochlea anteriorly and the semicircular canals posteriorly. It houses the utricle and saccule and its lateral wall carries the oval window.",
+    "find": {
+      "axial": "A smooth oval lucency immediately posterior to the cochlea at the level of the lateral semicircular canal; the oval window is on its lateral wall and the IAC fundus medial to it.",
+      "coronal": "An oval lucency medial to the oval window and stapes, with the lateral canal above and the facial nerve tympanic segment between them.",
+      "sagittal": "Oval lucency central to the labyrinth with the canals arching posteriorly and superiorly."
+    },
+    "relations": [
+      "Oval window and stapes footplate laterally.",
+      "Cochlea anteriorly (scala vestibuli of the basal turn).",
+      "Three semicircular canals open into it posteriorly and superiorly (five openings, because the superior and posterior canals share the common crus).",
+      "IAC fundus medially; the superior and inferior vestibular nerves cross the bone between them.",
+      "The vestibular aqueduct leaves its posteromedial wall."
+    ],
+    "surgical": [
+      "Opening the vestibule is the key step of labyrinthectomy and the translabyrinthine approach; the IAC fundus is only a few millimetres medial.",
+      "A footplate fracture during stapes surgery opens the vestibule; the saccule lies immediately beneath the posterior half of the footplate.",
+      "Over-deep drilling of the oval window region or a 'floating footplate' risks perilymph fistula."
+    ],
+    "variants": [
+      {
+        "name": "Dilated vestibule",
+        "note": "Seen with lateral canal dysplasia (a 'vestibule-lateral canal' complex that looks like a single large cavity).",
+        "prevalence": "most common inner ear anomaly on CT in some series"
+      }
+    ],
+    "pitfalls": [
+      "A dilated vestibule plus a short lateral canal is a malformation, not a widened canal lumen; compare with the other side.",
+      "The vestibule touches the stapes footplate: an apparent gap between them is partial volume, not dehiscence."
+    ],
+    "measurements": [
+      {
+        "label": "Size",
+        "value": "roughly 3 x 3 x 5 mm (width x height x length)"
+      }
+    ],
+    "fellow": [
+      "In the translabyrinthine approach, after the canals are opened, the vestibule is followed medially to the IAC fundus where the superior vestibular nerve is identified first.",
+      "The utricle sits in the elliptical recess (posterosuperior) and the saccule in the spherical recess (anteroinferior) of the medial wall."
+    ],
+    "pathology": [
+      "Third-window physiology is not vestibular dilation; look at the superior canal and the vestibular aqueduct."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Harnsberger HR et al. Diagnostic Imaging: Head and Neck."
+    ],
+    "curriculum": [
+      "Otology: inner ear anatomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "labyrinth"
+    ]
+  },
+  {
+    "id": "scc_lateral",
+    "name": "Lateral semicircular canal",
+    "group": "inner",
+    "level": 1,
+    "color": "#52c7bd",
+    "aliases": [
+      "horizontal canal",
+      "LSCC",
+      "HSCC"
+    ],
+    "summary": "The canal that lies closest to the horizontal plane (tilted about 20-30 degrees, anterior end up). It bulges into the medial wall of the aditus and antrum and is the first bony-labyrinth landmark you meet in a mastoidectomy.",
+    "find": {
+      "axial": "A ring or C-shaped lucency lateral and posterior to the vestibule, seen almost in one slice at the level of the vestibule and IAC.",
+      "coronal": "Two round lucencies (the canal cut twice) above the facial nerve tympanic segment and the oval window; the lateral limb is the 'prominence' in the antrum.",
+      "sagittal": "A horizontal lucent arc posterior to the vestibule."
+    },
+    "relations": [
+      "Facial nerve tympanic segment runs anteroinferior to it; the second genu lies inferior to its posterior limb.",
+      "Aditus and antrum laterally: the canal's prominence is the medial wall of the aditus.",
+      "Posterior canal posteriorly; the lateral canal is roughly perpendicular to both vertical canals.",
+      "The fossa incudis is lateral and slightly superior to its ampulla."
+    ],
+    "surgical": [
+      "First labyrinthine landmark of cortical mastoidectomy; once identified, the facial nerve is known to lie below and anterior to it.",
+      "Donaldson's line (its plane extended posteriorly through the sigmoid) marks the superior limit of the endolymphatic sac.",
+      "Cholesteatoma most often fistulises the lateral canal; a blue-lined or dehiscent canal must be handled with the matrix left or removed last.",
+      "In labyrinthectomy it is opened first and traced to the ampulla (anterior) and the vestibule."
+    ],
+    "variants": [
+      {
+        "name": "Lateral canal dysplasia",
+        "note": "Short, wide canal forming a single cavity with the vestibule; the most common canal malformation.",
+        "prevalence": "common among inner ear anomalies"
+      },
+      {
+        "name": "Lateral canal dehiscence",
+        "note": "Rare third-window variant; usually erosive (cholesteatoma) rather than congenital.",
+        "prevalence": "rare congenitally"
+      }
+    ],
+    "pitfalls": [
+      "A canal that looks interrupted on one slice is a partial-volume effect from its tilt; follow it over three slices before calling a fistula.",
+      "Compare canal bone thickness with the opposite side when cholesteatoma abuts it."
+    ],
+    "measurements": [
+      {
+        "label": "Lumen diameter",
+        "value": "about 0.8-1.2 mm"
+      },
+      {
+        "label": "Canal radius of curvature",
+        "value": "about 3 mm"
+      }
+    ],
+    "fellow": [
+      "The canal plane is tilted roughly 20-30 degrees from Reid's plane with the anterior end superior; axial scans are often acquired parallel to it so the canal is seen entire in one slice.",
+      "Caloric testing stimulates this canal; head impulse testing in the horizontal plane tests the same canal."
+    ],
+    "pathology": [
+      "Labyrinthine fistula from cholesteatoma: erosion of the canal's bony cover, usually at the dome of the lateral canal; CT sensitivity is high at thin collimation."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Otology: inner ear anatomy",
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "labyrinth"
+    ]
+  },
+  {
+    "id": "scc_superior",
+    "name": "Superior semicircular canal",
+    "group": "inner",
+    "level": 1,
+    "color": "#52c7bd",
+    "aliases": [
+      "anterior canal",
+      "SSCC",
+      "arcuate eminence"
+    ],
+    "summary": "The vertical canal oriented perpendicular to the long axis of the petrous bone (roughly 45 degrees to the sagittal plane). Its arc rises highest of the three, directly beneath the floor of the middle cranial fossa.",
+    "find": {
+      "axial": "The first labyrinthine structure seen scrolling down from the middle fossa: two dots, then a ring, superior to the vestibule and IAC.",
+      "coronal": "An arch above the vestibule; the arcuate eminence of the petrous ridge sits on top of it.",
+      "sagittal": "Not aligned with any orthogonal plane; use Poschl (parallel to the canal) and Stenvers (perpendicular) reformats to show the full arc and its bony roof."
+    },
+    "relations": [
+      "Middle fossa dura and the arcuate eminence superiorly; the bony roof over the canal is often under 1 mm thick.",
+      "Shares the common crus with the posterior canal.",
+      "Its ampulla lies anterosuperior to the vestibule, just posterior to the labyrinthine facial nerve.",
+      "Superior petrosal sinus runs along the petrous ridge above and medial to it."
+    ],
+    "surgical": [
+      "In the middle fossa approach the canal is the key landmark for finding the IAC (the IAC lies at about 60 degrees to the canal plane, Fisch's meatal plane).",
+      "Drilling the arcuate eminence or the blue line of the canal is the first step of the Fisch/House identification of the IAC; opening it causes sensorineural hearing loss.",
+      "Superior canal dehiscence repair plugs or resurfaces the canal via middle fossa or transmastoid routes."
+    ],
+    "variants": [
+      {
+        "name": "Superior canal dehiscence",
+        "note": "Absent bone over the canal apex into the middle fossa (or the superior petrosal sinus); third-window symptoms: sound- and pressure-induced vertigo, autophony, conductive loss with intact reflexes.",
+        "prevalence": "about 0.5% dehiscent and about 1.4% markedly thin bone in a large histologic series (Carey et al. 2000)"
+      },
+      {
+        "name": "Dehiscence into the superior petrosal sinus",
+        "note": "The dehiscence faces the sinus rather than the dura; repair is more awkward.",
+        "prevalence": "minority of dehiscences"
+      }
+    ],
+    "pitfalls": [
+      "Do not diagnose dehiscence on axial or coronal images alone; a canal cut obliquely always looks thin. Confirm on Poschl and Stenvers reformats at 0.5-0.6 mm collimation or thinner.",
+      "Radiologic dehiscence without symptoms is common; the diagnosis is clinical plus VEMP plus CT, not CT alone."
+    ],
+    "measurements": [
+      {
+        "label": "Lumen diameter",
+        "value": "about 0.8-1.2 mm"
+      },
+      {
+        "label": "Height of the arc above the vestibule",
+        "value": "about 6-7 mm"
+      }
+    ],
+    "fellow": [
+      "Garcia-Ibanez technique: the IAC is found by bisecting the angle between the superior canal (blue-lined) and the GSPN.",
+      "The arcuate eminence is an unreliable surface marker: the canal lies directly beneath it in only a proportion of bones, so blue-line the canal rather than trusting the eminence.",
+      "Cervical VEMP thresholds are reduced and amplitudes increased in dehiscence; ocular VEMP amplitudes are a sensitive screen."
+    ],
+    "pathology": [
+      "Superior canal dehiscence syndrome; also tegmen dehiscence with encephalocele in the same region."
+    ],
+    "sources": [
+      "Carey JP, Minor LB, Nager GT. Dehiscence or thinning of bone overlying the superior semicircular canal in a temporal bone survey. Arch Otolaryngol Head Neck Surg 2000.",
+      "Minor LB et al. Sound- and/or pressure-induced vertigo due to bone dehiscence of the superior semicircular canal. Arch Otolaryngol Head Neck Surg 1998.",
+      "Fisch U. Transtemporal surgery of the internal auditory canal. Adv Otorhinolaryngol 1970."
+    ],
+    "curriculum": [
+      "Otology: inner ear anatomy",
+      "Neurotology: middle fossa approach",
+      "Otology: third-window disorders"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "labyrinth"
+    ]
+  },
+  {
+    "id": "scc_posterior",
+    "name": "Posterior semicircular canal",
+    "group": "inner",
+    "level": 1,
+    "color": "#52c7bd",
+    "aliases": [
+      "PSCC",
+      "inferior canal"
+    ],
+    "summary": "The vertical canal lying parallel to the posterior surface of the petrous bone, posterior to the vestibule. It is the most posterior part of the bony labyrinth and the canal nearest the posterior fossa dura and the endolymphatic sac.",
+    "find": {
+      "axial": "Seen over several slices as two dots or a short vertical bar posterior to the vestibule, lateral to the vestibular aqueduct; its lower limb is at the level of the round window.",
+      "coronal": "A vertical lucent bar posterior to the vestibule, inferior to the common crus.",
+      "sagittal": "Shows the canal arc well, posterior to the vestibule and lateral canal."
+    },
+    "relations": [
+      "Vestibular aqueduct runs parallel and medial to it.",
+      "Posterior fossa dura and the endolymphatic sac posteromedially.",
+      "Facial nerve mastoid segment is lateral to it; the retrofacial air cells lie between.",
+      "Jugular bulb inferiorly (a high bulb can reach its ampulla)."
+    ],
+    "surgical": [
+      "Opened last in labyrinthectomy; its ampulla is close to the facial nerve second genu and the lower limb approaches the jugular bulb.",
+      "Singular neurectomy and posterior canal occlusion (for intractable BPPV) are done through the mastoid at its lower limb.",
+      "Marks the anterior limit of the retrolabyrinthine approach and of endolymphatic sac exposure."
+    ],
+    "variants": [
+      {
+        "name": "Posterior canal dehiscence",
+        "note": "Rare third-window variant, usually toward a high jugular bulb.",
+        "prevalence": "rare"
+      }
+    ],
+    "pitfalls": [
+      "A high jugular bulb abutting the canal can mimic erosion on coronal images; check the cortical margin on axial slices.",
+      "Lower limb of the canal lies close to the round window niche level: do not confuse it with the cochlear aqueduct, which runs medially and inferiorly."
+    ],
+    "measurements": [
+      {
+        "label": "Lumen diameter",
+        "value": "about 0.8-1.2 mm"
+      }
+    ],
+    "fellow": [
+      "In the translabyrinthine approach the posterior canal ampulla marks the position of the singular nerve and inferior vestibular nerve at the fundus.",
+      "Posterior canal BPPV is the most common form; the canal's orientation explains the upbeating torsional nystagmus in the Dix-Hallpike position."
+    ],
+    "pathology": [
+      "Erosion by cholesteatoma is uncommon (the lateral canal is the usual site)."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Otology: inner ear anatomy",
+      "Neurotology: translabyrinthine approach"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "labyrinth"
+    ]
+  },
+  {
+    "id": "vestibular_aqueduct",
+    "name": "Vestibular aqueduct",
+    "group": "inner",
+    "level": 2,
+    "color": "#6fd8ce",
+    "aliases": [
+      "endolymphatic duct",
+      "operculum",
+      "EVA"
+    ],
+    "summary": "A narrow bony channel carrying the endolymphatic duct from the vestibule posteromedially to the operculum on the posterior petrous surface, where it opens into the endolymphatic sac. Its width is the key measurement in children with hearing loss.",
+    "find": {
+      "axial": "A fine lucent line running posteromedially from the posterior wall of the vestibule, parallel and medial to the posterior canal, best at the level of the lateral canal; its medial end flares at the operculum.",
+      "coronal": "Seen in cross-section posteromedial to the vestibule as a small dot; hard to follow.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Posterior canal lateral and parallel to it.",
+      "Common crus anterior to its origin.",
+      "Endolymphatic sac at its posterior end under the posterior fossa dura.",
+      "Vestibular aqueduct and posterior canal both lie above the jugular bulb."
+    ],
+    "surgical": [
+      "Endolymphatic sac surgery follows the aqueduct's line below Donaldson's line to the sac on the dura.",
+      "A large aqueduct is a contraindication to stapes surgery and a caution in CI (perilymph gusher risk is lower than with IP-III but present)."
+    ],
+    "variants": [
+      {
+        "name": "Enlarged vestibular aqueduct (EVA)",
+        "note": "Midpoint wider than about 1 mm or operculum wider than about 2 mm (Cincinnati criteria); Valvassori's older threshold was 1.5 mm at the midpoint. Associated with Pendred syndrome (SLC26A4), IP-II, and progressive or fluctuating sensorineural loss.",
+        "prevalence": "most common radiologic anomaly in paediatric sensorineural hearing loss"
+      }
+    ],
+    "pitfalls": [
+      "Measure at the midpoint between the common crus and the operculum, perpendicular to the duct, on 0.5-0.6 mm axial images; oblique cuts overestimate width.",
+      "Compare with the posterior canal diameter: an aqueduct wider than the adjacent canal is enlarged.",
+      "A visible aqueduct is normal; a 'prominent' aqueduct is not a diagnosis without measurement."
+    ],
+    "measurements": [
+      {
+        "label": "Normal midpoint width",
+        "value": "under 1 mm (often 0.4-0.8 mm)"
+      },
+      {
+        "label": "EVA, Cincinnati criteria",
+        "value": "midpoint 1 mm or more, or operculum 2 mm or more"
+      },
+      {
+        "label": "EVA, Valvassori",
+        "value": "midpoint more than 1.5 mm"
+      }
+    ],
+    "fellow": [
+      "MRI (heavily T2-weighted) shows the enlarged endolymphatic sac and duct directly and should accompany CT in paediatric work-up.",
+      "Counsel EVA patients on head-trauma precautions and contact sports; hearing can drop stepwise after minor injury."
+    ],
+    "pathology": [
+      "Pendred syndrome: EVA plus thyroid organification defect; IP-II in about half.",
+      "Endolymphatic sac tumour (von Hippel-Lindau) expands the aqueduct region with a lytic, spiculated matrix."
+    ],
+    "sources": [
+      "Valvassori GE, Clemis JD. The large vestibular aqueduct syndrome. Laryngoscope 1978.",
+      "Boston M et al. The large vestibular aqueduct: a new definition based on audiologic and computed tomography correlation. Otolaryngol Head Neck Surg 2007.",
+      "Swartz JD, Loevner LA. Imaging of the Temporal Bone."
+    ],
+    "curriculum": [
+      "Otology: inner ear anatomy",
+      "Pediatric otology: sensorineural hearing loss imaging"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "cochlear_aqueduct",
+    "name": "Cochlear aqueduct",
+    "group": "inner",
+    "level": 2,
+    "color": "#6fd8ce",
+    "aliases": [
+      "perilymphatic duct",
+      "perilymphatic aqueduct"
+    ],
+    "summary": "A narrow channel connecting the perilymph of the scala tympani (near the round window) to the subarachnoid space of the posterior fossa near the jugular foramen. It runs parallel to and below the IAC and widens medially.",
+    "find": {
+      "axial": "A thin oblique lucency running medially and posteriorly from the basal turn of the cochlea toward the pars nervosa of the jugular foramen, one to three slices below the IAC. Its medial end is funnel-shaped.",
+      "coronal": "Seen as a small channel inferomedial to the basal turn; hard to follow.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "IAC superior and parallel to it.",
+      "Basal turn of the cochlea at its lateral end, near the round window.",
+      "Jugular foramen (pars nervosa) and the glossopharyngeal nerve at its medial end.",
+      "Inferior petrosal sinus runs nearby medially."
+    ],
+    "surgical": [
+      "In the translabyrinthine and transcochlear approaches it is a landmark for the lower limit of IAC dissection and for the jugular foramen; opening it releases CSF and marks where IX is at risk.",
+      "A widely patent aqueduct can contribute to perilymph gusher at stapedotomy or cochleostomy (the main gusher mechanism is a deficient IAC fundus)."
+    ],
+    "variants": [
+      {
+        "name": "Patency",
+        "note": "Patent in most infants and children, progressively narrowed by bone and arachnoid in adults; a widely patent adult aqueduct is a normal variant that can transmit CSF pressure changes.",
+        "prevalence": "visible on CT in most adults, patent lumen variable"
+      }
+    ],
+    "pitfalls": [
+      "Do not mistake it for a fracture line: it has corticated margins and a predictable course from the basal turn to the jugular foramen.",
+      "Distinguish from the vestibular aqueduct, which lies posterior to the vestibule and above the jugular bulb."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 10-12 mm"
+      },
+      {
+        "label": "Lateral (otic) end",
+        "value": "under 0.5 mm; medial end up to several mm"
+      }
+    ],
+    "fellow": [
+      "In cochlear implantation an unusually wide aqueduct in a malformed ear warns of CSF flow at the cochleostomy; have fascia and a lumbar drain plan ready.",
+      "Transmits infection in meningogenic labyrinthitis, which is why post-meningitic ossification starts in the basal turn."
+    ],
+    "pathology": [
+      "Route of meningogenic labyrinthitis and subsequent labyrinthitis ossificans."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Swartz JD, Loevner LA. Imaging of the Temporal Bone."
+    ],
+    "curriculum": [
+      "Otology: inner ear anatomy",
+      "Neurotology: lateral skull base anatomy"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "iac",
+    "name": "Internal auditory canal",
+    "group": "inner",
+    "level": 1,
+    "color": "#8ed6cf",
+    "aliases": [
+      "IAC",
+      "internal acoustic meatus",
+      "porus acusticus",
+      "fundus"
+    ],
+    "summary": "A bony canal about 8-10 mm long running laterally from the porus on the posterior petrous face to the fundus beside the labyrinth. It carries the facial nerve, cochlear nerve, superior and inferior vestibular nerves and the labyrinthine artery.",
+    "find": {
+      "axial": "A horizontal, corticated canal running medially from the vestibule and cochlea to open into the cerebellopontine angle; symmetric with the other side in width.",
+      "coronal": "A round or oval lucency medial to the cochlea and vestibule, below the superior canal and above the cochlear aqueduct.",
+      "sagittal": "A round canal in cross-section anterior to the posterior canal."
+    },
+    "relations": [
+      "Cochlea anterolaterally and vestibule posterolaterally at the fundus.",
+      "Superior canal and the arcuate eminence above; the cochlear aqueduct and jugular foramen below.",
+      "Posterior fossa dura and cerebellopontine angle at the porus.",
+      "Petrous carotid anteriorly and inferiorly, separated by bone."
+    ],
+    "surgical": [
+      "Fundus contents: facial nerve anterosuperior, cochlear nerve anteroinferior, superior vestibular posterosuperior, inferior vestibular posteroinferior ('7-up, Coke down'). The transverse (falciform) crest separates the upper and lower halves; Bill's bar separates the facial nerve (anterior) from the superior vestibular nerve (posterior) in the upper half.",
+      "Translabyrinthine: the IAC is skeletonised over 180-270 degrees; the superior vestibular nerve is found first at the fundus, then Bill's bar, then the facial nerve.",
+      "Middle fossa: the IAC is found by the meatal plane (60 degrees to the superior canal), by bisecting the GSPN-superior canal angle, or by following the GSPN to the geniculate and then medially.",
+      "Retrosigmoid: the posterior lip of the porus is drilled to expose the lateral IAC; a high jugular bulb or posterior canal limits the drilling."
+    ],
+    "variants": [
+      {
+        "name": "Narrow or stenotic IAC",
+        "note": "Diameter under about 2 mm suggests cochlear nerve deficiency; check the cochlear aperture and the nerve on MRI.",
+        "prevalence": "uncommon, important in CI candidacy"
+      },
+      {
+        "name": "Bulbous IAC with absent modiolus",
+        "note": "Incomplete partition type III (X-linked); very high CSF gusher risk.",
+        "prevalence": "rare"
+      },
+      {
+        "name": "Duplicated IAC",
+        "note": "Separate facial and cochleovestibular canals.",
+        "prevalence": "rare"
+      }
+    ],
+    "pitfalls": [
+      "Asymmetry of more than about 2 mm in width between sides is suspicious for an intracanalicular mass; CT shows widening late, MRI with contrast is the test.",
+      "An IAC that appears 'long' or 'short' on a single axial image reflects the angle of the slice, not anatomy."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 8-10 mm"
+      },
+      {
+        "label": "Width",
+        "value": "about 4-8 mm; under 2 mm is stenotic"
+      },
+      {
+        "label": "Side-to-side difference",
+        "value": "usually under 1-2 mm"
+      }
+    ],
+    "fellow": [
+      "The porus lies on the posterior petrous surface about midway along it; the lateral end of the posterior fossa drilling in retrosigmoid surgery is limited by the posterior canal and the vestibular aqueduct, which is why the lateral 2-3 mm of the fundus is blind from that approach.",
+      "The labyrinthine artery (from AICA or basilar) runs in the IAC with the nerves; AICA often loops toward or into the porus.",
+      "Cochlear aperture (the opening of the cochlear nerve into the modiolus) narrower than about 1.4 mm predicts cochlear nerve hypoplasia."
+    ],
+    "pathology": [
+      "Vestibular schwannoma: intracanalicular widening and erosion; MRI shows the extent.",
+      "Facial nerve schwannoma and meningioma can involve the canal; fractures crossing it cause facial palsy and sensorineural loss."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery.",
+      "Fatterpekar GM et al. Hypoplasia of the bony canal for the cochlear nerve. Radiology 2000."
+    ],
+    "curriculum": [
+      "Neurotology: IAC and CPA anatomy",
+      "Neurotology: lateral skull base approaches"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "round_window",
+    "name": "Round window",
+    "group": "inner",
+    "level": 1,
+    "color": "#9fd8d2",
+    "aliases": [
+      "fenestra cochleae",
+      "round window niche",
+      "round window membrane",
+      "secondary tympanic membrane"
+    ],
+    "summary": "A membrane-closed opening at the posterior end of the basal turn, opening from the scala tympani into the round window niche of the middle ear. The niche faces posteroinferiorly and is partly hidden by a bony overhang.",
+    "find": {
+      "axial": "At the level of the basal turn's posterior end, a small notch in the promontory facing the hypotympanum; the membrane is not resolved, the niche is.",
+      "coronal": "The niche appears as a small recess below and posterior to the oval window level, at the inferior edge of the basal turn.",
+      "sagittal": "Occasionally shows the niche opening posteriorly from the basal turn."
+    },
+    "relations": [
+      "Oval window superior and anterior to it (about 2 mm apart), with the promontory between.",
+      "Facial recess and the posterior tympanotomy window lateral to it.",
+      "Hypotympanum and jugular bulb inferior to it.",
+      "Sinus tympani posterior and medial; the subiculum runs from the niche to the styloid prominence.",
+      "The cochlear aqueduct opens into the scala tympani just medial to the membrane."
+    ],
+    "surgical": [
+      "Preferred entry point for cochlear implant electrodes into the scala tympani; the overhang is drilled to expose the membrane in full.",
+      "Round window reinforcement (fat or fascia) for perilymph fistula and some third-window syndromes.",
+      "Visible through the facial recess during posterior tympanotomy; the chorda and facial nerve bound the view."
+    ],
+    "variants": [
+      {
+        "name": "Round window atresia or narrow niche",
+        "note": "Bony obliteration or a narrow, deep niche; CI then needs a cochleostomy. Also seen in otosclerosis (obliterative) and osteogenesis imperfecta.",
+        "prevalence": "uncommon"
+      },
+      {
+        "name": "High jugular bulb reaching the niche",
+        "note": "The bulb can sit immediately below or even obscure the niche, blocking the round window approach.",
+        "prevalence": "a few percent"
+      }
+    ],
+    "pitfalls": [
+      "A mucosal fold or 'false membrane' across the niche can be mistaken for the true membrane intraoperatively; the true membrane lies deeper and more anteriorly.",
+      "Round window obliteration on CT in otosclerosis predicts a poorer stapes outcome."
+    ],
+    "measurements": [
+      {
+        "label": "Membrane size",
+        "value": "about 2 x 1.5 mm"
+      },
+      {
+        "label": "Distance from oval window",
+        "value": "about 2 mm"
+      }
+    ],
+    "fellow": [
+      "The membrane sits obliquely; the electrode is aimed along the basal turn (anteroinferiorly, toward the carotid), not straight medially.",
+      "In the 'round window approach' the posterior-inferior overhang (the crista fenestrae) is removed to see the membrane's full circumference before insertion.",
+      "Jacobson's nerve crosses the promontory just above the niche and can bleed on manipulation."
+    ],
+    "pathology": [
+      "Round window membrane rupture is one site of perilymph fistula after barotrauma or stapes surgery.",
+      "Glomus tympanicum arises on the promontory near the niche from Jacobson's nerve paraganglia."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: cochlear implantation"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "cochlea"
+    ]
+  },
+  {
+    "id": "oval_window",
+    "name": "Oval window",
+    "group": "inner",
+    "level": 1,
+    "color": "#9fd8d2",
+    "mesh": false,
+    "anchor": "oval_window",
+    "aliases": [
+      "fenestra vestibuli",
+      "stapes footplate",
+      "annular ligament",
+      "fissula ante fenestram"
+    ],
+    "summary": "The opening in the lateral wall of the vestibule closed by the stapes footplate and annular ligament. It sits on the medial wall of the middle ear beneath the facial nerve's tympanic segment and above the promontory.",
+    "find": {
+      "axial": "At the level of the vestibule, a short lucent gap in the bone between the vestibule and the middle ear with the footplate as a thin density; the stapes crura project laterally from it.",
+      "coronal": "The classic view: footplate in the window with the facial nerve immediately above it and the lateral canal above the nerve; the promontory below.",
+      "sagittal": "Seen en face only on oblique reformats."
+    },
+    "relations": [
+      "Facial nerve tympanic segment directly above (and sometimes overhanging or dehiscent at this point).",
+      "Promontory below and the round window posteroinferior.",
+      "Vestibule medial; the saccule lies beneath the posterior half of the footplate.",
+      "Fissula ante fenestram anterior to the window, the site of fenestral otosclerosis.",
+      "Pyramidal eminence and stapedius tendon posterior."
+    ],
+    "surgical": [
+      "Stapedotomy fenestrates the posterior half of the footplate; the facial nerve overhang and a narrow niche are the main anatomic obstacles.",
+      "A dehiscent facial nerve over the window can be injured by the laser or the prosthesis.",
+      "Floating or fractured footplate during surgery is managed by avoiding suction over the vestibule."
+    ],
+    "variants": [
+      {
+        "name": "Oval window atresia",
+        "note": "Absent window with an anomalous facial nerve course (the nerve often runs across the window); seen with congenital conductive loss and aural atresia.",
+        "prevalence": "rare"
+      },
+      {
+        "name": "Facial nerve overhang or dehiscence at the window",
+        "note": "The most common site of tympanic segment dehiscence; the nerve may prolapse onto the footplate.",
+        "prevalence": "common histologically"
+      }
+    ],
+    "pitfalls": [
+      "Fenestral otosclerosis: look for a subtle lucency anterior to the window; a thickened footplate shows as a dense bar across the window.",
+      "On coronal images the footplate is partially volumed with the facial nerve; a 'dehiscence' call needs the axial slice too."
+    ],
+    "measurements": [
+      {
+        "label": "Window size",
+        "value": "about 3 x 1.5 mm"
+      },
+      {
+        "label": "Footplate thickness",
+        "value": "about 0.25 mm"
+      }
+    ],
+    "fellow": [
+      "Preoperative CT in otosclerosis grades fenestral and retrofenestral disease (Symons-Fanning); extensive retrofenestral disease predicts sensorineural components.",
+      "An overhanging facial nerve covering more than about half the window is a relative contraindication to routine stapedotomy."
+    ],
+    "pathology": [
+      "Otosclerosis; tympanosclerosis fixing the footplate; cholesteatoma eroding the window."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Harnsberger HR et al. Diagnostic Imaging: Head and Neck."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: stapes surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "stapes",
+      "vestibule"
+    ]
+  },
+  {
+    "id": "endolymphatic_sac",
+    "name": "Endolymphatic sac",
+    "group": "inner",
+    "level": 2,
+    "color": "#6fd8ce",
+    "aliases": [
+      "sac",
+      "operculum",
+      "Donaldson's line"
+    ],
+    "summary": "A dural pouch at the end of the endolymphatic duct on the posterior surface of the petrous bone, lying beneath the posterior fossa dura between the sigmoid sinus and the labyrinth. It is the target of sac decompression surgery.",
+    "find": {
+      "axial": "Not directly visible on CT; locate the operculum at the medial end of the vestibular aqueduct on the posterior petrous surface. MRI heavily T2-weighted sequences show the sac when enlarged.",
+      "coronal": "Inferred from the aqueduct's exit on the posterior petrous surface, inferior to the posterior canal.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Lies inferior to Donaldson's line (the plane of the lateral canal extended posteriorly through the sigmoid).",
+      "Posterior canal anterior and the vestibular aqueduct opening into it.",
+      "Sigmoid sinus posterior and the jugular bulb inferior.",
+      "Posterior fossa dura splits to contain it."
+    ],
+    "surgical": [
+      "Endolymphatic sac decompression for Meniere's disease: complete mastoidectomy, skeletonise the sigmoid and posterior fossa dura, identify the sac as a thickened white dural area below Donaldson's line.",
+      "Retrofacial air cells between the mastoid facial nerve and the posterior canal are opened to reach it.",
+      "The sac marks the lower limit of the retrolabyrinthine exposure."
+    ],
+    "variants": [
+      {
+        "name": "Enlarged sac with EVA",
+        "note": "The sac is grossly enlarged on MRI in enlarged vestibular aqueduct syndrome.",
+        "prevalence": "with EVA"
+      }
+    ],
+    "pitfalls": [
+      "The sac's position is variable; a high jugular bulb can push it superiorly and an anterior sigmoid can hide it.",
+      "In children the sac is relatively more lateral."
+    ],
+    "measurements": [
+      {
+        "label": "Operculum to posterior canal",
+        "value": "a few millimetres"
+      }
+    ],
+    "fellow": [
+      "Endolymphatic sac tumour (papillary adenomatous) occurs sporadically and in von Hippel-Lindau; CT shows a destructive retrolabyrinthine lesion with intratumoral bone spicules."
+    ],
+    "pathology": [
+      "Meniere's disease (endolymphatic hydrops); endolymphatic sac tumour."
+    ],
+    "sources": [
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery.",
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Otology: Meniere's disease surgery",
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "vestibular_aqueduct",
+      "scc_posterior"
+    ]
+  },
+  {
+    "id": "labyrinth",
+    "name": "Bony labyrinth (overview)",
+    "group": "inner",
+    "level": 1,
+    "color": "#52c7bd",
+    "aliases": [
+      "semicircular canals",
+      "otic capsule",
+      "inner ear"
+    ],
+    "summary": "The otic capsule's cavities as one object: cochlea anteriorly, vestibule centrally, three semicircular canals posteriorly and superiorly. Datasets that segment the inner ear as a single surface (or the canals together) map here; the individual cards describe each part.",
+    "find": {
+      "axial": "Scrolling down: superior canal, then vestibule with the lateral canal and IAC, then the cochlea and the lower limb of the posterior canal.",
+      "coronal": "Cochlea anteriorly, then the oval window stack with the lateral canal, then the vestibule and posterior canal.",
+      "sagittal": "Vestibule centrally with the canal arcs around it."
+    },
+    "relations": [
+      "Middle ear laterally (promontory, oval window, lateral canal prominence).",
+      "IAC medially at the fundus.",
+      "Facial nerve wraps around it: labyrinthine segment above the cochlea, tympanic segment under the lateral canal, mastoid segment lateral to the posterior canal.",
+      "Jugular bulb below, carotid genu anterior, middle fossa above the superior canal."
+    ],
+    "surgical": [
+      "The otic capsule is the densest bone in the body; a change in drill note and the blue line warn the surgeon before it is opened.",
+      "Labyrinthectomy order: lateral, superior and posterior canals, common crus, vestibule."
+    ],
+    "variants": [
+      {
+        "name": "Combined inner ear malformations",
+        "note": "See the cochlea card for the Sennaroglu classification; canal and vestibule dysplasia often coexist.",
+        "prevalence": "uncommon"
+      }
+    ],
+    "pitfalls": [
+      "Read each part on its own card; a 'labyrinth' label on a dataset hides which structure the cursor is on."
+    ],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [
+      "Labyrinthitis ossificans, otosclerosis, fistula, third-window dehiscences."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: inner ear anatomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "vestibule",
+      "cochlea"
+    ]
+  }
+]

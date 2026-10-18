@@ -1,0 +1,1389 @@
+[
+  {
+    "id": "sigmoid_sinus",
+    "name": "Sigmoid sinus",
+    "group": "vascular",
+    "level": 1,
+    "color": "#4e7ad6",
+    "aliases": [
+      "sigmoid",
+      "lateral sinus",
+      "sinus plate"
+    ],
+    "summary": "The S-shaped continuation of the transverse sinus, running down the posterior wall of the mastoid in a groove of the petrous bone to the jugular bulb. It is the posterior boundary of every mastoidectomy and the sinodural angle it forms with the middle fossa dura is a key landmark.",
+    "find": {
+      "axial": "A smooth, corticated groove in the posterior mastoid, round or crescentic in cross-section, posterior to the air cells; judge how far it lies behind the posterior EAC wall.",
+      "coronal": "A curved channel in posterior slices descending from the tegmen level to the jugular bulb; the sinus plate is the thin bone between it and the cells.",
+      "sagittal": "The whole S-curve from the transverse sinus to the bulb; the best plane to see an anterior sinus crowding the mastoid."
+    },
+    "relations": [
+      "Mastoid air cells and the sinus plate anteriorly and laterally.",
+      "Posterior fossa dura medially (Trautmann's triangle is between the sinus and the labyrinth).",
+      "Middle fossa dura superiorly at the sinodural angle (Citelli's angle), where the superior petrosal sinus joins.",
+      "Jugular bulb inferiorly; the mastoid emissary vein leaves its posterior wall.",
+      "Posterior canal and endolymphatic sac anterior to its lower part."
+    ],
+    "surgical": [
+      "Skeletonised and thinned ('blue-lined') but not opened in cortical mastoidectomy; an eggshell of bone over it allows safe retraction.",
+      "An anteriorly placed sinus or a sclerotic mastoid reduces working room; the sinus can be decompressed and retracted in translabyrinthine and retrolabyrinthine approaches.",
+      "A sinus tear is controlled with Surgicel and a pledget; air embolism is a risk with a large opening in the head-up position.",
+      "Lateral sinus thrombosis from coalescent mastoiditis presents with the sinus wall eroded on CT and a filling defect on CT or MR venography."
+    ],
+    "variants": [
+      {
+        "name": "Anteriorly placed sigmoid",
+        "note": "Less than about 10 mm from the posterior canal wall; crowds the antrum and may prevent canal-wall-up surgery without decompression.",
+        "prevalence": "common in sclerotic mastoids"
+      },
+      {
+        "name": "Dehiscent sinus plate",
+        "note": "The sinus wall lies directly against the cells or granulation; bleeds when the plate is removed.",
+        "prevalence": "uncommon congenitally, common in chronic disease"
+      },
+      {
+        "name": "Sigmoid dominance",
+        "note": "One side (usually the right) is larger; the smaller side may be hypoplastic and the dominant one must be protected.",
+        "prevalence": "asymmetry is the rule"
+      },
+      {
+        "name": "Sigmoid diverticulum",
+        "note": "Outpouching into the mastoid; a cause of pulsatile tinnitus.",
+        "prevalence": "uncommon"
+      }
+    ],
+    "pitfalls": [
+      "Measure the sinus-to-canal-wall distance on the axial image through the lateral canal; a short distance plus a low tegmen is the setup for a difficult mastoid.",
+      "Flow-related apparent 'thrombosis' on MRI is common in the non-dominant sinus; confirm with venography."
+    ],
+    "measurements": [
+      {
+        "label": "Distance from the posterior EAC wall",
+        "value": "usually more than 10 mm; under 10 mm is anterior"
+      },
+      {
+        "label": "Diameter",
+        "value": "about 6-10 mm"
+      }
+    ],
+    "fellow": [
+      "The sinus can be ligated or the transverse-sigmoid junction occluded for retrosigmoid-transtentorial work only after venography confirms the contralateral drainage.",
+      "The emissary vein's position on the posterior mastoid surface is a reminder of where the sinus lies behind the cortex during the postauricular approach."
+    ],
+    "pathology": [
+      "Lateral sinus thrombosis, perisinus abscess, sigmoid dehiscence or diverticulum with pulsatile tinnitus, invasion by glomus jugulare."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy",
+      "Neurotology: lateral skull base approaches"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "jugular_bulb",
+    "name": "Jugular bulb",
+    "group": "vascular",
+    "level": 1,
+    "color": "#4e7ad6",
+    "aliases": [
+      "jugular fossa",
+      "jugular foramen",
+      "high-riding jugular bulb",
+      "dehiscent jugular bulb"
+    ],
+    "summary": "The dome of the internal jugular vein where the sigmoid sinus turns down into the neck, lying in the jugular fossa beneath the hypotympanum. Its height is highly variable; a high or dehiscent bulb changes the plan for middle ear, mastoid and skull base surgery.",
+    "find": {
+      "axial": "A round or oval venous fossa posterolateral to the carotid canal and inferior to the hypotympanum and labyrinth; a high bulb appears on the same slices as the round window or the IAC.",
+      "coronal": "The best plane to judge its height: the dome relative to the floor of the hypotympanum, the round window and the basal turn; look for an intact thin bony floor.",
+      "sagittal": "Shows the bulb beneath the hypotympanum and the vein descending."
+    },
+    "relations": [
+      "Hypotympanum above, separated by the jugular plate (sometimes absent).",
+      "Carotid canal anterior, separated by the carotid ridge (caroticojugular spine).",
+      "Facial nerve mastoid segment lateral.",
+      "Posterior canal and vestibular aqueduct above and medial; the IAC above medially.",
+      "Cranial nerves IX, X and XI pass through the jugular foramen (pars nervosa for IX anteromedially, pars vascularis for X, XI and the bulb)."
+    ],
+    "surgical": [
+      "A high bulb limits the posterior tympanotomy, the round window approach, the retrofacial approach and the retrosigmoid exposure of the IAC.",
+      "Decompression of the bulb (removing bone over it and gently displacing it downward) is used in translabyrinthine and infratemporal fossa approaches.",
+      "A dehiscent bulb in the hypotympanum bleeds on myringotomy or biopsy; it is recognised as a blue mass behind the inferior TM.",
+      "Glomus jugulare arises in the bulb's adventitia and erodes the jugular plate and the caroticojugular spine (the hallmark CT sign)."
+    ],
+    "variants": [
+      {
+        "name": "High-riding jugular bulb",
+        "note": "Definitions vary: a dome above the inferior tympanic annulus, above the basal turn, or above the round window niche. Right side more often.",
+        "prevalence": "roughly 6-20% depending on the definition"
+      },
+      {
+        "name": "Dehiscent jugular bulb",
+        "note": "Absent jugular plate with the bulb protruding into the hypotympanum.",
+        "prevalence": "a few percent"
+      },
+      {
+        "name": "Jugular bulb diverticulum",
+        "note": "Finger-like projection, usually superiorly toward the IAC or posterior canal; a cause of pulsatile tinnitus and vertigo.",
+        "prevalence": "uncommon"
+      }
+    ],
+    "pitfalls": [
+      "A dehiscent bulb in the middle ear and a glomus tympanicum look alike otoscopically; CT shows the intact (glomus) versus absent (bulb) hypotympanic floor.",
+      "Apparent erosion of the caroticojugular spine with an intact bulb margin is normal variation; irregular 'moth-eaten' erosion is glomus jugulare.",
+      "Low-lying or hypoplastic bulbs are also common; asymmetry alone is not pathology."
+    ],
+    "measurements": [
+      {
+        "label": "Dome height",
+        "value": "normally below the floor of the hypotympanum and below the basal turn"
+      },
+      {
+        "label": "Distance to the IAC in a high bulb",
+        "value": "can be under 2 mm"
+      }
+    ],
+    "fellow": [
+      "In the retrosigmoid approach a high bulb limits drilling of the posterior IAC wall; in the translabyrinthine approach it limits exposure of the inferior IAC and the cochlear aqueduct region.",
+      "The jugular bulb's relationship to the posterior canal ampulla and the vestibular aqueduct is reported in every pre-CI and pre-skull-base CT."
+    ],
+    "pathology": [
+      "Glomus jugulare and jugulotympanicum, jugular bulb diverticulum, thrombosis, dehiscence-related tinnitus."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Harnsberger HR et al. Diagnostic Imaging: Head and Neck."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Neurotology: jugular foramen and skull base"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "carotid_canal",
+    "name": "Petrous internal carotid artery",
+    "group": "vascular",
+    "level": 1,
+    "color": "#d9534f",
+    "aliases": [
+      "carotid canal",
+      "carotid genu",
+      "horizontal petrous carotid",
+      "vertical petrous carotid",
+      "aberrant carotid"
+    ],
+    "summary": "The internal carotid enters the skull base through the carotid canal anteromedial to the jugular bulb, ascends as the vertical segment anterior to the hypotympanum and cochlea, turns at the genu, and runs anteromedially as the horizontal segment beneath the cochlea and petrous apex toward the foramen lacerum.",
+    "find": {
+      "axial": "Vertical segment: a round, corticated canal anterior to the jugular bulb and the hypotympanum. Genu and horizontal segment: an oval canal running anteromedially below the cochlea, medial to the Eustachian tube, toward the petrous apex.",
+      "coronal": "The vertical segment as a vertical canal anteromedial to the middle ear with the cochlea above and lateral; the horizontal segment in cross-section under the cochlea.",
+      "sagittal": "Shows the genu and the course beneath the cochlea."
+    },
+    "relations": [
+      "Cochlea posterolateral and superior to the genu, separated by a thin plate (often under 1 mm).",
+      "Eustachian tube and tensor tympani lateral to the horizontal segment.",
+      "Jugular bulb posterior to the vertical segment with the caroticojugular spine between.",
+      "Hypotympanum and protympanum lateral to the vertical segment; the bony wall is thin and sometimes dehiscent.",
+      "Petrous apex and the greater superficial petrosal nerve above the horizontal segment; the vidian canal lies anteroinferior."
+    ],
+    "surgical": [
+      "The carotid is the boundary of the infracochlear and infralabyrinthine approaches to the petrous apex; it is skeletonised in the infratemporal fossa approaches.",
+      "Dehiscent carotid in the hypotympanum or protympanum: dissection, Eustachian tube obliteration and balloon dilation all carry risk; CT review before any anterior middle ear work.",
+      "Never biopsy a red retrotympanic mass without a CT that shows the vertical carotid canal is present.",
+      "Endoscopic and transcanal approaches to the petrous apex pass between the carotid and the cochlea."
+    ],
+    "variants": [
+      {
+        "name": "Aberrant internal carotid artery",
+        "note": "Congenital absence of the cervical segment with the inferior tympanic artery enlarging to reconstitute the carotid; the vessel enters the middle ear through an enlarged inferior tympanic canaliculus, crosses the promontory lateral to the normal position, and the vertical carotid canal is absent. Presents as a pulsatile red retrotympanic mass.",
+        "prevalence": "rare"
+      },
+      {
+        "name": "Persistent stapedial artery",
+        "note": "Arises from the aberrant or normal carotid, crosses the promontory, passes through the stapes obturator foramen into the facial canal and becomes the middle meningeal artery; absent foramen spinosum and a widened tympanic facial canal on CT.",
+        "prevalence": "about 0.02-0.05%"
+      },
+      {
+        "name": "Dehiscent carotid canal",
+        "note": "No bone between the carotid and the middle ear or Eustachian tube.",
+        "prevalence": "a small minority"
+      },
+      {
+        "name": "Lateralised carotid",
+        "note": "The vertical segment lies more lateral than usual, close to or in the tympanic cavity.",
+        "prevalence": "uncommon"
+      }
+    ],
+    "pitfalls": [
+      "An aberrant carotid is the one lesion in otology where a biopsy can be fatal; report it in capital letters on the request if the vertical canal is absent.",
+      "The thin plate between the carotid genu and the cochlea is routinely below resolution; apparent dehiscence there is common and usually not reportable unless the vessel bulges."
+    ],
+    "measurements": [
+      {
+        "label": "Carotid genu to basal turn",
+        "value": "often under 1 mm of bone"
+      },
+      {
+        "label": "Vertical segment diameter",
+        "value": "about 5-6 mm"
+      }
+    ],
+    "fellow": [
+      "In infratemporal fossa type A (Fisch) surgery the vertical carotid is skeletonised to the genu to mobilise glomus jugulare; preoperative balloon occlusion testing decides whether sacrifice is survivable.",
+      "The horizontal segment's course under the cochlea and petrous apex defines the limit of the infracochlear drill-out; its relationship to the Eustachian tube and tensor canal is the 'anterior cluster' of the middle ear.",
+      "Carotid canal fracture on CT (even without a pseudoaneurysm visible) mandates CTA."
+    ],
+    "pathology": [
+      "Aberrant carotid, carotid aneurysm or dissection, glomus jugulare and petrous apex lesions abutting it, cholesteatoma erosion of the canal, skull base osteomyelitis."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Lo WW, Solti-Bohman LG, McElveen JT. Aberrant carotid artery: radiologic diagnosis with emphasis on high-resolution computed tomography. Radiographics 1985.",
+      "Moreano EH et al. Prevalence of facial canal dehiscence and of persistent stapedial artery in the human middle ear. Laryngoscope 1994."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Neurotology: petrous apex and skull base approaches"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "emissary_vein",
+    "name": "Mastoid emissary vein",
+    "group": "vascular",
+    "level": 3,
+    "color": "#6b8fe0",
+    "aliases": [
+      "mastoid foramen"
+    ],
+    "summary": "A vein connecting the sigmoid sinus with the posterior auricular or occipital veins through the mastoid foramen on the posterior surface of the mastoid. It marks where the sigmoid lies beneath the cortex and bleeds in the postauricular approach.",
+    "find": {
+      "axial": "A canal running posterolaterally from the sigmoid groove through the posterior mastoid cortex, usually in the lower half; its calibre is variable.",
+      "coronal": "A channel leaving the sigmoid toward the posterior surface.",
+      "sagittal": "Shows the foramen on the posterior cortex."
+    },
+    "relations": [
+      "Sigmoid sinus at its origin.",
+      "Posterior mastoid cortex and the postauricular soft tissues.",
+      "Occipital and posterior auricular veins outside."
+    ],
+    "surgical": [
+      "Brisk bleeding from the mastoid cortex posteriorly during the postauricular approach is almost always this vein; bone wax and bipolar control it.",
+      "A large emissary vein is a conduit for infection (Griesinger's sign in lateral sinus thrombosis) and a drainage pathway worth preserving in some skull base cases."
+    ],
+    "variants": [
+      {
+        "name": "Giant mastoid emissary vein",
+        "note": "A wide canal (several mm) that can cause pulsatile tinnitus or heavy bleeding; also seen with high-flow venous anomalies and in craniosynostosis.",
+        "prevalence": "uncommon"
+      },
+      {
+        "name": "Absent or multiple foramina",
+        "note": "Variable number and position.",
+        "prevalence": "common"
+      }
+    ],
+    "pitfalls": [
+      "A large emissary foramen can be mistaken for a lytic lesion of the mastoid cortex; it has corticated margins and connects to the sigmoid."
+    ],
+    "measurements": [
+      {
+        "label": "Diameter",
+        "value": "usually 1-3 mm; giant veins are wider"
+      }
+    ],
+    "fellow": [
+      "In Dandy's time the emissary vein was deliberately traced to find the sigmoid; it still tells you where the sinus is before the first burr cut.",
+      "Thrombophlebitis of the vein with postauricular oedema (Griesinger's sign) is a clinical marker of sigmoid sinus thrombosis."
+    ],
+    "pathology": [
+      "Giant emissary vein with tinnitus, thrombophlebitis, bleeding."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "sigmoid_sinus"
+    ]
+  },
+  {
+    "id": "petrous_apex",
+    "name": "Petrous apex",
+    "group": "mastoid",
+    "level": 2,
+    "color": "#c9b99a",
+    "aliases": [
+      "apex",
+      "petrous apex marrow",
+      "petrous apex air cells",
+      "Meckel's cave"
+    ],
+    "summary": "The medial, pyramidal tip of the petrous bone, anterior to the IAC and medial to the cochlea, containing bone marrow in most people and air cells in about a third. The horizontal carotid runs through its inferior part and Meckel's cave and the trigeminal nerve lie on its superior surface.",
+    "find": {
+      "axial": "The bone medial to the cochlea and anterior to the IAC, extending to the clivus; fatty marrow is low density, air cells are lucent with septa, and sclerotic apices are dense.",
+      "coronal": "Medial and inferior to the IAC, with the carotid canal below and the middle fossa above.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "IAC posterolateral; cochlea lateral.",
+      "Horizontal petrous carotid inferiorly.",
+      "Meckel's cave, trigeminal nerve and the petrous ridge superiorly; abducens nerve in Dorello's canal at the petrous tip.",
+      "Clivus and sphenoid medially; the inferior petrosal sinus along its inferomedial edge.",
+      "Perilabyrinthine air cell tracts connect it to the mastoid in pneumatised bones."
+    ],
+    "surgical": [
+      "Drained through the infracochlear or infralabyrinthine routes (hearing-preserving) or resected by the transcochlear and translabyrinthine approaches (hearing-sacrificing).",
+      "Endoscopic endonasal transsphenoidal drainage is used for medially placed cystic lesions.",
+      "Cholesterol granuloma is drained and stented; cholesteatoma (epidermoid) must be exteriorised or resected."
+    ],
+    "variants": [
+      {
+        "name": "Pneumatised apex",
+        "note": "Air cells reach the apex via peri-labyrinthine tracts; disease then presents as apex effusion, cholesterol granuloma or apicitis.",
+        "prevalence": "about a third of bones, often asymmetric"
+      },
+      {
+        "name": "Asymmetric fatty marrow",
+        "note": "T1-bright marrow on one side that mimics a lesion on MRI; fat saturation resolves it.",
+        "prevalence": "common"
+      }
+    ],
+    "pitfalls": [
+      "Asymmetric marrow is the commonest 'petrous apex lesion' referral; non-expansile, follows fat on every sequence.",
+      "Trapped fluid (effusion) is non-expansile and does not erode; cholesterol granuloma expands and is T1/T2 bright; epidermoid is T1 dark, T2 bright and restricts diffusion."
+    ],
+    "measurements": [
+      {
+        "label": "Distance from the cochlea to the apex tip",
+        "value": "about 15-20 mm"
+      }
+    ],
+    "fellow": [
+      "Gradenigo's triad (otorrhoea, retro-orbital pain, abducens palsy) is apicitis involving Dorello's canal and the Gasserian ganglion.",
+      "The infracochlear corridor is bounded by the carotid (anterior), jugular bulb (posterior) and cochlea (superior); CT measures its width before surgery.",
+      "Chondrosarcoma arises at the petroclival synchondrosis; chordoma is midline clival. Both are differentials for destructive apex lesions."
+    ],
+    "pathology": [
+      "Cholesterol granuloma, epidermoid, apicitis (Gradenigo), effusion, chondrosarcoma, metastasis, petrous apex meningioma."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Harnsberger HR et al. Diagnostic Imaging: Head and Neck."
+    ],
+    "curriculum": [
+      "Neurotology: petrous apex lesions and approaches"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "digastric_ridge",
+    "name": "Digastric ridge",
+    "group": "mastoid",
+    "level": 2,
+    "color": "#c9b99a",
+    "aliases": [
+      "digastric groove",
+      "mastoid notch"
+    ],
+    "summary": "The bony ridge on the inner surface of the mastoid corresponding to the digastric groove on its undersurface, running anteriorly toward the stylomastoid foramen. Its anterior end points to where the facial nerve exits.",
+    "find": {
+      "axial": "On the lowest mastoid slices, a groove on the medial undersurface of the mastoid tip running anteroposteriorly, with the stylomastoid foramen at its anterior end.",
+      "coronal": "The notch on the medial side of the mastoid tip where the posterior belly of digastric arises.",
+      "sagittal": "Shows the groove's anteroposterior course toward the styloid and foramen."
+    },
+    "relations": [
+      "Posterior belly of digastric attaches in the groove.",
+      "Stylomastoid foramen and facial nerve at its anterior end.",
+      "Jugular bulb medial; the occipital artery groove medial to the digastric groove.",
+      "Mastoid tip cells above and lateral."
+    ],
+    "surgical": [
+      "In mastoidectomy, exenterating the tip cells exposes the ridge; following it anteriorly skeletonises the lower facial nerve safely to the stylomastoid foramen.",
+      "The ridge is the inferior landmark for the facial nerve when the lateral canal and fossa incudis are obscured by disease.",
+      "In the infratemporal fossa approach the mastoid tip and digastric are removed to follow the nerve out of the bone."
+    ],
+    "variants": [
+      {
+        "name": "Poorly developed ridge in sclerotic or small mastoids",
+        "note": "The landmark can be indistinct; the nerve is then found from the fossa incudis downward.",
+        "prevalence": "variable"
+      }
+    ],
+    "pitfalls": [
+      "The facial nerve lies anterior and slightly lateral to the ridge's anterior end, not within it; drilling at the anterior end of the groove exposes the nerve."
+    ],
+    "measurements": [
+      {
+        "label": "Ridge to facial nerve at the foramen",
+        "value": "the nerve is 1-2 mm anterior to the ridge's anterior end"
+      }
+    ],
+    "fellow": [
+      "The occipital artery runs in a groove medial to the digastric groove, which is why the medial tip bleeds when the tip is amputated."
+    ],
+    "pathology": [
+      "Bezold's abscess tracks from the tip cells through the thin medial cortex into the digastric and sternocleidomastoid."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "stylomastoid_foramen",
+      "fn_mastoid"
+    ]
+  },
+  {
+    "id": "styloid",
+    "name": "Styloid process",
+    "group": "mastoid",
+    "level": 3,
+    "color": "#c9b99a",
+    "aliases": [
+      "stylohyoid",
+      "Eagle syndrome"
+    ],
+    "summary": "A slender bony projection from the undersurface of the temporal bone, anteromedial to the stylomastoid foramen and lateral to the jugular foramen, giving origin to the stylohyoid ligament and the styloglossus, stylohyoid and stylopharyngeus muscles.",
+    "find": {
+      "axial": "A dense round or oval process anterior to the stylomastoid foramen and lateral to the jugular fossa on the lowest temporal bone slices, continuing into the neck.",
+      "coronal": "A vertical spike below the tympanic bone medial to the parotid.",
+      "sagittal": "Shows its anteroinferior course."
+    },
+    "relations": [
+      "Facial nerve exits immediately posterolateral at the stylomastoid foramen.",
+      "Internal jugular vein and cranial nerves IX-XI medial to its base; the carotid anteromedial.",
+      "Parotid gland lateral; the stylomandibular tunnel anterior.",
+      "Tympanic bone (vaginal process) sheathes its base."
+    ],
+    "surgical": [
+      "The styloid is removed in the infratemporal fossa approaches after the facial nerve is transposed, to expose the jugular bulb and carotid.",
+      "In parotidectomy the styloid and its muscles separate the superficial lobe plane from the carotid sheath."
+    ],
+    "variants": [
+      {
+        "name": "Elongated styloid (over about 30 mm)",
+        "note": "Eagle syndrome: throat and ear pain, dysphagia; can also compress the carotid.",
+        "prevalence": "elongation in a few percent; symptoms in a small fraction"
+      },
+      {
+        "name": "Calcified stylohyoid ligament",
+        "note": "Continuous ossification to the hyoid.",
+        "prevalence": "uncommon"
+      }
+    ],
+    "pitfalls": [
+      "The styloid is the medial landmark for the facial nerve exit in the infant without a mastoid tip."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 20-30 mm; elongated above about 30 mm"
+      }
+    ],
+    "fellow": [
+      "Removing the styloid and dividing the stylohyoid muscles opens the retrostyloid space (poststyloid parapharyngeal space) for jugular foramen tumours."
+    ],
+    "pathology": [
+      "Eagle syndrome, styloid fracture."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Neurotology: lateral skull base anatomy"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "tmj",
+    "name": "Mandibular condyle and glenoid fossa",
+    "group": "mastoid",
+    "level": 3,
+    "color": "#bfb6a6",
+    "aliases": [
+      "TMJ",
+      "temporomandibular joint",
+      "glenoid fossa"
+    ],
+    "summary": "The temporomandibular joint lies directly anterior to the external canal, separated from it by the thin anterior canal wall (the tympanic plate). Its proximity matters for canalplasty, atresia repair and the spread of canal disease.",
+    "find": {
+      "axial": "The condyle is the rounded bone anterior to the EAC; the joint space and glenoid fossa lie between it and the anterior canal wall.",
+      "coronal": "The condyle sits in the glenoid fossa anterior to the canal, below the middle fossa floor.",
+      "sagittal": "Shows the joint anterior to the canal with the thin wall between."
+    },
+    "relations": [
+      "Anterior wall of the EAC posteriorly (thin, with the foramen of Huschke in some).",
+      "Middle fossa floor above the glenoid fossa.",
+      "Parotid gland and the facial nerve branches lateral and inferior.",
+      "Petrotympanic fissure posteromedially, transmitting the chorda tympani."
+    ],
+    "surgical": [
+      "In canalplasty the anterior canal wall is thinned, not removed; entering the joint causes pain and canal stenosis from herniation.",
+      "The condyle is displaced or the joint sacrificed in some infratemporal fossa approaches to reach the petrous carotid."
+    ],
+    "variants": [
+      {
+        "name": "Foramen of Huschke",
+        "note": "Defect between the canal and the joint.",
+        "prevalence": "about 5-20%"
+      }
+    ],
+    "pitfalls": [
+      "TMJ pain referred to the ear is a common cause of otalgia with a normal otoscopy; CT of the temporal bone shows the joint on its anterior slices."
+    ],
+    "measurements": [
+      {
+        "label": "Anterior canal wall thickness",
+        "value": "under 1 mm in places"
+      }
+    ],
+    "fellow": [
+      "The glenoid fossa roof is also thin middle fossa floor; condylar fractures rarely, but occasionally, enter the middle fossa."
+    ],
+    "pathology": [
+      "TMJ dysfunction, condylar fracture into the canal, canal herniation of joint tissue through a Huschke foramen."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: external ear anatomy"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "middle_fossa",
+    "name": "Middle cranial fossa floor",
+    "group": "mastoid",
+    "level": 2,
+    "color": "#9b8bb0",
+    "aliases": [
+      "temporal lobe",
+      "middle fossa dura",
+      "tegmen",
+      "petrous ridge",
+      "superior petrosal sinus"
+    ],
+    "summary": "The dura and temporal lobe resting on the tegmen and the petrous ridge. The middle fossa approach works through this space to reach the IAC, geniculate and superior canal from above with hearing preserved.",
+    "find": {
+      "axial": "Appears when the tegmen is passed superiorly: brain density replaces bone over the attic, antrum and petrous ridge.",
+      "coronal": "The temporal lobe above the thin tegmen; the superior canal and arcuate eminence project up into it.",
+      "sagittal": "The floor of the middle fossa along the length of the petrous bone."
+    },
+    "relations": [
+      "Tegmen tympani and mastoideum below.",
+      "Arcuate eminence (superior canal) and the GSPN on its floor.",
+      "Superior petrosal sinus along the petrous ridge, joining the sigmoid at the sinodural angle.",
+      "Middle meningeal artery and foramen spinosum anteriorly; Meckel's cave anteromedially."
+    ],
+    "surgical": [
+      "Middle fossa craniotomy: dura elevated from posterior to anterior over the tegmen to expose the arcuate eminence and GSPN; the IAC is unroofed between them.",
+      "Tegmen defects with encephalocele and CSF leak are repaired from above with a multilayer closure.",
+      "Superior canal dehiscence is plugged or resurfaced from this side."
+    ],
+    "variants": [
+      {
+        "name": "Low middle fossa floor",
+        "note": "Narrows the attic and antrum from above.",
+        "prevalence": "common"
+      },
+      {
+        "name": "Dehiscent geniculate, GSPN or tegmen",
+        "note": "Dura adherent to exposed structures; elevation must be deliberate.",
+        "prevalence": "common"
+      }
+    ],
+    "pitfalls": [
+      "Brain herniation into the mastoid can look like soft tissue 'disease' in a post-operative cavity; a tegmen defect with continuity to the temporal lobe on coronal images is the clue."
+    ],
+    "measurements": [
+      {
+        "label": "Tegmen thickness",
+        "value": "often under 1 mm"
+      }
+    ],
+    "fellow": [
+      "The petrous ridge's arcuate eminence is unreliable as a marker of the superior canal; blue-lining is required.",
+      "The superior petrosal sinus is the usual source of venous bleeding when the posterior fossa dura is opened from the middle fossa (petrosal approaches)."
+    ],
+    "pathology": [
+      "Encephalocele, CSF leak, extradural abscess, temporal lobe abscess from otogenic infection."
+    ],
+    "sources": [
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery.",
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Neurotology: middle fossa approach"
+    ],
+    "reviewed": null,
+    "mesh": false,
+    "anchor": "middle_fossa",
+    "fallback": [
+      "tegmen",
+      "scc_superior"
+    ]
+  },
+  {
+    "id": "posterior_fossa",
+    "name": "Posterior fossa dura and cerebellopontine angle",
+    "group": "mastoid",
+    "level": 2,
+    "color": "#9b8bb0",
+    "aliases": [
+      "posterior fossa",
+      "CPA",
+      "Trautmann's triangle",
+      "presigmoid dura"
+    ],
+    "summary": "The dura of the posterior cranial fossa covers the posterior surface of the petrous bone from the sigmoid sinus to the porus acusticus. The strip of dura between the sigmoid, the labyrinth and the superior petrosal sinus is Trautmann's triangle, the window of the retrolabyrinthine and translabyrinthine approaches.",
+    "find": {
+      "axial": "The posterior surface of the petrous bone with the porus, the operculum and the sigmoid groove; the cerebellopontine angle cistern lies beyond.",
+      "coronal": "Dura medial and posterior to the labyrinth and sigmoid.",
+      "sagittal": "Shows the presigmoid dura between the sigmoid and the labyrinth."
+    },
+    "relations": [
+      "Sigmoid sinus posteriorly, superior petrosal sinus superiorly, bony labyrinth anteriorly (Trautmann's triangle).",
+      "Endolymphatic sac within the dura below Donaldson's line.",
+      "IAC porus and the CPA with cranial nerves VII, VIII (and IX-XI below).",
+      "Jugular bulb inferiorly."
+    ],
+    "surgical": [
+      "Retrolabyrinthine approach: Trautmann's triangle is opened for vestibular neurectomy or small CPA lesions with hearing preserved.",
+      "Translabyrinthine: the dura is opened from the sigmoid to the porus after the labyrinth and IAC are drilled out.",
+      "Sigmoid-decompression and the presigmoid petrosal approaches use the same dural window."
+    ],
+    "variants": [
+      {
+        "name": "Narrow Trautmann's triangle",
+        "note": "An anterior sigmoid and a large labyrinth leave little dura; the sigmoid must be decompressed and retracted.",
+        "prevalence": "common"
+      }
+    ],
+    "pitfalls": [
+      "Dural venous lakes and arachnoid granulations near the sigmoid can look like bone erosion."
+    ],
+    "measurements": [
+      {
+        "label": "Trautmann's triangle width",
+        "value": "a few millimetres to over 1 cm"
+      }
+    ],
+    "fellow": [
+      "The petrosal vein (Dandy's vein) and AICA are the vessels met first after the dura is opened near the porus.",
+      "Retrosigmoid exposure is limited laterally by the posterior canal, vestibular aqueduct and jugular bulb, which CT shows before the operation."
+    ],
+    "pathology": [
+      "Vestibular schwannoma, meningioma, epidermoid in the CPA; dural venous sinus thrombosis; otogenic cerebellar abscess."
+    ],
+    "sources": [
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery.",
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Neurotology: lateral skull base approaches"
+    ],
+    "reviewed": null,
+    "mesh": false,
+    "anchor": "posterior_fossa",
+    "fallback": [
+      "sigmoid_sinus",
+      "iac"
+    ]
+  },
+  {
+    "id": "fossa_incudis",
+    "name": "Fossa incudis",
+    "group": "landmark",
+    "level": 1,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "fossa_incudis",
+    "aliases": [
+      "incudal fossa",
+      "buttress"
+    ],
+    "summary": "The small depression on the floor of the aditus that receives the short process of the incus, held by the posterior incudal ligament. The short process points to the facial nerve's second genu, which lies 2-3 mm inferomedial.",
+    "find": {
+      "axial": "At the level of the aditus, the posterior tip of the incus short process sits in a small recess at the junction of the attic and antrum.",
+      "coronal": "The short process is out of plane; the fossa is the floor of the aditus in a posterior slice.",
+      "sagittal": "Shows the incus body and short process resting in the fossa."
+    },
+    "relations": [
+      "Incus short process inside it.",
+      "Facial nerve second genu inferomedial.",
+      "Lateral canal medial and slightly superior.",
+      "Facial recess directly inferior; the buttress of bone lateral to it connects to the posterior canal wall."
+    ],
+    "surgical": [
+      "The surgeon's lateral landmark for the facial nerve before opening the facial recess; the burr stays inferior and lateral to the short process.",
+      "Dislocation of the incus during drilling near the fossa causes conductive loss."
+    ],
+    "variants": [],
+    "pitfalls": [
+      "A missing short process (erosion) removes the landmark; use the lateral canal and the digastric ridge."
+    ],
+    "measurements": [
+      {
+        "label": "Short process to facial nerve",
+        "value": "about 2-3 mm"
+      }
+    ],
+    "fellow": [
+      "The buttress is removed in canal-wall-down surgery once the incus is out; leaving it hides the facial recess."
+    ],
+    "pathology": [],
+    "sources": [
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "incus"
+    ]
+  },
+  {
+    "id": "macewen_triangle",
+    "name": "MacEwen's triangle",
+    "group": "landmark",
+    "level": 1,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "macewen_triangle",
+    "aliases": [
+      "suprameatal triangle",
+      "spine of Henle"
+    ],
+    "summary": "The surface landmark for the antrum: a triangle on the lateral mastoid cortex bounded by the temporal line (supramastoid crest) above, the posterosuperior margin of the bony canal in front, and a tangent to the posterior canal wall behind. The antrum lies 12-15 mm deep to it in adults.",
+    "find": {
+      "axial": "Not directly a CT structure; locate the posterosuperior EAC margin and project 12-15 mm medially to the antrum.",
+      "coronal": "The lateral cortex just above and behind the canal.",
+      "sagittal": "Best plane: the triangle on the lateral surface with the antrum medial."
+    },
+    "relations": [
+      "Spine of Henle at its anterior-inferior corner.",
+      "Antrum 12-15 mm deep (2-4 mm in the newborn).",
+      "Tegmen along the temporal line; the sigmoid posteriorly."
+    ],
+    "surgical": [
+      "The first burr cut of a cortical mastoidectomy is centred here, parallel to the canal and the temporal line.",
+      "Staying below the temporal line keeps the drill below the middle fossa floor."
+    ],
+    "variants": [],
+    "pitfalls": [
+      "In children the triangle is small and the antrum shallow; drilling depth must be scaled."
+    ],
+    "measurements": [
+      {
+        "label": "Depth to the antrum (adult)",
+        "value": "about 12-15 mm"
+      }
+    ],
+    "fellow": [],
+    "pathology": [
+      "Subperiosteal abscess points here in acute mastoiditis."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "eac"
+    ]
+  },
+  {
+    "id": "sinodural_angle",
+    "name": "Sinodural angle (Citelli's angle)",
+    "group": "landmark",
+    "level": 2,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "sinodural_angle",
+    "aliases": [
+      "Citelli's angle",
+      "superior petrosal sinus"
+    ],
+    "summary": "The acute angle between the sigmoid sinus and the middle fossa dura (tegmen) at the posterosuperior corner of the mastoidectomy, where the superior petrosal sinus runs into the sigmoid. Opening it fully is the mark of a complete mastoidectomy and it is a frequent site of retained disease.",
+    "find": {
+      "axial": "The angle between the sigmoid groove and the posterior-superior mastoid at the highest sigmoid slices.",
+      "coronal": "The junction of the sigmoid and the tegmen in posterior slices.",
+      "sagittal": "The corner where the sigmoid meets the tegmen."
+    },
+    "relations": [
+      "Sigmoid sinus below and posterior, tegmen above and anterior.",
+      "Superior petrosal sinus at its apex.",
+      "Antrum anteroinferior; perisinus cells inside it."
+    ],
+    "surgical": [
+      "Drilled out with a diamond burr to thin the dura and sigmoid; a blocked angle leaves cells and cholesteatoma behind.",
+      "In the translabyrinthine approach the angle is opened widely to allow sigmoid retraction."
+    ],
+    "variants": [],
+    "pitfalls": [
+      "An anterior sigmoid makes the angle deep and narrow; CT shows how much room there is."
+    ],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [],
+    "sources": [
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "sigmoid_sinus"
+    ]
+  },
+  {
+    "id": "trautmann_triangle",
+    "name": "Trautmann's triangle",
+    "group": "landmark",
+    "level": 2,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "trautmann_triangle",
+    "aliases": [
+      "presigmoid dura",
+      "retrolabyrinthine window"
+    ],
+    "summary": "The posterior fossa dural plate exposed between the sigmoid sinus (posterior), the bony labyrinth (anterior) and the superior petrosal sinus or tegmen (superior). It is the window for the retrolabyrinthine approach and the site where the endolymphatic sac is found.",
+    "find": {
+      "axial": "The posterior petrous surface between the posterior canal and the sigmoid groove.",
+      "coronal": "The dura between the labyrinth and the sigmoid.",
+      "sagittal": "Best plane for its extent."
+    },
+    "relations": [
+      "Sigmoid sinus posterior, labyrinth anterior, superior petrosal sinus superior.",
+      "Endolymphatic sac within it below Donaldson's line.",
+      "Jugular bulb inferior."
+    ],
+    "surgical": [
+      "Retrolabyrinthine vestibular neurectomy and endolymphatic sac surgery open the dura here.",
+      "Its size depends on the sigmoid position: an anterior sinus leaves a narrow triangle."
+    ],
+    "variants": [],
+    "pitfalls": [],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [],
+    "sources": [
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Neurotology: lateral skull base approaches"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "sigmoid_sinus"
+    ]
+  },
+  {
+    "id": "donaldson_line",
+    "name": "Donaldson's line",
+    "group": "landmark",
+    "level": 2,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "donaldson_line",
+    "aliases": [
+      "endolymphatic sac landmark"
+    ],
+    "summary": "An imaginary line along the plane of the lateral semicircular canal extended posteriorly to bisect the sigmoid sinus. The endolymphatic sac lies inferior to this line on the posterior fossa dura, so drilling above it is safe for the sac.",
+    "find": {
+      "axial": "Project the lateral canal's plane posteriorly to the sigmoid; the sac is on the dura below that level.",
+      "coronal": "Not applicable.",
+      "sagittal": "The line runs horizontally from the lateral canal to the sigmoid."
+    },
+    "relations": [
+      "Lateral canal defines it; the sigmoid sinus is bisected by it.",
+      "Endolymphatic sac inferior; the posterior canal anterior to the sac."
+    ],
+    "surgical": [
+      "Endolymphatic sac surgery: skeletonise the sigmoid and posterior fossa dura, then look below Donaldson's line for the thickened white dura of the sac.",
+      "Retrofacial cells are opened between the facial nerve and the posterior canal to reach the sac's lateral aspect."
+    ],
+    "variants": [],
+    "pitfalls": [
+      "The line is a guide, not a wall: a high jugular bulb can push the sac up and an anterior sigmoid hides it."
+    ],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [],
+    "sources": [
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Otology: Meniere's disease surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "scc_lateral"
+    ]
+  },
+  {
+    "id": "solid_angle",
+    "name": "Solid angle",
+    "group": "landmark",
+    "level": 3,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "solid_angle",
+    "aliases": [
+      "labyrinthine bone between the canals"
+    ],
+    "summary": "The dense bone enclosed by the three semicircular canals, posterior and superior to the vestibule. It is drilled away in labyrinthectomy and marks the bony mass between the antrum and the posterior fossa dura.",
+    "find": {
+      "axial": "The dense bone between the lateral canal and the posterior and superior canals.",
+      "coronal": "Bone between the arcs of the canals above the vestibule.",
+      "sagittal": "The bone within the arcs of the vertical canals."
+    },
+    "relations": [
+      "The three canals around it; the common crus at its posterosuperior edge.",
+      "Antrum lateral; posterior fossa dura medial and posterior.",
+      "Subarcuate artery runs through it toward the mastoid (the subarcuate tract)."
+    ],
+    "surgical": [
+      "Removed in labyrinthectomy and in the translabyrinthine approach after the canals are opened.",
+      "The subarcuate artery within the superior canal's arc bleeds when the solid angle is drilled."
+    ],
+    "variants": [],
+    "pitfalls": [],
+    "measurements": [],
+    "fellow": [
+      "The petromastoid canal (subarcuate canal) crossing the superior canal arc can be mistaken for a fracture or a canal dehiscence on CT; it is a normal, corticated channel."
+    ],
+    "pathology": [],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Neurotology: translabyrinthine approach"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "scc_lateral",
+      "labyrinth"
+    ]
+  },
+  {
+    "id": "bill_bar",
+    "name": "Bill's bar and the transverse crest",
+    "group": "landmark",
+    "level": 2,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "bill_bar",
+    "aliases": [
+      "vertical crest",
+      "falciform crest",
+      "transverse crest",
+      "IAC fundus"
+    ],
+    "summary": "Two bony ridges at the fundus of the IAC. The transverse (falciform) crest divides the fundus into upper and lower halves; Bill's bar (vertical crest) divides the upper half into an anterior compartment for the facial nerve and a posterior one for the superior vestibular nerve.",
+    "find": {
+      "axial": "The transverse crest is sometimes seen as a horizontal bony septum at the lateral end of the IAC; Bill's bar is below CT resolution in most scans.",
+      "coronal": "The transverse crest divides the fundus into superior and inferior compartments.",
+      "sagittal": "Oblique sagittal MRI through the fundus shows the four quadrants the crests create."
+    },
+    "relations": [
+      "Facial nerve anterosuperior, superior vestibular nerve posterosuperior (separated by Bill's bar).",
+      "Cochlear nerve anteroinferior, inferior vestibular nerve posteroinferior (below the transverse crest).",
+      "Vestibule and cochlea immediately lateral to the fundus."
+    ],
+    "surgical": [
+      "Translabyrinthine: the superior vestibular nerve is identified first, then followed medially; Bill's bar is the safe guide to the facial nerve lying anterior to it.",
+      "Middle fossa: Bill's bar separates the facial nerve from the superior vestibular nerve at the lateral end of the unroofed canal."
+    ],
+    "variants": [],
+    "pitfalls": [
+      "An absent or poorly formed transverse crest is seen with incomplete partition type III, warning of a gusher."
+    ],
+    "measurements": [],
+    "fellow": [
+      "'7-up, Coke down': facial (VII) up and anterior, cochlear down and anterior; vestibular nerves posterior."
+    ],
+    "pathology": [],
+    "sources": [
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Neurotology: IAC surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "iac"
+    ]
+  },
+  {
+    "id": "cochlear_aperture",
+    "name": "Cochlear aperture (cochlear nerve canal)",
+    "group": "landmark",
+    "level": 3,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "cochlear_aperture",
+    "aliases": [
+      "bony cochlear nerve canal",
+      "modiolar canal"
+    ],
+    "summary": "The opening between the fundus of the IAC and the base of the modiolus through which the cochlear nerve enters the cochlea. Its width is measured in children with sensorineural loss as a marker of cochlear nerve deficiency.",
+    "find": {
+      "axial": "At the level of the basal turn, the short canal between the anteroinferior fundus and the modiolus; measure its width perpendicular to its axis.",
+      "coronal": "Seen as a gap between the IAC and the cochlea in a mid-cochlear slice.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "IAC fundus medially, modiolus laterally.",
+      "Facial nerve and vestibular nerves above and behind."
+    ],
+    "surgical": [
+      "A narrow aperture predicts a hypoplastic or absent cochlear nerve; MRI confirms before cochlear implantation, and an auditory brainstem implant may be considered if the nerve is absent."
+    ],
+    "variants": [
+      {
+        "name": "Cochlear nerve canal stenosis",
+        "note": "Width under about 1.4 mm.",
+        "prevalence": "uncommon, important in CI candidacy"
+      }
+    ],
+    "pitfalls": [
+      "Measure on thin axial images through the mid-modiolus; oblique slices widen the apparent aperture."
+    ],
+    "measurements": [
+      {
+        "label": "Normal width",
+        "value": "about 1.9-2.0 mm"
+      },
+      {
+        "label": "Stenosis threshold",
+        "value": "under about 1.4 mm"
+      }
+    ],
+    "fellow": [],
+    "pathology": [
+      "Cochlear nerve aplasia or hypoplasia."
+    ],
+    "sources": [
+      "Fatterpekar GM et al. Hypoplasia of the bony canal for the cochlear nerve in patients with congenital sensorineural hearing loss: initial observations. Radiology 2000."
+    ],
+    "curriculum": [
+      "Pediatric otology: cochlear implant candidacy imaging"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "cochlea",
+      "iac"
+    ]
+  },
+  {
+    "id": "arcuate_eminence",
+    "name": "Arcuate eminence",
+    "group": "landmark",
+    "level": 3,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "arcuate_eminence",
+    "aliases": [
+      "superior canal landmark",
+      "middle fossa floor"
+    ],
+    "summary": "A rounded bulge on the superior surface of the petrous bone traditionally said to overlie the superior semicircular canal. It is the classic middle fossa landmark, but the canal lies directly beneath it in only a proportion of bones.",
+    "find": {
+      "axial": "The highest point of the petrous bone over the superior canal.",
+      "coronal": "The bump on the middle fossa floor above the superior canal arc.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Superior canal beneath (approximately).",
+      "GSPN and facial hiatus anteromedial.",
+      "Tegmen lateral; the IAC medial and anterior at about 60 degrees to the canal plane."
+    ],
+    "surgical": [
+      "Middle fossa approach: the eminence is drilled to blue-line the superior canal, after which the IAC is located by the Fisch, Garcia-Ibanez or House method."
+    ],
+    "variants": [
+      {
+        "name": "Flat or absent eminence",
+        "note": "The surface gives no clue to the canal; blue-lining is mandatory.",
+        "prevalence": "common"
+      }
+    ],
+    "pitfalls": [
+      "Do not rely on the eminence for the canal position; the canal can be medial or lateral to it."
+    ],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [],
+    "sources": [
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Neurotology: middle fossa approach"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "scc_superior"
+    ]
+  },
+  {
+    "id": "korner_septum",
+    "name": "Korner's septum (variant)",
+    "group": "landmark",
+    "level": 2,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "korner_septum",
+    "aliases": [
+      "petrosquamous septum",
+      "petrosquamosal lamina",
+      "false antrum"
+    ],
+    "summary": "A persistent plate of the petrosquamous suture that runs vertically through the mastoid air cells lateral to the antrum. When present it separates a lateral (squamous) compartment from the true (petrous) antrum, and the lateral compartment is easily mistaken for the antrum.",
+    "find": {
+      "axial": "A thin vertical bony plate within the mastoid cells running anteroposteriorly, lateral to the antrum and the lateral canal.",
+      "coronal": "A vertical septum lateral to the antrum extending down from the tegmen.",
+      "sagittal": "A plate parallel to the lateral cortex."
+    },
+    "relations": [
+      "Antrum and lateral canal medial to it.",
+      "Lateral mastoid cells and cortex lateral to it.",
+      "Tegmen at its superior attachment."
+    ],
+    "surgical": [
+      "Must be recognised and drilled through to reach the true antrum; stopping lateral to it leaves disease and risks the tegmen while 'searching'.",
+      "The lateral canal is the proof of the true antrum."
+    ],
+    "variants": [
+      {
+        "name": "Complete versus partial septum",
+        "note": "Can be a full plate or a partial ledge.",
+        "prevalence": "roughly 10-25% of bones"
+      }
+    ],
+    "pitfalls": [
+      "On CT it is best seen on axial images; mention it in the report of any pre-mastoidectomy scan."
+    ],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "mastoid_cells",
+      "antrum"
+    ]
+  },
+  {
+    "id": "hyrtl_fissure",
+    "name": "Hyrtl's fissure (variant)",
+    "group": "landmark",
+    "level": 3,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "hyrtl_fissure",
+    "aliases": [
+      "tympanomeningeal fissure",
+      "tympanomeningeal hiatus"
+    ],
+    "summary": "An embryonic cleft between the round window niche and the posterior fossa (near the jugular foramen and cochlear aqueduct) that normally closes in fetal life. Its persistence is a rare cause of CSF otorrhoea and recurrent meningitis through a normal-looking inner ear.",
+    "find": {
+      "axial": "A thin channel running from the hypotympanum or round window niche posteromedially toward the posterior fossa, inferior to the cochlear aqueduct.",
+      "coronal": "Occasionally seen below the round window toward the jugular foramen.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Round window niche and hypotympanum laterally.",
+      "Cochlear aqueduct and jugular foramen medially.",
+      "Jugular bulb below."
+    ],
+    "surgical": [
+      "Repaired through the middle ear or mastoid with fascia and bone wax; it is suspected when CSF otorrhoea occurs with a normal labyrinth on CT.",
+      "A middle ear 'cyst' that pulses or a conductive loss with meningitis should prompt a search for it."
+    ],
+    "variants": [],
+    "pitfalls": [
+      "Easily missed; look for it when CSF otorrhoea has no tegmen defect and no inner ear malformation."
+    ],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [
+      "CSF otorrhoea, recurrent meningitis, meningocele into the middle ear."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Pediatric otology: recurrent meningitis work-up"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "round_window",
+      "cochlea"
+    ]
+  },
+  {
+    "id": "cog",
+    "name": "Cog",
+    "group": "landmark",
+    "level": 2,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "cog",
+    "aliases": [
+      "anterior epitympanic recess",
+      "supratubal recess"
+    ],
+    "summary": "A bony ridge projecting down from the tegmen anterior to the malleus head, dividing the attic into the anterior epitympanic recess (supratubal recess) in front and the attic proper behind. Its medial end points to the geniculate ganglion and the start of the facial nerve's tympanic segment.",
+    "find": {
+      "axial": "A bony spur from the anterior attic roof just anterior to the malleus head.",
+      "coronal": "A downward projection of the tegmen anterior to the ossicular heads.",
+      "sagittal": "Shows the cog in front of the malleus head."
+    },
+    "relations": [
+      "Malleus head posterior; the anterior epitympanic recess anterior.",
+      "Geniculate ganglion medial and slightly inferior to its medial end.",
+      "Tensor tympani fold below it."
+    ],
+    "surgical": [
+      "Removed with the malleus head to clear cholesteatoma from the anterior epitympanic recess, a classic site of residual disease.",
+      "Its medial end warns of the facial nerve; drill lateral to it first."
+    ],
+    "variants": [
+      {
+        "name": "Prominent cog",
+        "note": "Deep anterior recess that hides disease.",
+        "prevalence": "variable"
+      }
+    ],
+    "pitfalls": [],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: cholesteatoma surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "malleus",
+      "epitympanum"
+    ]
+  },
+  {
+    "id": "common_crus",
+    "name": "Common crus",
+    "group": "landmark",
+    "level": 2,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "common_crus",
+    "aliases": [
+      "crus commune"
+    ],
+    "summary": "The shared limb formed by the non-ampullated ends of the superior and posterior semicircular canals, opening into the posterosuperior vestibule. It is why the labyrinth has five canal openings rather than six.",
+    "find": {
+      "axial": "A single lucency posterior to the vestibule above the level of the lateral canal where the superior and posterior canals join.",
+      "coronal": "A vertical lucency above and behind the vestibule.",
+      "sagittal": "The junction of the two vertical canal arcs."
+    },
+    "relations": [
+      "Superior canal above, posterior canal below.",
+      "Vestibule anteroinferior.",
+      "Vestibular aqueduct begins just below and medial to it."
+    ],
+    "surgical": [
+      "Opened in labyrinthectomy after the two vertical canals; it leads directly into the vestibule.",
+      "Its position relative to the vestibular aqueduct is used to measure the aqueduct's midpoint."
+    ],
+    "variants": [],
+    "pitfalls": [
+      "On a single axial image the common crus can be mistaken for a dilated canal; follow it up to the superior canal and down to the posterior canal."
+    ],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: inner ear anatomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "scc_posterior",
+      "labyrinth"
+    ]
+  },
+  {
+    "id": "mastoid_tip",
+    "name": "Mastoid tip",
+    "group": "landmark",
+    "level": 2,
+    "color": "#a0a7ae",
+    "mesh": false,
+    "anchor": "mastoid_tip",
+    "aliases": [
+      "mastoid process"
+    ],
+    "summary": "The inferior projection of the mastoid, absent at birth and developed by about two years, giving attachment to the sternocleidomastoid, splenius and longissimus capitis laterally and the posterior belly of digastric medially. Its growth moves the stylomastoid foramen from a superficial to a protected position.",
+    "find": {
+      "axial": "The lowest mastoid slices: a rounded bony process lateral to the digastric groove.",
+      "coronal": "The inferior end of the mastoid below the level of the EAC.",
+      "sagittal": "The tip below and behind the canal."
+    },
+    "relations": [
+      "Digastric groove medially; the facial nerve anterior to the groove's anterior end.",
+      "Sternocleidomastoid attached laterally.",
+      "Tip air cells inside; the thin medial cortex toward the neck."
+    ],
+    "surgical": [
+      "Exenterating the tip cells completes the mastoidectomy inferiorly and exposes the digastric ridge.",
+      "The tip is amputated in the infratemporal fossa approaches to follow the facial nerve into the parotid.",
+      "In infants the absence of the tip means a postauricular incision placed low can cut the facial nerve."
+    ],
+    "variants": [],
+    "pitfalls": [
+      "Bezold's abscess: pus tracks from the tip through the medial cortex into the neck; the CT sign is a breached tip cortex with a neck collection."
+    ],
+    "measurements": [],
+    "fellow": [],
+    "pathology": [
+      "Bezold's abscess."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy",
+      "Pediatric otology"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "mastoid_cells"
+    ]
+  }
+]

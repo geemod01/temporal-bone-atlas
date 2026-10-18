@@ -1,0 +1,63 @@
+name: Build OpenEar packs
+
+# Downloads an OpenEar specimen from Zenodo on GitHub's runner, converts it into a small
+# data pack, commits the pack to data/, then rebuilds and deploys the site.
+on:
+  workflow_dispatch:
+    inputs:
+      specimen:
+        description: "Specimen: alpha, beta, gamma, delta, epsilon, zeta, eta, theta, or all"
+        default: "delta"
+        required: true
+      spacing:
+        description: "Voxel size of the pack in mm (0.3 is a good default; 0.2 is sharper and ~3x larger)"
+        default: "0.3"
+        required: true
+      full_download:
+        description: "Download the whole archive instead of using range requests (slower, needs disk)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: openear-data
+  cancel-in-progress: false
+
+jobs:
+  build-pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install converter dependencies
+        run: pip install numpy SimpleITK trimesh fast-simplification requests
+      - name: Fetch and convert ${{ inputs.specimen }}
+        run: |
+          python3 tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --spacing "${{ inputs.spacing }}" --out data --work work ${{ inputs.full_download && '--full' || '' }}
+          ls -la data
+      - name: Commit packs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A data
+          git commit -m "Add OpenEar pack(s): ${{ inputs.specimen }} at ${{ inputs.spacing }} mm" || echo "nothing to commit"
+          git push
+      - name: Upload pack as workflow artifact (also downloadable from this run)
+        uses: actions/upload-artifact@v4
+        with:
+          name: openear-packs
+          path: |
+            data/*.tba
+            data/datasets.json
+
+  deploy-site:
+    needs: build-pack
+    uses: ./.github/workflows/pages.yml
+    secrets: inherit

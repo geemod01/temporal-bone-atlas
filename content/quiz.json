@@ -1,0 +1,94 @@
+{
+  "sets": [
+    {
+      "id": "spot_junior",
+      "title": "Spot check: core structures",
+      "level": 1,
+      "description": "Ten point-and-identify questions on the structures every junior should find on CT.",
+      "questions": [
+        {"type": "identify", "target": "cochlea"},
+        {"type": "identify", "target": "vestibule"},
+        {"type": "identify", "target": "iac"},
+        {"type": "identify", "target": "scc_lateral"},
+        {"type": "identify", "target": "fn_tympanic"},
+        {"type": "identify", "target": "fn_mastoid"},
+        {"type": "identify", "target": "malleus"},
+        {"type": "identify", "target": "incus"},
+        {"type": "identify", "target": "jugular_bulb"},
+        {"type": "identify", "target": "carotid_canal"}
+      ]
+    },
+    {
+      "id": "name_it",
+      "title": "Name the highlighted structure",
+      "level": 1,
+      "description": "A structure lights up in all four views; pick its name.",
+      "questions": [
+        {"type": "name", "target": "scc_superior"},
+        {"type": "name", "target": "fn_labyrinthine"},
+        {"type": "name", "target": "geniculate"},
+        {"type": "name", "target": "stapes"},
+        {"type": "name", "target": "sigmoid_sinus"},
+        {"type": "name", "target": "antrum"},
+        {"type": "name", "target": "eustachian_tube"},
+        {"type": "name", "target": "tensor_tympani"},
+        {"type": "name", "target": "vestibular_aqueduct"},
+        {"type": "name", "target": "facial_recess"},
+        {"type": "name", "target": "sinus_tympani"},
+        {"type": "name", "target": "chorda_tympani"}
+      ]
+    },
+    {
+      "id": "levels",
+      "title": "Find the level",
+      "level": 2,
+      "description": "Scroll the named plane to the slice that best shows the structure.",
+      "questions": [
+        {"type": "level", "target": "scc_lateral", "plane": "axial"},
+        {"type": "level", "target": "cochlea", "plane": "axial"},
+        {"type": "level", "target": "oval_window", "plane": "coronal"},
+        {"type": "level", "target": "jugular_bulb", "plane": "coronal"},
+        {"type": "level", "target": "round_window", "plane": "axial"},
+        {"type": "level", "target": "second_genu", "plane": "axial"},
+        {"type": "level", "target": "geniculate", "plane": "axial"},
+        {"type": "level", "target": "scc_superior", "plane": "coronal"}
+      ]
+    },
+    {
+      "id": "relations",
+      "title": "Relations and landmarks",
+      "level": 2,
+      "description": "Multiple-choice questions on what lies next to what.",
+      "questions": [
+        {"type": "mcq", "focus": "oval_window", "question": "On a coronal CT through the oval window, which structure lies immediately above the stapes footplate?", "options": ["Facial nerve, tympanic segment", "Lateral semicircular canal", "Cochleariform process", "Tensor tympani tendon"], "answer": 0, "explain": "The vertical order on the medial wall is lateral canal, then facial nerve, then oval window, then promontory. The nerve sits directly on the window, which is why dehiscence there matters for stapes surgery."},
+        {"type": "mcq", "focus": "fossa_incudis", "question": "The short process of the incus points toward which structure, about 2-3 mm away?", "options": ["The second genu of the facial nerve", "The geniculate ganglion", "The round window niche", "The sinodural angle"], "answer": 0, "explain": "The fossa incudis is the lateral landmark for the second genu, which lies inferomedial to the short process."},
+        {"type": "mcq", "focus": "donaldson_line", "question": "Donaldson's line is drawn along the plane of which structure?", "options": ["Lateral semicircular canal", "Superior semicircular canal", "Tegmen", "Internal auditory canal"], "answer": 0, "explain": "The lateral canal's plane extended posteriorly bisects the sigmoid sinus; the endolymphatic sac lies below the line."},
+        {"type": "mcq", "focus": "facial_recess", "question": "Which of the following is NOT a boundary of the facial recess?", "options": ["Promontory", "Facial nerve", "Chorda tympani", "Fossa incudis"], "answer": 0, "explain": "The recess is bounded by the facial nerve medially, the chorda laterally and the fossa incudis above; the promontory is seen through it, not part of it."},
+        {"type": "mcq", "focus": "sinus_tympani", "question": "A sinus tympani that extends posterior to the facial nerve is classified as which Marchioni type?", "options": ["Type C", "Type A", "Type B", "Type D"], "answer": 0, "explain": "Type A does not extend medial to the nerve, type B extends medial but not posterior, type C extends posterior to the nerve and is hidden from the facial recess view."},
+        {"type": "mcq", "focus": "cochleariform_process", "question": "The cochleariform process is a landmark for the start of which segment of the facial nerve?", "options": ["Tympanic segment", "Labyrinthine segment", "Mastoid segment", "Meatal segment"], "answer": 0, "explain": "The tympanic segment emerges just above and behind the process, where the tensor tympani tendon turns to the malleus."},
+        {"type": "mcq", "focus": "carotid_genu", "question": "The carotid genu lies closest to which part of the inner ear?", "options": ["Basal turn of the cochlea", "Posterior semicircular canal", "Vestibule", "Common crus"], "answer": 0, "explain": "The genu sits anterior and inferior to the basal turn, often separated by less than a millimetre of bone."},
+        {"type": "mcq", "focus": "iac", "question": "In the IAC fundus, which nerve lies anterosuperior?", "options": ["Facial nerve", "Cochlear nerve", "Superior vestibular nerve", "Inferior vestibular nerve"], "answer": 0, "explain": "Seven-up, Coke down: facial anterosuperior, cochlear anteroinferior; the vestibular nerves are posterior, separated from the anterior nerves by Bill's bar (above) and the transverse crest (horizontally)."},
+        {"type": "mcq", "focus": "antrum", "question": "A surgeon drilling through MacEwen's triangle reaches a cell with a vertical bony plate on its medial side. What is the most likely explanation?", "options": ["Korner's septum; the true antrum is medial", "The tegmen has been reached", "The posterior canal wall has been breached", "The sigmoid sinus plate"], "answer": 0, "explain": "The petrosquamous septum creates a false antrum laterally. The true antrum is identified by the lateral canal prominence in its medial wall."},
+        {"type": "mcq", "focus": "vestibular_aqueduct", "question": "By the Cincinnati criteria, the vestibular aqueduct is enlarged when its midpoint width is at least:", "options": ["1.0 mm", "0.5 mm", "1.5 mm", "2.0 mm"], "answer": 0, "explain": "Midpoint 1 mm or more, or operculum 2 mm or more. Valvassori's older threshold was 1.5 mm at the midpoint."}
+      ]
+    },
+    {
+      "id": "pitfalls",
+      "title": "Variants and pitfalls",
+      "level": 3,
+      "description": "Fellow-level questions on the variants that change an operation.",
+      "questions": [
+        {"type": "mcq", "focus": "promontory", "question": "A pulsatile red mass is seen anteriorly behind the tympanic membrane. CT shows no vertical carotid canal and a vessel crossing the promontory. The diagnosis is:", "options": ["Aberrant internal carotid artery", "Glomus tympanicum", "Dehiscent jugular bulb", "Persistent stapedial artery"], "answer": 0, "explain": "An absent vertical carotid canal with the vessel on the promontory is the signature of an aberrant carotid. Biopsy can be fatal."},
+        {"type": "mcq", "focus": "stapes", "question": "Which CT finding is characteristic of a persistent stapedial artery?", "options": ["Absent foramen spinosum with an enlarged tympanic facial canal", "Enlarged jugular foramen", "Absent round window niche", "Widened cochlear aqueduct"], "answer": 0, "explain": "The artery becomes the middle meningeal, so the foramen spinosum never forms, and it travels in the facial canal after passing through the stapes."},
+        {"type": "mcq", "focus": "scc_superior", "question": "Which reformat is required before calling a superior canal dehiscence?", "options": ["Poschl and Stenvers planes", "Standard axial only", "Standard coronal only", "Sagittal only"], "answer": 0, "explain": "Oblique cuts through the canal always look thin. Poschl (parallel to the canal) and Stenvers (perpendicular) show the bony roof properly."},
+        {"type": "mcq", "focus": "fn_tympanic", "question": "In large histologic series, dehiscence of the facial canal is found in roughly what fraction of temporal bones?", "options": ["About half", "Under 5%", "About 10%", "Nearly all"], "answer": 0, "explain": "Baxter (1971) and Moreano (1994) reported dehiscence in roughly half of bones, most often at the oval window. CT detects far fewer."},
+        {"type": "mcq", "focus": "jugular_bulb", "question": "A high jugular bulb most directly limits which of the following?", "options": ["The round window approach for cochlear implantation", "Middle fossa exposure of the geniculate", "Atticotomy", "Canalplasty"], "answer": 0, "explain": "A high bulb can sit beneath or over the round window niche and fill the retrofacial space; it also limits retrosigmoid drilling of the IAC."},
+        {"type": "mcq", "focus": "cochlear_aperture", "question": "A cochlear aperture narrower than about 1.4 mm on axial CT suggests:", "options": ["Cochlear nerve deficiency", "Enlarged vestibular aqueduct", "Otosclerosis", "Labyrinthitis ossificans"], "answer": 0, "explain": "Narrowing of the bony cochlear nerve canal predicts a hypoplastic or absent cochlear nerve; MRI confirms before implantation."},
+        {"type": "mcq", "focus": "eac", "question": "A smooth corticated defect in the anteroinferior wall of the bony external canal communicating with the TMJ is most likely:", "options": ["Foramen of Huschke", "Fracture", "Necrotising otitis externa", "Canal cholesteatoma"], "answer": 0, "explain": "The foramen tympanicum persists in a minority of adults and can allow salivary otorrhoea or TMJ herniation."},
+        {"type": "mcq", "focus": "fn_mastoid", "question": "In a two-year-old, why is a low postauricular incision dangerous?", "options": ["The mastoid tip is undeveloped and the facial nerve exits superficially", "The sigmoid sinus lies under the skin", "The antrum has not formed", "The tegmen is absent"], "answer": 0, "explain": "The stylomastoid foramen is protected by the mastoid tip only after it grows; in infants the nerve lies just under the skin behind the ear."},
+        {"type": "mcq", "focus": "geniculate", "question": "During middle fossa dural elevation, why is the dura elevated from posterior to anterior?", "options": ["To avoid avulsing a dehiscent geniculate ganglion and the GSPN", "To protect the sigmoid sinus", "To find the arcuate eminence first", "To preserve the superior petrosal sinus"], "answer": 0, "explain": "The GSPN and a dehiscent geniculate are adherent to the dura anteriorly; elevating toward them lets you see and release them."},
+        {"type": "mcq", "focus": "petrous_apex", "question": "An expansile petrous apex lesion that is bright on both T1 and T2 MRI is most likely:", "options": ["Cholesterol granuloma", "Epidermoid (cholesteatoma)", "Asymmetric fatty marrow", "Trapped effusion"], "answer": 0, "explain": "Cholesterol granuloma expands and is T1/T2 bright; epidermoid is T1 dark with restricted diffusion; marrow and effusion are non-expansile."}
+      ]
+    }
+  ]
+}

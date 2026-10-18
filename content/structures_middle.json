@@ -1,0 +1,1469 @@
+[
+  {
+    "id": "eac",
+    "name": "External auditory canal",
+    "group": "middle",
+    "level": 1,
+    "color": "#7f93a8",
+    "aliases": [
+      "EAC",
+      "bony canal",
+      "tympanic bone",
+      "foramen of Huschke"
+    ],
+    "summary": "An S-shaped canal about 25 mm long: the lateral third is cartilaginous and the medial two-thirds are bony (tympanic bone below and anteriorly, squama above). It ends at the tympanic membrane, which sits obliquely so the anteroinferior canal wall is longest.",
+    "find": {
+      "axial": "A wide air-filled canal running medially from the pinna to the tympanic membrane; the anterior wall is thin bone against the TMJ, the posterior wall is thicker mastoid bone.",
+      "coronal": "A canal sloping slightly downward medially to the TM; the scutum is its superomedial corner and the hypotympanum lies below its medial end.",
+      "sagittal": "A round canal in cross-section with the TMJ anterior and the mastoid posterior."
+    },
+    "relations": [
+      "Tympanic membrane and the tympanic sulcus medially.",
+      "TMJ and the condyle anterior to the thin anterior wall.",
+      "Mastoid air cells and the facial nerve (mastoid segment) posterior.",
+      "Middle fossa floor above the medial canal; the scutum at the superomedial end.",
+      "Parotid gland anteroinferior to the cartilaginous canal."
+    ],
+    "surgical": [
+      "Canalplasty removes the anterior bulge of the tympanic bone; the TMJ capsule lies immediately anterior and the anterior canal wall is thin.",
+      "The tympanomastoid and tympanosquamous suture lines are the landmarks for the vascular strip in tympanoplasty.",
+      "In canal-wall-down surgery the posterior canal wall is removed to the facial ridge, with the facial nerve 2-4 mm medial to the posterior wall.",
+      "Exostoses are removed with drilling toward the TM only after the TM and facial nerve positions are confirmed."
+    ],
+    "variants": [
+      {
+        "name": "Foramen of Huschke (foramen tympanicum)",
+        "note": "Persistent defect in the anteroinferior bony canal wall opening to the TMJ or parotid; cause of salivary otorrhoea, TMJ herniation into the canal, and a route for infection or tumour.",
+        "prevalence": "about 5-20% of adults in CT series"
+      },
+      {
+        "name": "Congenital aural atresia",
+        "note": "Absent or stenotic canal with variable middle ear and facial nerve anomalies; graded by the Jahrsdoerfer score.",
+        "prevalence": "about 1 in 10 000-20 000 births"
+      },
+      {
+        "name": "Anteroinferior bony overhang",
+        "note": "A prominent anterior canal bulge hides the anterior TM and the anterior sulcus.",
+        "prevalence": "common"
+      }
+    ],
+    "pitfalls": [
+      "A dehiscent anterior wall (Huschke) looks like a fracture or erosion; it is a smooth, corticated defect in the expected location.",
+      "Keratosis obturans and canal cholesteatoma both widen the canal; cholesteatoma erodes bone focally with sequestra, keratosis widens it smoothly."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 24-25 mm (bony portion about 16 mm)"
+      },
+      {
+        "label": "Diameter",
+        "value": "about 7-9 mm"
+      }
+    ],
+    "fellow": [
+      "The Jahrsdoerfer grading (10 points: stapes, oval window, middle ear space, facial nerve, malleus-incus complex, mastoid pneumatisation, incus-stapes connection, round window, external ear) predicts the outcome of atresiaplasty; a score of 7 or more favours surgery.",
+      "The tympanic bone forms the anterior, inferior and part of the posterior bony canal; its anterior part is the thinnest wall toward the TMJ."
+    ],
+    "pathology": [
+      "Exostoses (broad-based, bilateral, cold water exposure), osteoma (solitary, pedunculated), canal cholesteatoma, necrotising (malignant) otitis externa with bone erosion along the fissures of Santorini."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Jahrsdoerfer RA et al. Grading system for the selection of patients with congenital aural atresia. Am J Otol 1992."
+    ],
+    "curriculum": [
+      "Otology: external ear anatomy",
+      "Pediatric otology: aural atresia"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "tympanic_membrane",
+    "name": "Tympanic membrane",
+    "group": "middle",
+    "level": 1,
+    "color": "#c98a7a",
+    "aliases": [
+      "TM",
+      "eardrum",
+      "pars tensa",
+      "pars flaccida",
+      "annulus",
+      "umbo"
+    ],
+    "summary": "An oval, three-layered membrane about 9 mm across set obliquely at the medial end of the canal, with the malleus handle embedded in its fibrous layer down to the umbo. The pars tensa fills the annulus; the pars flaccida (Shrapnell's membrane) sits above the lateral process of the malleus in the notch of Rivinus.",
+    "find": {
+      "axial": "A thin oblique line between the canal air and the middle ear air; normal thickness is barely resolved. The malleus handle lies in its plane.",
+      "coronal": "A thin line running inferomedially from the scutum to the hypotympanic floor, attached to the malleus handle; the pars flaccida is the small superior portion lateral to the malleus neck.",
+      "sagittal": "The membrane is cut obliquely; the umbo is the most medial point."
+    },
+    "relations": [
+      "Malleus handle and lateral process in its fibrous layer; the umbo is at the tip of the handle.",
+      "Chorda tympani crosses its medial surface in the posterosuperior quadrant.",
+      "Incus long process and the stapes lie medial to the posterosuperior quadrant.",
+      "Promontory and round window niche medial to the inferior half.",
+      "Scutum above at the notch of Rivinus; the annulus sits in the tympanic sulcus."
+    ],
+    "surgical": [
+      "The tympanomeatal flap is raised from the posterior canal skin to the annulus and the middle ear entered behind the annulus, where the chorda tympani is the first structure seen.",
+      "Posterosuperior quadrant elevation exposes the incudostapedial joint, stapes and facial nerve for stapes surgery; bone of the scutum is curetted for exposure.",
+      "Underlay and overlay grafting use the annulus and the malleus handle as the frame; anterior perforations need the anterior sulcus exposed.",
+      "Pars flaccida retraction pockets are the origin of attic cholesteatoma and must be followed into Prussak's space."
+    ],
+    "variants": [
+      {
+        "name": "Monomeric (dimeric) membrane",
+        "note": "A healed perforation without a fibrous layer; thin and prone to retraction.",
+        "prevalence": "common after otitis media"
+      },
+      {
+        "name": "Tympanosclerosis",
+        "note": "Hyaline plaques in the lamina propria; on CT, calcified plaques in the membrane and middle ear.",
+        "prevalence": "common after ventilation tubes"
+      }
+    ],
+    "pitfalls": [
+      "A thickened TM on CT is nonspecific; retraction onto the promontory or incus is the sign of an atelectatic ear.",
+      "The pars flaccida is not resolved on CT; attic soft tissue with scutum erosion is the CT sign of a flaccida cholesteatoma."
+    ],
+    "measurements": [
+      {
+        "label": "Diameter",
+        "value": "about 9-10 mm (oval)"
+      },
+      {
+        "label": "Thickness",
+        "value": "about 0.1 mm"
+      },
+      {
+        "label": "Angle to the canal floor",
+        "value": "about 55 degrees"
+      }
+    ],
+    "fellow": [
+      "The pars flaccida lacks the radial and circular fibrous layers, which is why it retracts first with chronic negative pressure.",
+      "Sade and Tos classifications grade pars tensa and pars flaccida retractions respectively; both guide the decision to operate."
+    ],
+    "pathology": [
+      "Perforation, retraction pockets, cholesteatoma, tympanosclerosis, bullous myringitis."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: tympanoplasty"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "tympanic_cavity",
+    "name": "Tympanic cavity (meso- and hypotympanum)",
+    "group": "middle",
+    "level": 1,
+    "color": "#7f93a8",
+    "aliases": [
+      "middle ear",
+      "mesotympanum",
+      "hypotympanum",
+      "tympanum"
+    ],
+    "summary": "The air space medial to the tympanic membrane. The mesotympanum lies at the level of the membrane; the hypotympanum is the recess below it over the jugular bulb; the epitympanum (attic) is above the membrane and is described separately. Its medial wall carries the promontory, the two windows, the facial nerve and the lateral canal prominence.",
+    "find": {
+      "axial": "A lucent space between the membrane and the promontory; the hypotympanum is the lowest slices of air, floored by thin bone over the jugular bulb and with the carotid anteriorly.",
+      "coronal": "At the oval window level: scutum, attic, mesotympanum with the ossicles, and the hypotympanum below the membrane's inferior margin, with the jugular bulb beneath.",
+      "sagittal": "Shows the anteroposterior extent from the Eustachian tube to the facial recess."
+    },
+    "relations": [
+      "Medial wall: promontory, oval window with stapes, round window niche, facial nerve tympanic segment, lateral canal prominence, cochleariform process, pyramidal eminence.",
+      "Floor: jugular bulb under the hypotympanum; the carotid in the anterior floor and wall.",
+      "Anterior wall: Eustachian tube below, tensor tympani above, carotid canal medially.",
+      "Posterior wall: facial recess laterally, pyramidal eminence, sinus tympani medially, aditus above.",
+      "Roof: tegmen tympani (epitympanum).",
+      "Lateral wall: tympanic membrane and the bony lateral attic wall."
+    ],
+    "surgical": [
+      "The medial wall is the map for every middle ear operation: the facial nerve above the oval window, the lateral canal above that, the promontory below, and the round window posteroinferior.",
+      "Hypotympanic cholesteatoma and glomus tumours sit over the jugular bulb; a dehiscent bulb bleeds on biopsy or dissection.",
+      "The anterior tympanic floor and wall contain the carotid: 'never biopsy a red retrotympanic mass without CT'.",
+      "The protympanum (anterior mesotympanum) leads to the Eustachian tube orifice."
+    ],
+    "variants": [
+      {
+        "name": "Dehiscent jugular bulb into the hypotympanum",
+        "note": "Blue mass behind the inferior TM; the bony floor is absent on CT.",
+        "prevalence": "a few percent"
+      },
+      {
+        "name": "Aberrant carotid in the middle ear",
+        "note": "A red mass anteriorly over the promontory; absent vertical carotid canal on CT.",
+        "prevalence": "rare"
+      },
+      {
+        "name": "Persistent stapedial artery",
+        "note": "Runs across the promontory to the facial canal; absent foramen spinosum and widened tympanic facial canal on CT.",
+        "prevalence": "about 0.02-0.05% histologically"
+      },
+      {
+        "name": "Deep hypotympanum with pneumatised cells",
+        "note": "Extensive hypotympanic and peritubal cells harbour disease and lead to the carotid and jugular walls.",
+        "prevalence": "variable with pneumatisation"
+      }
+    ],
+    "pitfalls": [
+      "Every retrotympanic vascular-looking mass gets a CT before any instrument touches it: aberrant carotid, dehiscent jugular bulb, persistent stapedial artery and glomus can all look red or blue.",
+      "Soft tissue in the hypotympanum on CT is nonspecific (fluid, granulation, cholesteatoma, tumour); bone erosion of the floor or the promontory decides."
+    ],
+    "measurements": [
+      {
+        "label": "Height (hypotympanum to attic roof)",
+        "value": "about 15 mm"
+      },
+      {
+        "label": "Width at the umbo",
+        "value": "about 2 mm; about 6 mm in the attic"
+      }
+    ],
+    "fellow": [
+      "The hypotympanum is accessed in the infracochlear approach to the petrous apex, between the carotid (anterior), jugular bulb (posterior) and cochlea (superior).",
+      "Jacobson's nerve (tympanic branch of IX) runs across the promontory in the tympanic canaliculus and is the origin of glomus tympanicum."
+    ],
+    "pathology": [
+      "Otitis media with effusion, cholesteatoma, glomus tympanicum, tympanosclerosis, congenital cholesteatoma (anterosuperior quadrant)."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Harnsberger HR et al. Diagnostic Imaging: Head and Neck."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Radiology: temporal bone CT"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "epitympanum",
+    "name": "Epitympanum (attic)",
+    "group": "middle",
+    "level": 1,
+    "color": "#7f93a8",
+    "aliases": [
+      "attic",
+      "epitympanic recess",
+      "anterior epitympanic recess",
+      "supratubal recess",
+      "cog"
+    ],
+    "summary": "The part of the middle ear above the level of the tympanic membrane, containing the malleus head and the incus body and short process. Its roof is the tegmen, its lateral wall the scutum and bony lateral attic wall, and it opens posteriorly through the aditus into the antrum.",
+    "find": {
+      "axial": "Above the oval window level: the ossicular 'ice-cream cone' (malleus head anterior, incus body and short process posterior) inside an air-filled space, with the aditus leading posteriorly to the antrum.",
+      "coronal": "The space above the scutum and medial to the lateral attic wall, with the ossicular heads inside and the tegmen above; Prussak's space is the small lateral pocket between the scutum and the malleus neck.",
+      "sagittal": "Shows the attic with the malleus head and incus body, the aditus and antrum behind."
+    },
+    "relations": [
+      "Tegmen tympani above; middle fossa dura beyond it.",
+      "Malleus head, incus body and short process inside; the fossa incudis at the posterior end.",
+      "Facial nerve tympanic segment and lateral canal on the medial wall.",
+      "Scutum and the lateral attic wall laterally.",
+      "Aditus and antrum posteriorly; the cog and anterior epitympanic recess anteriorly, with the geniculate ganglion medial to the cog."
+    ],
+    "surgical": [
+      "Atticotomy removes the scutum and lateral attic wall to follow a pars flaccida cholesteatoma; the facial nerve and lateral canal are on the medial wall.",
+      "The anterior epitympanic recess (supratubal recess), anterior to the cog, is a common site of residual cholesteatoma; it is reached by removing the cog and the malleus head.",
+      "Endoscopic ear surgery reaches the attic through the canal with the ossicles left in place when possible.",
+      "The attic is the first space blocked by a retraction pocket, isolating it from the Eustachian tube (the 'epitympanic diaphragm' concept)."
+    ],
+    "variants": [
+      {
+        "name": "Low tegmen",
+        "note": "A low-lying middle fossa floor narrows the attic and the antrum entrance, limiting canal-wall-up access.",
+        "prevalence": "common"
+      },
+      {
+        "name": "Prominent cog",
+        "note": "A thick cog divides the attic and hides the anterior recess.",
+        "prevalence": "variable"
+      },
+      {
+        "name": "Complete epitympanic diaphragm",
+        "note": "Mucosal folds fully isolating the attic, predisposing to attic retraction.",
+        "prevalence": "variable"
+      }
+    ],
+    "pitfalls": [
+      "Attic soft tissue with scutum erosion is cholesteatoma until proven otherwise; granulation tissue does not usually blunt the scutum.",
+      "Prussak's space opacification alone is a retraction pocket or early cholesteatoma; look at the lateral attic wall and the incus body."
+    ],
+    "measurements": [
+      {
+        "label": "Height",
+        "value": "about 6 mm above the TM level"
+      },
+      {
+        "label": "Width (scutum to medial wall)",
+        "value": "about 6 mm"
+      }
+    ],
+    "fellow": [
+      "The tensor fold, lateral incudomalleal fold and the tympanic isthmus define the attic's ventilation; the isthmus (between the tensor tendon and the stapes/incus) is the main route.",
+      "In the transcanal endoscopic approach the attic is exposed by removing the scutum in the 'atticotomy' step; a low tegmen and an anterior sigmoid are not limiting as in the mastoid route."
+    ],
+    "pathology": [
+      "Pars flaccida cholesteatoma (Prussak's space to the attic to the antrum), ossicular fixation, attic retraction."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Marchioni D, Presutti L et al. Endoscopic approach to the tensor fold, epitympanum and supratubal recess. Otol Neurotol 2010."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: cholesteatoma surgery"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "prussak_space",
+    "name": "Prussak's space",
+    "group": "middle",
+    "level": 2,
+    "color": "#8ea5bc",
+    "aliases": [
+      "superior recess of the tympanic membrane"
+    ],
+    "summary": "A small pocket between the pars flaccida laterally and the neck of the malleus medially, floored by the lateral process of the malleus and roofed by the lateral malleal ligament. It is where pars flaccida retraction pockets begin and where attic cholesteatoma starts.",
+    "find": {
+      "axial": "A tiny air space lateral to the malleus neck at the level just above the lateral process; on a normal scan it is air, in cholesteatoma it is soft tissue with a blunted scutum.",
+      "coronal": "The small lucent pocket between the scutum/pars flaccida and the malleus neck, directly above the lateral process; the best plane to see it.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Pars flaccida laterally; the scutum above and lateral.",
+      "Malleus neck medially, lateral process below.",
+      "Lateral malleal ligament above; the lateral attic (epitympanum) beyond it."
+    ],
+    "surgical": [
+      "A pars flaccida retraction pocket followed into Prussak's space means the lateral attic must be opened to see its depth.",
+      "Early attic cholesteatoma here is removed by a limited atticotomy or endoscopically through the canal."
+    ],
+    "variants": [
+      {
+        "name": "Variable size",
+        "note": "Depends on the depth of the notch of Rivinus and the malleus neck position.",
+        "prevalence": "variable"
+      }
+    ],
+    "pitfalls": [
+      "On CT, soft tissue confined to Prussak's space without bone erosion can be a retraction pocket; follow-up or endoscopy decides.",
+      "Erosion of the scutum next to Prussak's space is the earliest CT sign of flaccida cholesteatoma."
+    ],
+    "measurements": [
+      {
+        "label": "Size",
+        "value": "a few millimetres"
+      }
+    ],
+    "fellow": [
+      "The space is isolated from the rest of the attic by the lateral malleal ligament, so its ventilation depends on a route behind the lateral incudomalleal fold (the posterior pouch), which is why it retracts readily."
+    ],
+    "pathology": [
+      "Attic retraction pocket, pars flaccida cholesteatoma."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: cholesteatoma"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "scutum",
+    "name": "Scutum",
+    "group": "middle",
+    "level": 1,
+    "color": "#d8c9a6",
+    "aliases": [
+      "lateral attic wall",
+      "notch of Rivinus"
+    ],
+    "summary": "The sharp inferior edge of the bony lateral attic wall, where the superior canal wall meets the pars flaccida. Its blunting or erosion is the earliest CT sign of attic cholesteatoma.",
+    "find": {
+      "axial": "Not well shown; the lateral attic wall is the bone lateral to the ossicular heads.",
+      "coronal": "The classic view: a sharp bony spur at the superolateral corner of the tympanic membrane, pointing medially toward the malleus neck.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Pars flaccida and Prussak's space immediately medial and inferior.",
+      "Malleus neck and lateral process medial.",
+      "EAC roof lateral and below; the attic above and medial."
+    ],
+    "surgical": [
+      "Curetted or drilled away in atticotomy to expose the attic; reconstructed with cartilage to prevent re-retraction.",
+      "A blunted scutum on the preoperative CT tells you the cholesteatoma has already breached the lateral attic wall."
+    ],
+    "variants": [
+      {
+        "name": "Thin or short scutum",
+        "note": "A shallow notch of Rivinus gives a small Prussak's space.",
+        "prevalence": "variable"
+      }
+    ],
+    "pitfalls": [
+      "Scutum erosion must be read on coronal images; a partial-volume axial image can look eroded.",
+      "Post-surgical scutum defects look identical to erosion; read the history."
+    ],
+    "measurements": [
+      {
+        "label": "Height above the TM annulus",
+        "value": "a few millimetres"
+      }
+    ],
+    "fellow": [
+      "Scutum erosion with an intact TM annulus favours a flaccida cholesteatoma; tensa cholesteatoma erodes the posterosuperior annulus and the long process first."
+    ],
+    "pathology": [
+      "Erosion by cholesteatoma; iatrogenic defect after atticotomy."
+    ],
+    "sources": [
+      "Swartz JD, Loevner LA. Imaging of the Temporal Bone."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Radiology: temporal bone CT"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "tegmen",
+    "name": "Tegmen tympani and tegmen mastoideum",
+    "group": "middle",
+    "level": 1,
+    "color": "#c9b99a",
+    "aliases": [
+      "tegmen",
+      "middle fossa plate",
+      "roof of the middle ear"
+    ],
+    "summary": "The thin plate of petrous bone separating the attic, antrum and mastoid from the middle cranial fossa. It is often less than 1 mm thick, frequently dehiscent in small areas, and its height determines how much room there is for an intact-canal-wall mastoidectomy.",
+    "find": {
+      "axial": "Seen only as the uppermost bone over the attic and antrum before the middle fossa appears.",
+      "coronal": "A thin line of bone above the attic and antrum with temporal lobe above; dehiscence is a gap with soft tissue (meninges or brain) touching the middle ear.",
+      "sagittal": "The roof of the attic and mastoid along its whole length; the best plane for an encephalocele."
+    },
+    "relations": [
+      "Middle fossa dura and temporal lobe above.",
+      "Epitympanum, aditus and antrum below.",
+      "Superior canal and arcuate eminence medially.",
+      "Superior petrosal sinus along its medial edge at the petrous ridge."
+    ],
+    "surgical": [
+      "Identified early in mastoidectomy as the superior limit; drilling parallel to it with a large burr avoids exposing dura.",
+      "A low tegmen limits attic and antral exposure and may force a canal-wall-down procedure.",
+      "Tegmen defects with CSF leak or encephalocele are repaired through the middle fossa, transmastoid route or combined, with cartilage, bone and fascia."
+    ],
+    "variants": [
+      {
+        "name": "Tegmen dehiscence",
+        "note": "Small bony gaps are common and asymptomatic; large defects allow meningoencephalocele, especially with chronic otitis or after surgery.",
+        "prevalence": "small dehiscences are common in histologic series"
+      },
+      {
+        "name": "Low-lying tegmen",
+        "note": "The middle fossa floor sits at or below the level of the superior canal, narrowing the attic.",
+        "prevalence": "common"
+      }
+    ],
+    "pitfalls": [
+      "Thin tegmen bone is below CT resolution; a defect with soft tissue bulging into the mastoid or attic is the finding to report, not thinness alone.",
+      "Spontaneous CSF otorrhoea in an older patient with obesity: look for multiple tegmen defects and arachnoid granulations."
+    ],
+    "measurements": [
+      {
+        "label": "Thickness",
+        "value": "often under 1 mm"
+      }
+    ],
+    "fellow": [
+      "In the middle fossa approach the tegmen is the floor of the exposure; the arcuate eminence and GSPN are its landmarks.",
+      "Superior petrosal sinus and the petrous ridge mark the medial edge of the tegmen; the sinus is a bleeding risk in middle fossa and translabyrinthine dissections."
+    ],
+    "pathology": [
+      "Encephalocele, CSF otorrhoea, extradural abscess from coalescent mastoiditis, cholesteatoma eroding the roof."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy",
+      "Neurotology: CSF leak and encephalocele"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "epitympanum",
+      "antrum"
+    ]
+  },
+  {
+    "id": "aditus",
+    "name": "Aditus ad antrum",
+    "group": "middle",
+    "level": 1,
+    "color": "#7f93a8",
+    "aliases": [
+      "aditus"
+    ],
+    "summary": "The short passage from the posterior epitympanum to the mastoid antrum. Its medial wall is the lateral canal prominence, its floor carries the fossa incudis and the short process of the incus, and the facial nerve second genu lies just inferior and medial to that floor.",
+    "find": {
+      "axial": "The narrow air channel behind the ossicular heads leading posteriorly into the antrum at the level of the lateral canal.",
+      "coronal": "A small air passage above the lateral canal and behind the attic in a posterior slice.",
+      "sagittal": "Shows the attic-aditus-antrum continuity in one image."
+    },
+    "relations": [
+      "Lateral canal on the medial wall.",
+      "Fossa incudis and the incus short process on the floor.",
+      "Facial nerve second genu inferomedial to the floor.",
+      "Tegmen above."
+    ],
+    "surgical": [
+      "Cholesteatoma from the attic reaches the antrum through the aditus; the aditus is widened in canal-wall-up surgery to improve ventilation.",
+      "The short process of the incus in the fossa incudis is the landmark used to find the facial nerve during the posterior tympanotomy.",
+      "Blockage of the aditus (by cholesteatoma, granulation or a cartilage graft) isolates the mastoid from the middle ear."
+    ],
+    "variants": [
+      {
+        "name": "Narrow aditus",
+        "note": "Low tegmen and a prominent lateral canal make a tight aditus, favouring retention of disease in the antrum.",
+        "prevalence": "variable"
+      }
+    ],
+    "pitfalls": [
+      "Soft tissue filling the aditus on CT with an opacified mastoid can be fluid trapped behind a blocked aditus rather than disease in the mastoid itself."
+    ],
+    "measurements": [
+      {
+        "label": "Diameter",
+        "value": "about 3-4 mm"
+      }
+    ],
+    "fellow": [
+      "In canal-wall-up mastoidectomy the aditus is opened from the antrum forward toward the attic, keeping the burr lateral to the lateral canal and above the fossa incudis.",
+      "Ventilation of the mastoid depends on the aditus; obstructive attic disease produces the 'blocked antrum' picture."
+    ],
+    "pathology": [
+      "Cholesteatoma extension, granulation tissue, mucosal blockage after surgery."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "antrum",
+    "name": "Mastoid antrum",
+    "group": "middle",
+    "level": 1,
+    "color": "#7f93a8",
+    "aliases": [
+      "antrum"
+    ],
+    "summary": "The largest and most constant mastoid air cell, present at birth, lying posterior to the aditus and lateral to the lateral canal. It is the first space opened in a mastoidectomy and the hub from which the other cells are followed.",
+    "find": {
+      "axial": "A large air cell posterior to the attic and lateral to the lateral canal and posterior canal, at the level of the lateral canal.",
+      "coronal": "The largest air space above and lateral to the lateral canal in posterior slices, roofed by the tegmen mastoideum.",
+      "sagittal": "Behind the attic, under the tegmen, in front of the sigmoid."
+    },
+    "relations": [
+      "Lateral canal prominence on its medial wall.",
+      "Tegmen mastoideum above.",
+      "Sigmoid sinus posterior and the sinodural angle posterosuperior.",
+      "Facial nerve mastoid segment anteroinferior.",
+      "Korner's septum (when present) lateral to it within the mastoid cells."
+    ],
+    "surgical": [
+      "Found 12-15 mm deep to MacEwen's triangle in the adult; it is identified by the lateral canal in its medial wall.",
+      "All mastoidectomies proceed from the antrum: anteriorly to the aditus, superiorly along the tegmen, posteriorly to the sinodural angle and sigmoid, inferiorly to the tip.",
+      "Antrotomy alone (for acute mastoiditis) drains the antrum without skeletonising the nerve."
+    ],
+    "variants": [
+      {
+        "name": "Small antrum in a sclerotic mastoid",
+        "note": "In poorly pneumatised bones the antrum is the only cell and lies close to the sigmoid and tegmen.",
+        "prevalence": "with sclerotic mastoids"
+      },
+      {
+        "name": "Korner's septum",
+        "note": "A plate of the petrosquamous suture lateral to the antrum that produces a false 'antrum' lateral to the true one.",
+        "prevalence": "roughly 10-25% of bones"
+      }
+    ],
+    "pitfalls": [
+      "Stopping at a Korner's septum cell is the classic error: the true antrum lies medial to the septum, identified by the lateral canal.",
+      "In a sclerotic mastoid the antrum can be only a few millimetres from the sigmoid sinus; map the sinus on CT before drilling."
+    ],
+    "measurements": [
+      {
+        "label": "Depth from the cortex (adult)",
+        "value": "about 12-15 mm"
+      },
+      {
+        "label": "Size",
+        "value": "about 10 x 5 x 10 mm"
+      }
+    ],
+    "fellow": [
+      "At birth the antrum lies only 2-4 mm below the cortex and the facial nerve exits superficially; the adult position results from mastoid tip growth.",
+      "Antral 'blocked' effusion on CT is one of the commonest false-positive findings for cholesteatoma."
+    ],
+    "pathology": [
+      "Coalescent mastoiditis (loss of cell septa), cholesteatoma, cholesterol granuloma."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "mastoid_cells",
+    "name": "Mastoid air cells",
+    "group": "middle",
+    "level": 1,
+    "color": "#6f8296",
+    "aliases": [
+      "mastoid",
+      "pneumatisation",
+      "Korner's septum",
+      "retrofacial cells",
+      "perisinus cells",
+      "tip cells"
+    ],
+    "summary": "A honeycomb of air cells radiating from the antrum, classified as pneumatic, diploic or sclerotic. Cell tracts are named by where they go: perisinus, retrofacial, tip, tegmental, peri-labyrinthine and petrous apex cells. Their extent decides how much room the surgeon has and how far disease can travel.",
+    "find": {
+      "axial": "Air-filled cells posterior to the EAC and lateral to the labyrinth, bounded by the sigmoid sinus posteriorly; count how many cells separate the sigmoid from the posterior canal wall.",
+      "coronal": "Cells below the tegmen and lateral to the labyrinth extending down to the tip; the digastric ridge is the floor.",
+      "sagittal": "The full extent from the tegmen to the tip, with the sigmoid curving behind."
+    },
+    "relations": [
+      "Sigmoid sinus posteriorly (perisinus cells), tegmen above, facial nerve anteriorly, labyrinth medially, digastric ridge and tip below.",
+      "Posterior fossa dura between the sigmoid and the labyrinth (Trautmann's triangle).",
+      "Korner's septum splits the cells into a lateral (squamous) and medial (petrous) compartment when present."
+    ],
+    "surgical": [
+      "Cortical mastoidectomy removes the cells to expose the antrum, tegmen, sigmoid, sinodural angle and the facial nerve while leaving the posterior canal wall.",
+      "Retrofacial cells are opened to reach the endolymphatic sac and the jugular bulb; tip cells are exenterated in subtotal petrosectomy.",
+      "Obliteration (abdominal fat, bone pate, hydroxyapatite) after canal-wall-down surgery reduces cavity problems.",
+      "Sclerotic mastoids bleed less but give the surgeon no margin from the sigmoid and tegmen."
+    ],
+    "variants": [
+      {
+        "name": "Korner's septum",
+        "note": "A persistent petrosquamous suture plate running from the tegmen downward within the cells; its lateral compartment is a false antrum.",
+        "prevalence": "roughly 10-25% of bones"
+      },
+      {
+        "name": "Sclerotic (non-pneumatised) mastoid",
+        "note": "Associated with chronic otitis media in childhood; the sigmoid and tegmen crowd the antrum.",
+        "prevalence": "common in chronic ear disease"
+      },
+      {
+        "name": "Hyperpneumatisation with petrous apex cells",
+        "note": "Cells track to the apex, around the labyrinth and along the carotid; apex disease then presents as effusion or cholesterol granuloma.",
+        "prevalence": "apex pneumatised in about a third of bones"
+      }
+    ],
+    "pitfalls": [
+      "Opacified cells without bone destruction are usually effusion or mucosal disease; coalescence (loss of septa) indicates mastoiditis.",
+      "Korner's septum on CT: a vertical bony plate lateral to the antrum; mention it so the surgeon does not stop at the false antrum."
+    ],
+    "measurements": [
+      {
+        "label": "Sigmoid to posterior canal wall distance",
+        "value": "typically more than 10 mm; under 10 mm is an anteriorly placed sinus"
+      }
+    ],
+    "fellow": [
+      "Pneumatisation tracts explain spread: perilabyrinthine cells to the petrous apex, perisinus cells to the posterior fossa, zygomatic root cells to the squama.",
+      "Pre-operative review of the sigmoid position, tegmen height and Korner's septum avoids the three classic mastoidectomy surprises."
+    ],
+    "pathology": [
+      "Acute and coalescent mastoiditis, Bezold's abscess (through the tip), cholesteatoma, cholesterol granuloma."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Harnsberger HR et al. Diagnostic Imaging: Head and Neck."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy",
+      "Otology: chronic ear disease"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "eustachian_tube",
+    "name": "Eustachian tube (bony portion)",
+    "group": "middle",
+    "level": 1,
+    "color": "#7f93a8",
+    "aliases": [
+      "protympanum",
+      "pharyngotympanic tube",
+      "auditory tube"
+    ],
+    "summary": "The bony third of the tube runs anteromedially and inferiorly from the protympanum (anterior middle ear) to the isthmus, then continues as the cartilaginous tube to the nasopharynx. The tensor tympani semicanal lies above it and the carotid canal medial to it.",
+    "find": {
+      "axial": "An air channel leaving the anterior middle ear and running anteromedially, with the carotid canal immediately medial; its lumen narrows to the isthmus.",
+      "coronal": "A channel below the tensor tympani semicanal in anterior slices, lateral to the carotid.",
+      "sagittal": "Shows its anteroinferior slope from the middle ear."
+    },
+    "relations": [
+      "Tensor tympani semicanal directly above.",
+      "Petrous carotid medial; the bony wall between can be thin or dehiscent.",
+      "Protympanum and hypotympanum posteriorly.",
+      "TMJ lateral to the anterior tube."
+    ],
+    "surgical": [
+      "Obliterated with soft tissue in subtotal petrosectomy and in CSF leak repair to prevent rhinorrhoea.",
+      "Balloon dilation addresses the cartilaginous tube, not the bony portion; the isthmus is the stopping point.",
+      "Protympanic cholesteatoma hides anterior to the cochleariform process and under the tensor tendon."
+    ],
+    "variants": [
+      {
+        "name": "Dehiscent carotid canal into the tube",
+        "note": "The carotid wall is uncovered medially; a hazard in protympanic dissection and in balloon dilation if the balloon is forced past the isthmus.",
+        "prevalence": "a small minority"
+      },
+      {
+        "name": "Patulous tube",
+        "note": "Functional, not structural; no bony correlate.",
+        "prevalence": "common symptom"
+      }
+    ],
+    "pitfalls": [
+      "Soft tissue in the bony tube on CT is usually mucosal; a mass extending from the nasopharynx along the tube is the finding that matters."
+    ],
+    "measurements": [
+      {
+        "label": "Bony portion length",
+        "value": "about 10-12 mm of a 35 mm tube"
+      },
+      {
+        "label": "Isthmus diameter",
+        "value": "about 1-2 mm"
+      }
+    ],
+    "fellow": [
+      "The tube's medial wall is the carotid: in revision surgery and in petrous apex approaches the protympanum is the place where the carotid is most often exposed.",
+      "The 'isthmus' on CT marks the junction of the bony and cartilaginous portions, about 2 cm from the nasopharyngeal orifice."
+    ],
+    "pathology": [
+      "Eustachian tube dysfunction, nasopharyngeal carcinoma spreading along the tube, protympanic cholesteatoma."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: Eustachian tube"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "malleus",
+    "name": "Malleus",
+    "group": "middle",
+    "level": 1,
+    "color": "#efe3cc",
+    "aliases": [
+      "hammer",
+      "manubrium",
+      "umbo",
+      "lateral process",
+      "malleus head",
+      "malleus neck"
+    ],
+    "summary": "The largest ossicle. Its head sits in the attic articulating with the incus body, the neck lies behind the pars flaccida, and the handle (manubrium) runs down in the tympanic membrane to the umbo. The tensor tympani tendon inserts on the upper handle and neck.",
+    "find": {
+      "axial": "In the attic the head is the anterior, rounder part of the 'ice-cream cone' (the incus body is the cone); lower slices show the neck and handle in the plane of the TM.",
+      "coronal": "The head in the attic, the neck medial to the scutum, and the handle running down within the TM to the umbo; the lateral process is the small spur at the top of the handle.",
+      "sagittal": "The handle and head in one plane."
+    },
+    "relations": [
+      "Incus body posterior to the head (incudomalleolar joint).",
+      "Tympanic membrane holds the handle; the lateral process marks the junction of the pars tensa and flaccida.",
+      "Chorda tympani passes medial to the neck.",
+      "Tensor tympani tendon from the cochleariform process inserts on the neck and upper handle.",
+      "Anterior malleal ligament fixes the neck to the petrotympanic fissure."
+    ],
+    "surgical": [
+      "The head is removed in attic cholesteatoma surgery to reach the anterior epitympanum; the handle is preserved for graft support in tympanoplasty.",
+      "Fixation of the head (attic fixation, tympanosclerosis) causes conductive loss with an intact chain; the head must be mobilised or removed.",
+      "Ossiculoplasty prostheses are placed between the TM or malleus handle and the stapes capitulum or footplate."
+    ],
+    "variants": [
+      {
+        "name": "Malleus bar (fixation to the anterior attic wall)",
+        "note": "Bony bridge fixing the malleus head anteriorly, a cause of congenital conductive loss.",
+        "prevalence": "uncommon"
+      },
+      {
+        "name": "Fused malleus-incus mass in congenital atresia",
+        "note": "The ossicular heads are fused and may be attached to the atretic plate.",
+        "prevalence": "common in atresia"
+      }
+    ],
+    "pitfalls": [
+      "Malleus head fixation is often invisible on CT; a thin bony bar to the anterior attic wall is the finding to look for.",
+      "Retraction onto the long process or promontory can rotate the handle medially and mimic erosion."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 8-9 mm"
+      },
+      {
+        "label": "Weight",
+        "value": "about 25 mg"
+      }
+    ],
+    "fellow": [
+      "The anterior malleal ligament and the lateral malleal ligament define the axis of ossicular rotation; the handle's medialisation in atelectasis changes that axis and the lever ratio.",
+      "In endoscopic surgery the malleus head is often left and the anterior attic reached around it by removing the tensor fold."
+    ],
+    "pathology": [
+      "Erosion by cholesteatoma (less often than the incus), tympanosclerotic fixation, congenital fixation, fracture of the handle."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: ossiculoplasty"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "incus",
+    "name": "Incus",
+    "group": "middle",
+    "level": 1,
+    "color": "#efe3cc",
+    "aliases": [
+      "anvil",
+      "short process",
+      "long process",
+      "lenticular process",
+      "fossa incudis"
+    ],
+    "summary": "The middle ossicle: a body in the attic articulating with the malleus head, a short process pointing posteriorly into the fossa incudis, and a long process descending parallel to the malleus handle to the lenticular process, which articulates with the stapes head. The long process is the most frequently eroded ossicular part.",
+    "find": {
+      "axial": "In the attic the body and short process form the 'cone' behind the malleus head; one or two slices down the long process is a small dot medial and posterior to the handle, and the lenticular process meets the stapes head.",
+      "coronal": "The body above the scutum level and the long process descending medial to the TM toward the stapes; the short process points posteriorly, out of plane.",
+      "sagittal": "Shows the body, short process and long process in one image."
+    },
+    "relations": [
+      "Malleus head anterior (incudomalleolar joint).",
+      "Fossa incudis holds the short process; the facial nerve second genu is 2-3 mm inferomedial.",
+      "Stapes head at the lenticular process (incudostapedial joint).",
+      "Chorda tympani passes lateral to the long process and medial to the malleus handle.",
+      "Facial nerve tympanic segment medial to the body."
+    ],
+    "surgical": [
+      "The short process in the fossa incudis is the lateral landmark for the facial nerve during the posterior tympanotomy.",
+      "The incus is removed or sculpted as an interposition graft in ossiculoplasty; the long process is the usual site of erosion requiring a partial prosthesis.",
+      "Incudostapedial joint separation is the first step of stapes surgery; disarticulation injury to the incus is a cause of post-operative conductive loss.",
+      "During posterior tympanotomy the burr must stay below the short process to avoid dislocating the incus."
+    ],
+    "variants": [
+      {
+        "name": "Long process defect",
+        "note": "Congenital or post-inflammatory absence of the long or lenticular process with an intact body.",
+        "prevalence": "common cause of conductive loss"
+      },
+      {
+        "name": "Fixation of the short process in the fossa incudis",
+        "note": "Bony or fibrous fixation, a cause of conductive loss with a normal-looking chain.",
+        "prevalence": "uncommon"
+      }
+    ],
+    "pitfalls": [
+      "The lenticular process is tiny; an apparent gap at the incudostapedial joint on CT is partial volume unless the long process is clearly shortened.",
+      "After stapes surgery a prosthesis crimped on the long process can cause pressure erosion; a prosthesis that is too long or short is seen on CT."
+    ],
+    "measurements": [
+      {
+        "label": "Long process length",
+        "value": "about 7 mm"
+      },
+      {
+        "label": "Short process to facial nerve",
+        "value": "about 2-3 mm"
+      }
+    ],
+    "fellow": [
+      "The incus has the poorest blood supply at the lenticular process (end artery), explaining selective erosion and necrosis after surgery or chronic otitis.",
+      "The buttress (bony bridge between the fossa incudis and the posterior canal wall) is removed in canal-wall-down surgery after the incus is taken out."
+    ],
+    "pathology": [
+      "Erosion by cholesteatoma or chronic otitis (long process first), dislocation in temporal bone fractures (incudomalleolar or incudostapedial), aseptic necrosis after stapes surgery."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: ossiculoplasty"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "stapes",
+    "name": "Stapes",
+    "group": "middle",
+    "level": 1,
+    "color": "#efe3cc",
+    "aliases": [
+      "stirrup",
+      "footplate",
+      "crura",
+      "capitulum",
+      "stapedius tendon"
+    ],
+    "summary": "The smallest bone in the body: a head (capitulum) articulating with the incus, anterior and posterior crura, and a footplate held in the oval window by the annular ligament. The stapedius tendon inserts on the posterior crus and neck.",
+    "find": {
+      "axial": "At the level of the oval window the crura form a tiny arch between the incus and the footplate; the footplate is a thin line in the window.",
+      "coronal": "The footplate in the oval window below the facial nerve; the crura are seen as a 'V' when the slice passes through them.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Oval window and vestibule medial to the footplate.",
+      "Facial nerve tympanic segment immediately above.",
+      "Promontory below and the round window posteroinferior.",
+      "Pyramidal eminence posterior, giving the stapedius tendon.",
+      "Incus lenticular process lateral at the head."
+    ],
+    "surgical": [
+      "Stapedotomy: separate the incudostapedial joint, cut the stapedius tendon, fracture and remove the superstructure, fenestrate the footplate (0.5-0.7 mm), place the prosthesis on the long process.",
+      "Facial nerve overhang, a narrow niche, a floating footplate and a perilymph gusher are the recognised anatomical hazards.",
+      "Stapes fixation at the footplate (otosclerosis) versus congenital fixation versus tympanosclerosis decides the procedure."
+    ],
+    "variants": [
+      {
+        "name": "Monopod or columellar stapes",
+        "note": "Single crus or a solid stapes; congenital.",
+        "prevalence": "rare"
+      },
+      {
+        "name": "Congenital stapes fixation",
+        "note": "Bony fixation of the footplate without otosclerosis; associated with a higher gusher risk and anomalous facial nerve.",
+        "prevalence": "uncommon"
+      },
+      {
+        "name": "Persistent stapedial artery passing between the crura",
+        "note": "Runs across the promontory and through the obturator foramen of the stapes to the facial canal.",
+        "prevalence": "about 0.02-0.05%"
+      }
+    ],
+    "pitfalls": [
+      "The crura are below CT resolution in places; absence on one slice is not erosion. Compare with the normal side.",
+      "After stapedotomy, the prosthesis's position and the vestibule's integrity (pneumolabyrinth) are the CT questions."
+    ],
+    "measurements": [
+      {
+        "label": "Height",
+        "value": "about 3.3 mm"
+      },
+      {
+        "label": "Footplate",
+        "value": "about 3 x 1.5 mm"
+      },
+      {
+        "label": "Weight",
+        "value": "about 2-4 mg"
+      }
+    ],
+    "fellow": [
+      "The annular ligament's posterior half is thinner, which is why the posterior footplate is fenestrated.",
+      "In otosclerosis the fissula ante fenestram is the usual focus; the CT grade of fenestral versus retrofenestral disease predicts outcome and sensorineural risk."
+    ],
+    "pathology": [
+      "Otosclerosis, tympanosclerosis, erosion by cholesteatoma, dislocation in trauma, prosthesis complications."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Moreano EH et al. Prevalence of facial canal dehiscence and of persistent stapedial artery in the human middle ear. Laryngoscope 1994."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: stapes surgery"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "promontory",
+    "name": "Promontory",
+    "group": "middle",
+    "level": 1,
+    "color": "#d8c9a6",
+    "mesh": false,
+    "anchor": "promontory",
+    "aliases": [
+      "cochlear promontory",
+      "Jacobson's nerve",
+      "tympanic plexus"
+    ],
+    "summary": "The bulge on the medial wall of the middle ear formed by the basal turn of the cochlea. Jacobson's nerve (tympanic branch of IX) and the tympanic plexus run on its surface; the oval window is above and behind it and the round window niche posteroinferior.",
+    "find": {
+      "axial": "The convex medial wall of the mesotympanum at the level of the basal turn, with the round window niche at its posterior end.",
+      "coronal": "The rounded medial wall below the oval window and facial nerve, with the basal turn lucency inside it.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Basal turn of the cochlea inside it.",
+      "Oval window posterosuperior, round window niche posteroinferior.",
+      "Tensor tympani and cochleariform process anterosuperior.",
+      "Carotid canal anterior and the hypotympanum below.",
+      "Jacobson's nerve and the tympanic plexus on its surface; the ponticulus and subiculum run posteriorly from it."
+    ],
+    "surgical": [
+      "Promontory stimulation testing was used to assess cochlear nerve function before cochlear implantation.",
+      "Drilling the promontory for the infracochlear or transcochlear approaches opens the basal turn; it is sacrificed in transcochlear surgery.",
+      "Glomus tympanicum arises here and bleeds on biopsy; CT excludes aberrant carotid first."
+    ],
+    "variants": [
+      {
+        "name": "Aberrant carotid over the promontory",
+        "note": "The artery crosses the promontory instead of running in its canal; the vertical canal is absent on CT.",
+        "prevalence": "rare"
+      }
+    ],
+    "pitfalls": [
+      "Any mass on the promontory with intact bone on CT is more likely a paraganglioma; erosion of the promontory suggests cholesteatoma or malignancy.",
+      "Hypotympanic bone defect plus a promontory mass equals jugular bulb or glomus jugulare until proven otherwise."
+    ],
+    "measurements": [
+      {
+        "label": "Height of the bulge",
+        "value": "a few millimetres into the mesotympanum"
+      }
+    ],
+    "fellow": [
+      "The tympanic canaliculus carries Jacobson's nerve from the jugular foramen to the promontory and then to the lesser petrosal nerve: a route for glomus spread and for paraganglioma embolisation planning.",
+      "Cochlear otosclerosis gives the Schwartze sign (pink promontory) seen through the TM."
+    ],
+    "pathology": [
+      "Glomus tympanicum, cholesteatoma erosion, otosclerosis (retrofenestral), congenital cholesteatoma."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "cochlea"
+    ]
+  },
+  {
+    "id": "pyramidal_eminence",
+    "name": "Pyramidal eminence",
+    "group": "middle",
+    "level": 2,
+    "color": "#d8c9a6",
+    "aliases": [
+      "pyramid",
+      "ponticulus",
+      "subiculum",
+      "stapedius"
+    ],
+    "summary": "A hollow bony cone on the posterior wall of the middle ear from whose apex the stapedius tendon emerges to reach the stapes. It is the central landmark of the retrotympanum: the facial recess is lateral to it and the sinus tympani medial.",
+    "find": {
+      "axial": "A small bony projection on the posterior wall at the level of the oval window, between the facial recess (lateral) and the sinus tympani (medial); the facial nerve second genu is just posterior.",
+      "coronal": "A small spur posterior to the stapes in a posterior slice.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Stapedius muscle inside it; tendon to the stapes neck.",
+      "Facial nerve second genu and mastoid segment posterior.",
+      "Facial recess lateral; sinus tympani medial.",
+      "Ponticulus runs from it to the promontory above the sinus tympani; the subiculum lies below.",
+      "Chorda tympani enters the middle ear lateral to it."
+    ],
+    "surgical": [
+      "The stapedius tendon is cut at the pyramid in stapes surgery; the pyramid shows where the facial nerve lies (immediately posteromedial).",
+      "Endoscopic retrotympanic dissection uses the pyramid, ponticulus and subiculum to classify and clear the sinus tympani.",
+      "A cholesteatoma wrapped around the pyramid usually extends into the sinus tympani."
+    ],
+    "variants": [
+      {
+        "name": "Prominent or hypertrophic pyramid",
+        "note": "A large pyramid hides the sinus tympani and narrows the facial recess.",
+        "prevalence": "variable"
+      }
+    ],
+    "pitfalls": [
+      "On CT the pyramid can be confused with the lenticular process or with debris near the stapes; it is attached to the posterior wall."
+    ],
+    "measurements": [
+      {
+        "label": "Height",
+        "value": "about 1-2 mm"
+      }
+    ],
+    "fellow": [
+      "The stapedius muscle lies in a canal parallel to the mastoid facial nerve and is innervated by a facial branch; stapedius reflex testing localises lesions proximal versus distal to this branch.",
+      "The retrotympanic spaces (facial recess, sinus tympani, lateral tympanic sinus, posterior sinus, subtympanic sinus) are defined by the ridges radiating from the pyramid and are the usual sites of residual cholesteatoma."
+    ],
+    "pathology": [
+      "Cholesteatoma of the retrotympanum."
+    ],
+    "sources": [
+      "Marchioni D et al. The pyramidal eminence and related structures: anatomy and endoscopic surgical implications. Otol Neurotol.",
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: endoscopic ear surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "stapes"
+    ]
+  },
+  {
+    "id": "facial_recess",
+    "name": "Facial recess",
+    "group": "middle",
+    "level": 1,
+    "color": "#8ea5bc",
+    "aliases": [
+      "posterior tympanotomy",
+      "suprapyramidal recess",
+      "chorda-facial angle"
+    ],
+    "summary": "The triangular space on the posterior wall lateral to the facial nerve, bounded by the facial nerve medially, the chorda tympani laterally and the fossa incudis (buttress) above. Opening it from the mastoid (posterior tympanotomy) gives access to the round window, stapes and middle ear without removing the canal wall.",
+    "find": {
+      "axial": "The air space between the facial canal (medial/posterior) and the posterior tympanic annulus at the level of the round window; its width can be estimated between the facial canal and the chorda canal.",
+      "coronal": "Between the mastoid facial nerve and the posterior canal wall, below the fossa incudis.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Facial nerve mastoid segment and second genu medial.",
+      "Chorda tympani lateral and anterior.",
+      "Fossa incudis and short process of the incus superior.",
+      "Round window niche, stapes and promontory seen through it.",
+      "Pyramidal eminence and sinus tympani medial to its floor."
+    ],
+    "surgical": [
+      "Posterior tympanotomy: thin the bone between the facial nerve and the chorda from the fossa incudis downward with a small diamond burr, keeping the burr lateral to the nerve; widen inferiorly to see the round window niche.",
+      "The standard route for cochlear implant electrode insertion and for clearing cholesteatoma from the retrotympanum with the canal wall intact.",
+      "Sacrificing the chorda tympani adds 1-2 mm of width when the recess is narrow.",
+      "A narrow recess with an anterior facial nerve (common in congenital ears) may require the suprameatal or a different approach."
+    ],
+    "variants": [
+      {
+        "name": "Narrow recess",
+        "note": "High chorda origin or an anteriorly placed facial nerve narrow the recess to under 2 mm.",
+        "prevalence": "variable; common in malformed ears"
+      },
+      {
+        "name": "Lateral facial nerve",
+        "note": "In atresia and some syndromes the nerve runs within the recess, blocking the tympanotomy.",
+        "prevalence": "atresia"
+      }
+    ],
+    "pitfalls": [
+      "Residual cholesteatoma hides in the facial recess after canal-wall-up surgery; a posterior tympanotomy must be wide enough to see its floor.",
+      "The recess is not the sinus tympani: the sinus is medial to the nerve and invisible through the recess; endoscopes or a retrofacial approach are needed to see it."
+    ],
+    "measurements": [
+      {
+        "label": "Width",
+        "value": "about 2-3 mm (up to 4 mm with the chorda sacrificed)"
+      }
+    ],
+    "fellow": [
+      "The round window membrane is seen through the recess at an angle; the 'round window approach' for CI requires drilling the overhang through this narrow corridor.",
+      "The suprameatal (Kronenberg) approach avoids the posterior tympanotomy by tunnelling above the canal to the attic."
+    ],
+    "pathology": [
+      "Residual or recurrent cholesteatoma, granulation tissue."
+    ],
+    "sources": [
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery.",
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches."
+    ],
+    "curriculum": [
+      "Otology: cochlear implantation",
+      "Otology: chronic ear surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "fn_mastoid",
+      "chorda_tympani"
+    ]
+  },
+  {
+    "id": "sinus_tympani",
+    "name": "Sinus tympani",
+    "group": "middle",
+    "level": 2,
+    "color": "#8ea5bc",
+    "aliases": [
+      "retrotympanum",
+      "Marchioni classification",
+      "retrofacial approach"
+    ],
+    "summary": "A recess of the posterior middle ear medial to the pyramidal eminence and facial nerve, between the ponticulus above and the subiculum below, extending posteriorly a variable distance. It is the commonest site of residual cholesteatoma because it is hidden from the microscope's view through the canal and the facial recess.",
+    "find": {
+      "axial": "A pocket of air extending posteriorly from the mesotympanum medial to the facial canal at the level of the oval and round windows; its depth relative to the facial nerve is the key observation.",
+      "coronal": "A small recess medial to the facial nerve below the oval window level in a posterior slice.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Facial nerve mastoid segment lateral and posterior.",
+      "Pyramidal eminence lateral; ponticulus above and subiculum below.",
+      "Posterior canal ampulla medial.",
+      "Round window niche anteroinferior; oval window anterosuperior."
+    ],
+    "surgical": [
+      "Seen with angled endoscopes through the canal or with a mirror; a deep sinus (type C) needs a retrofacial approach from the mastoid between the facial nerve and the posterior canal.",
+      "Cholesteatoma matrix left here is the main cause of residual disease after canal-wall-up and canal-wall-down surgery alike.",
+      "Preoperative CT classification of its depth plans the approach."
+    ],
+    "variants": [
+      {
+        "name": "Marchioni type A",
+        "note": "Shallow: no extension medial to the facial nerve.",
+        "prevalence": "common"
+      },
+      {
+        "name": "Marchioni type B",
+        "note": "Extends medial to the facial nerve but not posterior to it.",
+        "prevalence": "common"
+      },
+      {
+        "name": "Marchioni type C",
+        "note": "Deep: extends posterior to the facial nerve; not visible through the facial recess, often needs a retrofacial approach or endoscopy.",
+        "prevalence": "a minority"
+      }
+    ],
+    "pitfalls": [
+      "A sinus that looks shallow on axial images can be deep in its inferior part; scroll the whole height before classifying.",
+      "Soft tissue in the sinus on a postoperative CT is residual cholesteatoma until MRI (non-EPI diffusion) says otherwise."
+    ],
+    "measurements": [
+      {
+        "label": "Depth posterior to the facial nerve (type C)",
+        "value": "a few millimetres"
+      }
+    ],
+    "fellow": [
+      "The retrofacial approach drills the cells between the mastoid facial nerve and the posterior canal to open the sinus from behind; the jugular bulb limits it inferiorly.",
+      "Endoscopic transcanal surgery sees the sinus directly, which is its main advantage over the microscope."
+    ],
+    "pathology": [
+      "Residual cholesteatoma."
+    ],
+    "sources": [
+      "Marchioni D, Valerini S, Mattioli F, Alicandri-Ciufelli M, Presutti L. Radiological assessment of the sinus tympani: temporal bone HRCT analyses and surgically related findings. Surg Radiol Anat 2015.",
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: cholesteatoma surgery",
+      "Otology: endoscopic ear surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "pyramidal_eminence",
+      "fn_mastoid"
+    ]
+  },
+  {
+    "id": "cochleariform_process",
+    "name": "Cochleariform process",
+    "group": "middle",
+    "level": 2,
+    "color": "#d8c9a6",
+    "aliases": [
+      "processus cochleariformis",
+      "tensor tendon pulley"
+    ],
+    "summary": "A small bony hook at the anterior end of the medial wall where the tensor tympani tendon turns laterally to the malleus. It is the most reliable landmark for the start of the facial nerve's tympanic segment, which lies just posterosuperior to it.",
+    "find": {
+      "axial": "A tiny spur on the medial wall anterior to the oval window at the end of the tensor tympani semicanal, one slice above the promontory.",
+      "coronal": "A small projection anterior to the oval window and inferior to the facial nerve in an anterior slice.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Facial nerve tympanic segment posterosuperior (the geniculate is anteromedial).",
+      "Tensor tympani semicanal anterior and medial.",
+      "Oval window posterior and slightly inferior.",
+      "Cog and anterior epitympanum above."
+    ],
+    "surgical": [
+      "In tympanoplasty and atresia surgery it is the fixed point from which the facial nerve is located when the oval window is obscured.",
+      "Cutting the tensor tendon at the process mobilises the malleus in some ossiculoplasties."
+    ],
+    "variants": [
+      {
+        "name": "Blunted or absent process",
+        "note": "Seen after chronic disease or in malformations; the nerve is then found from the oval window and lateral canal.",
+        "prevalence": "uncommon"
+      }
+    ],
+    "pitfalls": [
+      "Not resolved on every CT; its position is inferred from the end of the tensor semicanal."
+    ],
+    "measurements": [
+      {
+        "label": "Size",
+        "value": "about 1 mm"
+      }
+    ],
+    "fellow": [
+      "The nerve's tympanic segment emerges from under the cog's medial end just above the process; drilling anterior and superior to the process endangers the geniculate."
+    ],
+    "pathology": [
+      "Protympanic cholesteatoma hides anterior to it."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Otology: facial nerve landmarks"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "tensor_tympani",
+      "fn_tympanic"
+    ]
+  },
+  {
+    "id": "tensor_tympani",
+    "name": "Tensor tympani",
+    "group": "middle",
+    "level": 2,
+    "color": "#b36b5e",
+    "aliases": [
+      "tensor tympani semicanal",
+      "tensor tendon",
+      "tensor fold"
+    ],
+    "summary": "A muscle in a bony semicanal above the Eustachian tube, running from the cartilaginous tube and sphenoid posteriorly to the cochleariform process, where its tendon turns laterally to insert on the malleus neck. Innervated by the mandibular nerve, it tenses the drum.",
+    "find": {
+      "axial": "A soft-tissue-filled canal running anteromedially from the cochleariform process, parallel and superior to the Eustachian tube, lateral to the carotid genu.",
+      "coronal": "A round soft-tissue canal above the Eustachian tube in anterior slices.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Eustachian tube below (the two form the musculotubal canal).",
+      "Carotid canal medial.",
+      "Geniculate ganglion and the facial nerve above and posterior at the cochleariform process.",
+      "Malleus neck at the tendon insertion; the tensor fold runs from the tendon to the anterior attic wall."
+    ],
+    "surgical": [
+      "The tensor fold is removed in endoscopic surgery to ventilate the anterior attic.",
+      "The semicanal can be followed to the carotid in petrous apex approaches; it is a landmark for the horizontal carotid.",
+      "Sectioning the tendon is part of some ossicular mobilisation procedures and of tensor tympani myoclonus treatment."
+    ],
+    "variants": [
+      {
+        "name": "Dehiscence between the semicanal and the carotid canal",
+        "note": "Thin or absent bone medially.",
+        "prevalence": "uncommon"
+      }
+    ],
+    "pitfalls": [
+      "The semicanal is normally filled with muscle (soft tissue); do not read it as a blocked air cell."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 20-25 mm"
+      }
+    ],
+    "fellow": [
+      "The semicanal, Eustachian tube and carotid genu lie in a tight anterior cluster; this is the anatomy of the 'anterior epitympanic' and 'protympanic' approaches to the petrous apex.",
+      "Middle ear myoclonus from the tensor gives a clicking tinnitus and can be treated by tenotomy."
+    ],
+    "pathology": [
+      "Tensor tympani myoclonus; involvement by protympanic cholesteatoma."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "stapedius",
+    "name": "Stapedius tendon",
+    "group": "middle",
+    "level": 3,
+    "color": "#c98a7a",
+    "aliases": [
+      "stapedius muscle",
+      "stapedial reflex"
+    ],
+    "summary": "The tendon of the smallest skeletal muscle, emerging from the apex of the pyramidal eminence and inserting on the posterior crus and neck of the stapes. The muscle lies in a canal parallel to the facial nerve's mastoid segment and is supplied by a facial nerve branch.",
+    "find": {
+      "axial": "A fine soft-tissue strand from the pyramid to the stapes head at the oval window level; often below resolution.",
+      "coronal": "Rarely seen.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Pyramidal eminence at its origin; the facial nerve immediately posterior.",
+      "Stapes posterior crus and neck at its insertion.",
+      "Facial recess lateral; sinus tympani medial."
+    ],
+    "surgical": [
+      "Cut in stapes surgery before removing the superstructure; preserved in some techniques to maintain the reflex.",
+      "Its contraction response to electrical stimulation (eSRT) is used to set cochlear implant comfort levels in children."
+    ],
+    "variants": [
+      {
+        "name": "Absent tendon",
+        "note": "Associated with congenital stapes anomalies.",
+        "prevalence": "rare"
+      }
+    ],
+    "pitfalls": [
+      "A thick tendon can be mistaken for a bony bridge to the stapes on CT."
+    ],
+    "measurements": [
+      {
+        "label": "Tendon length",
+        "value": "about 1-2 mm"
+      }
+    ],
+    "fellow": [
+      "Stapedial reflex testing: present reflex with a conductive loss points to a third-window lesion rather than ossicular fixation; absent reflex with normal thresholds suggests otosclerosis or a retrocochlear lesion."
+    ],
+    "pathology": [
+      "Stapedius myoclonus; absence in congenital anomalies."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: middle ear anatomy",
+      "Audiology: acoustic reflex"
+    ],
+    "reviewed": null
+  }
+]

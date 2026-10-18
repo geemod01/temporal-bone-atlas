@@ -1,0 +1,707 @@
+[
+  {
+    "id": "facial_nerve",
+    "name": "Facial nerve (whole intratemporal course)",
+    "group": "facial",
+    "level": 1,
+    "color": "#f0c54a",
+    "aliases": [
+      "fallopian canal",
+      "VII",
+      "CN VII"
+    ],
+    "summary": "The nerve's intratemporal course as one object: meatal segment in the IAC, labyrinthine segment to the geniculate ganglion, tympanic segment along the medial wall of the middle ear, second genu below the lateral canal, mastoid segment to the stylomastoid foramen. Datasets that segment the nerve as a single surface map here; the segment cards hold the detail.",
+    "find": {
+      "axial": "Follow it slice by slice: anterosuperior IAC, then the short anterolateral labyrinthine canal, the geniculate 'snowman', the posteriorly running tympanic canal above the oval window, and the round vertical mastoid canal.",
+      "coronal": "The classic dot above the oval window (tympanic segment), and the vertical mastoid canal in posterior slices.",
+      "sagittal": "Shows the second genu and the mastoid descent in one plane."
+    },
+    "relations": [
+      "Cochlea and superior canal ampulla around the labyrinthine segment.",
+      "Oval window below and lateral canal above the tympanic segment.",
+      "Fossa incudis and incus short process lateral to the second genu.",
+      "Facial recess and chorda tympani lateral to the mastoid segment; posterior canal medial; jugular bulb inferomedial."
+    ],
+    "surgical": [
+      "Each approach finds the nerve from a different landmark: cochleariform process and oval window (tympanoplasty), lateral canal and fossa incudis (mastoidectomy), digastric ridge (lower mastoid), GSPN (middle fossa), Bill's bar (translabyrinthine).",
+      "Monitoring is standard for revision, cholesteatoma and skull base cases."
+    ],
+    "variants": [
+      {
+        "name": "Dehiscence",
+        "note": "Most often at the oval window; see the tympanic segment card.",
+        "prevalence": "roughly half of bones histologically"
+      },
+      {
+        "name": "Anomalous course",
+        "note": "Anterior and lateral displacement in congenital aural atresia; rare bifid segments.",
+        "prevalence": "atresia and syndromes"
+      }
+    ],
+    "pitfalls": [
+      "Dehiscence is under-called on CT and the labyrinthine segment is easily confused with the apical cochlear turn on a single slice."
+    ],
+    "measurements": [
+      {
+        "label": "Segment lengths",
+        "value": "meatal 8-10 mm, labyrinthine 3-5 mm, tympanic 8-11 mm, mastoid 10-14 mm"
+      }
+    ],
+    "fellow": [
+      "Topographic testing (Schirmer, stapedial reflex, taste) places a lesion relative to the geniculate, the stapedius branch and the chorda."
+    ],
+    "pathology": [
+      "Bell's palsy, fractures, cholesteatoma erosion, facial schwannoma, haemangioma, iatrogenic injury."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Otology: facial nerve anatomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "fn_tympanic",
+      "fn_mastoid",
+      "geniculate"
+    ]
+  },
+  {
+    "id": "fn_meatal",
+    "name": "Facial nerve, meatal segment",
+    "group": "facial",
+    "level": 1,
+    "color": "#f0c54a",
+    "aliases": [
+      "intracanalicular facial nerve",
+      "cisternal segment"
+    ],
+    "summary": "The facial nerve's course inside the internal auditory canal, from the porus to the fundus, where it occupies the anterosuperior quadrant above the transverse crest and anterior to Bill's bar. About 8-10 mm long.",
+    "find": {
+      "axial": "Not resolved from the other nerves on CT; it runs along the anterior wall of the IAC toward the anterosuperior fundus. MRI (CISS/FIESTA) shows it as the anterior of the two upper dots at the fundus.",
+      "coronal": "In the IAC cross-section it is the anterosuperior quadrant.",
+      "sagittal": "Oblique sagittal MRI through the IAC shows the four nerves in cross-section with the facial nerve anterosuperior."
+    },
+    "relations": [
+      "Superior vestibular nerve posterior to it, separated at the fundus by Bill's bar.",
+      "Cochlear nerve inferior to it, separated by the transverse (falciform) crest.",
+      "Nervus intermedius travels between the facial and cochleovestibular nerves.",
+      "Labyrinthine artery and the AICA loop accompany it in the canal."
+    ],
+    "surgical": [
+      "In vestibular schwannoma surgery the nerve is usually displaced anteriorly and flattened on the tumour's anterior surface.",
+      "Translabyrinthine: identify the superior vestibular nerve at the fundus, then Bill's bar; the facial nerve is immediately anterior.",
+      "Middle fossa: the nerve is the most superficial (superior) structure at the fundus and is at risk when the canal roof is opened."
+    ],
+    "variants": [
+      {
+        "name": "Facial nerve occupying the canal alone with absent cochleovestibular nerve",
+        "note": "In cochlear nerve aplasia the IAC can be narrow and contain only the facial nerve.",
+        "prevalence": "rare"
+      }
+    ],
+    "pitfalls": [
+      "On CISS MRI, confirm the four-nerve arrangement in oblique sagittal cross-section before calling a nerve absent; an oblique axial slice can miss a thin cochlear nerve."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 8-10 mm"
+      }
+    ],
+    "fellow": [
+      "The meatal foramen (entrance to the labyrinthine segment at the fundus) is the narrowest point of the whole nerve and the site of compression in Bell's palsy; middle fossa decompression targets it.",
+      "Nervus intermedius carries taste, lacrimal and salivary fibres and can be mistaken for a separate nerve at the porus."
+    ],
+    "pathology": [
+      "Vestibular schwannoma displacement; facial schwannoma; Bell's palsy enhancement of the fundal and labyrinthine segments on MRI."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Neurotology: facial nerve anatomy",
+      "Neurotology: IAC surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "facial_nerve"
+    ]
+  },
+  {
+    "id": "fn_labyrinthine",
+    "name": "Facial nerve, labyrinthine segment",
+    "group": "facial",
+    "level": 1,
+    "color": "#f0c54a",
+    "aliases": [
+      "meatal foramen",
+      "fallopian canal first segment"
+    ],
+    "summary": "The shortest and narrowest segment (about 3-5 mm long, about 0.7 mm wide), running anterolaterally from the IAC fundus to the geniculate ganglion. It passes between the cochlea (anteroinferior) and the superior canal ampulla (posterosuperior).",
+    "find": {
+      "axial": "A short oblique canal leaving the anterosuperior fundus and heading anterolaterally to the geniculate fossa, best seen one slice above the cochlea's middle turn. Look for the 'snowman' of the geniculate ganglion at its end.",
+      "coronal": "A small round or oval lucency above the cochlea and medial to the geniculate, below the superior canal ampulla.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Cochlea anteroinferiorly (it crosses over the middle and apical turns).",
+      "Superior canal ampulla and vestibule posteriorly.",
+      "Geniculate ganglion anterolaterally.",
+      "Middle fossa floor superiorly, often separated by only a thin plate."
+    ],
+    "surgical": [
+      "Exposed only through the middle fossa approach (or the translabyrinthine route after the cochlea and vestibule are removed).",
+      "Its tight bony canal and lack of epineurial cushioning make it the segment most vulnerable to oedema and to fractures; decompression for Bell's palsy or trauma targets it.",
+      "In the middle fossa approach the GSPN is traced back to the geniculate and then the labyrinthine segment is followed to the IAC."
+    ],
+    "variants": [
+      {
+        "name": "Duplication or split canal",
+        "note": "Rare; a bifid labyrinthine segment.",
+        "prevalence": "rare"
+      }
+    ],
+    "pitfalls": [
+      "Easy to confuse with the superior vestibular nerve canal or with the cochlea's apical turn on a single axial image; follow it from the fundus to the geniculate.",
+      "In temporal bone fractures a transverse line through this segment carries a high risk of immediate complete palsy."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 3-5 mm"
+      },
+      {
+        "label": "Diameter",
+        "value": "about 0.7 mm (narrowest point of the nerve)"
+      }
+    ],
+    "fellow": [
+      "The segment has no anastomotic blood supply (watershed between the labyrinthine and petrosal arteries), which is thought to explain its susceptibility in Bell's palsy.",
+      "Middle fossa decompression removes bone over the meatal foramen and labyrinthine segment while protecting the superior canal blue line."
+    ],
+    "pathology": [
+      "Bell's palsy (enhancement on MRI), transverse temporal bone fractures, facial schwannoma extending from the geniculate."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Fisch U. Facial paralysis in fractures of the petrous bone. Laryngoscope 1974."
+    ],
+    "curriculum": [
+      "Neurotology: facial nerve anatomy",
+      "Neurotology: facial nerve decompression"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "facial_nerve"
+    ]
+  },
+  {
+    "id": "geniculate",
+    "name": "Geniculate ganglion",
+    "group": "facial",
+    "level": 1,
+    "color": "#f4cf62",
+    "aliases": [
+      "first genu",
+      "geniculate fossa"
+    ],
+    "summary": "The sensory ganglion of the facial nerve at the first genu, where the labyrinthine segment turns sharply posteriorly to become the tympanic segment. The greater superficial petrosal nerve leaves it anteriorly.",
+    "find": {
+      "axial": "A small rounded expansion at the anterior end of the labyrinthine segment, anterior and lateral to the cochlea's apical turn, at the level of the cochleariform process or slightly above.",
+      "coronal": "A round lucency anterior to the cochlea just under the middle fossa floor, lateral to the carotid genu's level.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Middle fossa floor directly above; the ganglion is dehiscent into the middle fossa in a notable minority of bones.",
+      "Cochlea posteromedially and inferiorly.",
+      "The cog and anterior epitympanum lateral to it.",
+      "Tensor tympani and the carotid genu anteroinferior."
+    ],
+    "surgical": [
+      "Middle fossa approach: the ganglion is reached by following the GSPN posteriorly; the dura is elevated from posterior to anterior to avoid tearing a dehiscent ganglion.",
+      "Facial nerve schwannomas most often arise here and expand the geniculate fossa toward the middle fossa.",
+      "In the transmastoid-supralabyrinthine approach the ganglion is reached between the superior canal and the middle fossa plate."
+    ],
+    "variants": [
+      {
+        "name": "Dehiscent geniculate fossa",
+        "note": "No bone between the ganglion and the middle fossa dura, so dural elevation can avulse the nerve.",
+        "prevalence": "often quoted around 10-20% of bones"
+      }
+    ],
+    "pitfalls": [
+      "A normal geniculate fossa is wider than the labyrinthine segment and should not be reported as an expanded canal unless asymmetric or enhancing.",
+      "Perigeniculate enhancement on MRI is normal (the ganglion has a vascular plexus); asymmetric labyrinthine or fundal enhancement is not."
+    ],
+    "measurements": [
+      {
+        "label": "Ganglion size",
+        "value": "about 1.5-2 mm"
+      }
+    ],
+    "fellow": [
+      "The geniculate lies at the medial end of the cog's line; the anterior epitympanic recess is lateral to it.",
+      "Facial nerve decompression in longitudinal fractures most often finds the injury at or just distal to the geniculate."
+    ],
+    "pathology": [
+      "Facial schwannoma, haemangioma (ossifying haemangioma with intratumoral bone spicules), longitudinal fracture injury."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Neurotology: facial nerve anatomy",
+      "Neurotology: middle fossa approach"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "facial_nerve"
+    ]
+  },
+  {
+    "id": "gspn",
+    "name": "Greater superficial petrosal nerve",
+    "group": "facial",
+    "level": 2,
+    "color": "#e7bd55",
+    "aliases": [
+      "GSPN",
+      "greater petrosal nerve",
+      "facial hiatus"
+    ],
+    "summary": "A branch leaving the geniculate ganglion anteromedially, running beneath the middle fossa dura through the facial hiatus toward the foramen lacerum, where it joins the deep petrosal nerve to form the vidian nerve. It carries parasympathetic fibres to the lacrimal gland and nasal mucosa.",
+    "find": {
+      "axial": "A fine groove on the anterior surface of the petrous bone running anteromedially from the geniculate; usually only its hiatus is visible.",
+      "coronal": "Rarely seen.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Geniculate ganglion at its origin.",
+      "Middle fossa dura above; the nerve is extradural and adherent to the dura.",
+      "Petrosal branch of the middle meningeal artery accompanies it.",
+      "Carotid genu and the horizontal carotid run below it."
+    ],
+    "surgical": [
+      "The main landmark of the middle fossa approach: dura is elevated from posterior to anterior and the GSPN identified, then followed posteriorly to the geniculate.",
+      "Traction on the GSPN causes dry eye; avulsion of the geniculate is the classic injury of over-vigorous dural elevation.",
+      "Used in the Garcia-Ibanez method: the IAC lies along the bisector of the angle between the GSPN and the superior canal."
+    ],
+    "variants": [
+      {
+        "name": "Dehiscent facial hiatus",
+        "note": "The nerve is exposed on the middle fossa floor and adherent to dura; elevate dura carefully.",
+        "prevalence": "common"
+      }
+    ],
+    "pitfalls": [
+      "Do not confuse the GSPN groove with a fracture line or the lesser petrosal nerve canal, which runs parallel and lateral to it."
+    ],
+    "measurements": [
+      {
+        "label": "Course beneath the middle fossa",
+        "value": "about 10-15 mm to the foramen lacerum"
+      }
+    ],
+    "fellow": [
+      "The nerve lies in a direct line with the labyrinthine segment and geniculate; the House technique follows it to the geniculate and then medially to the IAC.",
+      "The middle meningeal artery's petrosal branch supplies the geniculate region; it bleeds when the hiatus is opened."
+    ],
+    "pathology": [
+      "Injury gives reduced lacrimation (abnormal Schirmer test), used in topographic facial nerve testing."
+    ],
+    "sources": [
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery.",
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Neurotology: middle fossa approach",
+      "Neurotology: facial nerve anatomy"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "fn_tympanic",
+    "name": "Facial nerve, tympanic segment",
+    "group": "facial",
+    "level": 1,
+    "color": "#f0c54a",
+    "aliases": [
+      "horizontal segment",
+      "fallopian canal second segment"
+    ],
+    "summary": "From the geniculate ganglion the nerve runs posteriorly along the medial wall of the middle ear (about 8-11 mm), passing just above the cochleariform process and the oval window and beneath the lateral canal, to the second genu at the posterior wall. It slopes slightly downward as it goes back.",
+    "find": {
+      "axial": "A thin canal running posteriorly from the geniculate along the medial wall of the attic and mesotympanum, lateral to the vestibule, best seen one slice above the oval window.",
+      "coronal": "The classic landmark: a small round lucency directly above the oval window and below the lateral canal (the 'facial nerve - lateral canal - oval window' vertical stack).",
+      "sagittal": "Runs anteroposteriorly, cut in long axis; rarely needed."
+    },
+    "relations": [
+      "Oval window and stapes immediately below the middle of the segment.",
+      "Lateral canal above and slightly medial; the nerve runs under its anterior limb.",
+      "Cochleariform process and tensor tympani tendon anteroinferior to its start.",
+      "Pyramidal eminence at its posterior end; the chorda and facial recess lateral to the second genu.",
+      "Incus body and short process lateral to it in the attic."
+    ],
+    "surgical": [
+      "Identified in tympanoplasty by the cochleariform process (the nerve lies just posterosuperior to it) and the oval window.",
+      "Dehiscence is common at the oval window: a stapes prosthesis or cholesteatoma dissection can injure an exposed nerve.",
+      "In cholesteatoma surgery, the nerve's tympanic segment is a frequent site of erosion and the attic matrix must be peeled away from it, not pushed into it.",
+      "Facial nerve monitoring is standard for revision and cholesteatoma cases; a dehiscent nerve can be stimulated at low thresholds."
+    ],
+    "variants": [
+      {
+        "name": "Dehiscent fallopian canal",
+        "note": "Absent bony cover, most often at the oval window; the nerve may bulge over the footplate. CT underestimates dehiscence compared with histology.",
+        "prevalence": "roughly half of temporal bones histologically (Baxter 1971, Moreano 1994); detected on CT far less often"
+      },
+      {
+        "name": "Overhanging or prolapsed nerve",
+        "note": "The nerve hangs over the oval window niche, limiting stapes surgery.",
+        "prevalence": "uncommon"
+      },
+      {
+        "name": "Anomalous course across the promontory or oval window",
+        "note": "Seen with oval window atresia and some congenital ears; the nerve runs inferior to or across the window.",
+        "prevalence": "rare"
+      },
+      {
+        "name": "Bifid tympanic segment",
+        "note": "The nerve splits around the stapes.",
+        "prevalence": "rare"
+      }
+    ],
+    "pitfalls": [
+      "The bony cover is thinner than a CT voxel at 0.5-0.6 mm; 'dehiscence' on CT is a low-specificity finding, but a clearly exposed nerve on two planes is worth reporting before stapes surgery.",
+      "A cholesteatoma that reaches the nerve on CT with no bone visible should be assumed dehiscent intraoperatively."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 8-11 mm"
+      },
+      {
+        "label": "Diameter",
+        "value": "about 1 mm"
+      }
+    ],
+    "fellow": [
+      "The nerve descends about 2-3 mm from the geniculate to the second genu; it is highest anteriorly, which is why attic cholesteatoma most often exposes its anterior portion near the cog.",
+      "In congenital aural atresia and some syndromes, the tympanic segment lies more inferiorly and can cross the oval window; preoperative CT is mandatory before atresiaplasty."
+    ],
+    "pathology": [
+      "Cholesteatoma erosion, facial schwannoma, haemangioma, Bell's palsy (enhancement of the tympanic segment is a less specific finding than the labyrinthine)."
+    ],
+    "sources": [
+      "Baxter A. Dehiscence of the fallopian canal: an anatomical study. J Laryngol Otol 1971.",
+      "Moreano EH, Paparella MM, Zelterman D, Goycoolea MV. Prevalence of facial canal dehiscence and of persistent stapedial artery in the human middle ear: a report of 1000 temporal bones. Laryngoscope 1994.",
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: facial nerve anatomy",
+      "Otology: chronic ear surgery",
+      "Otology: stapes surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "facial_nerve"
+    ]
+  },
+  {
+    "id": "fn_mastoid",
+    "name": "Facial nerve, mastoid segment",
+    "group": "facial",
+    "level": 1,
+    "color": "#f0c54a",
+    "aliases": [
+      "vertical segment",
+      "descending segment",
+      "second genu",
+      "fallopian canal third segment"
+    ],
+    "summary": "From the second genu below the lateral canal the nerve descends about 10-14 mm through the mastoid, lateral to the posterior canal and medial to the posterior canal wall, to exit at the stylomastoid foramen. It gives off the chorda tympani in its lower part.",
+    "find": {
+      "axial": "A round, corticated canal just posterior to the facial recess and lateral to the posterior canal, seen on each slice from the lateral canal down to the mastoid tip; it drifts slightly lateral as it descends.",
+      "coronal": "A vertical canal below the lateral canal, running down to the stylomastoid foramen between the EAC and the jugular bulb; the whole descent is seen in one or two posterior coronal slices.",
+      "sagittal": "A vertical canal posterior to the EAC; useful to show the second genu and the exit."
+    },
+    "relations": [
+      "Lateral canal superior to the second genu; the short process of the incus and fossa incudis point to the genu.",
+      "Facial recess and chorda tympani lateral to the upper part.",
+      "Posterior canal medial; retrofacial cells between them.",
+      "Jugular bulb medial and inferior; the carotid is well anterior.",
+      "Digastric ridge leads anteriorly to the stylomastoid foramen; the styloid process lies anterior to the foramen.",
+      "Posterior bony canal wall and tympanic annulus lateral to it (about 2-4 mm of bone between)."
+    ],
+    "surgical": [
+      "Mastoidectomy: the nerve is skeletonised using the lateral canal, the fossa incudis and the digastric ridge; drill parallel to the nerve with a diamond burr and copious irrigation, never across it.",
+      "Posterior tympanotomy opens the facial recess lateral to the nerve; the chorda-facial angle is the window.",
+      "Canal-wall-down surgery lowers the facial ridge to the level of the nerve; the nerve limits how low the ridge can go.",
+      "Facial nerve decompression and exploration after trauma or in Bell's palsy exposes it from the genu to the stylomastoid foramen."
+    ],
+    "variants": [
+      {
+        "name": "Anterior or lateral displacement in congenital aural atresia",
+        "note": "The mastoid segment courses more anteriorly and laterally and exits more laterally, often overlying the round window or the surgical field of atresiaplasty.",
+        "prevalence": "common in atresia"
+      },
+      {
+        "name": "Dehiscence of the mastoid segment",
+        "note": "Less common than the tympanic segment; seen in congenital ears and after surgery.",
+        "prevalence": "uncommon"
+      },
+      {
+        "name": "Bifid mastoid segment",
+        "note": "Two canals that rejoin or exit separately.",
+        "prevalence": "rare"
+      },
+      {
+        "name": "Posterior canal wall thin or dehiscent facial canal",
+        "note": "The nerve lies immediately under the posterior EAC wall; the Jahrsdoerfer score accounts for its position.",
+        "prevalence": "variable"
+      }
+    ],
+    "pitfalls": [
+      "The nerve is more lateral and superficial in children under about two years because the mastoid tip has not developed; postauricular incisions and canal procedures must respect this.",
+      "In congenital atresia the facial nerve's anterior displacement is the principal reason for preoperative CT; it can run across the planned canal.",
+      "Confusing the chorda tympani canal (thin, anterolateral) with the facial canal on axial images: the facial canal is larger and continues inferiorly."
+    ],
+    "measurements": [
+      {
+        "label": "Length",
+        "value": "about 10-14 mm"
+      },
+      {
+        "label": "Diameter",
+        "value": "about 1-1.5 mm"
+      },
+      {
+        "label": "Distance from the fossa incudis to the nerve",
+        "value": "about 2-3 mm inferomedially"
+      }
+    ],
+    "fellow": [
+      "The nerve is usually found 1-2 mm anterior to the anterior end of the digastric ridge and lateral to the tympanic bone's posterior edge; the tympanomastoid suture at the surface points to it in parotid surgery.",
+      "Facial ridge height in canal-wall-down surgery: lowering to the level of the lateral canal floor is safe; below that the nerve is exposed to the burr.",
+      "Topographic testing: lesions distal to the chorda origin spare taste; proximal to the stapedius branch lose the stapedial reflex."
+    ],
+    "pathology": [
+      "Cholesteatoma in the facial recess, longitudinal fractures (less common site of injury than the geniculate), facial schwannoma, iatrogenic injury (most often at the second genu or the lower mastoid segment)."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches.",
+      "Jahrsdoerfer RA et al. Grading system for the selection of patients with congenital aural atresia. Am J Otol 1992."
+    ],
+    "curriculum": [
+      "Otology: facial nerve anatomy",
+      "Otology: mastoidectomy",
+      "Pediatric otology: aural atresia"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "facial_nerve"
+    ]
+  },
+  {
+    "id": "chorda_tympani",
+    "name": "Chorda tympani",
+    "group": "facial",
+    "level": 2,
+    "color": "#e7bd55",
+    "aliases": [
+      "iter chordae posterius",
+      "iter chordae anterius",
+      "canal of Huguier"
+    ],
+    "summary": "A branch of the mastoid segment carrying taste from the anterior two-thirds of the tongue and parasympathetic fibres to the submandibular and sublingual glands. It leaves the nerve a few millimetres above the stylomastoid foramen, enters the middle ear posteriorly, crosses the tympanic membrane's medial surface between the malleus handle and incus long process, and exits anteriorly through the petrotympanic fissure.",
+    "find": {
+      "axial": "A thin canal arising from the anterolateral surface of the mastoid facial canal and running anterosuperiorly toward the posterior tympanic annulus; inside the middle ear it is not resolved on CT.",
+      "coronal": "A tiny canal lateral to the facial nerve in the posterior mastoid; rarely needed.",
+      "sagittal": "Not useful."
+    },
+    "relations": [
+      "Facial nerve mastoid segment at its origin; the facial recess lies between them.",
+      "Posterior tympanic annulus and the iter chordae posterius at its entry.",
+      "Runs medial to the tympanic membrane and lateral to the incus long process, then medial to the malleus neck.",
+      "Exits through the petrotympanic fissure at the anterior annulus."
+    ],
+    "surgical": [
+      "Forms the lateral boundary of the facial recess in posterior tympanotomy; sacrificing it widens the recess by a millimetre or two when necessary.",
+      "In tympanomeatal flap elevation it is seen crossing the posterosuperior quadrant; stretching it causes taste disturbance and metallic dysgeusia for weeks to months.",
+      "In stapes surgery it is displaced upward or downward gently; sectioning is preferable to stretching when it blocks the view."
+    ],
+    "variants": [
+      {
+        "name": "Origin from the facial nerve outside the stylomastoid foramen",
+        "note": "The chorda can arise at or below the foramen and re-enter the bone through its own canal.",
+        "prevalence": "uncommon"
+      },
+      {
+        "name": "High origin",
+        "note": "Origin close to the second genu, which narrows the facial recess.",
+        "prevalence": "uncommon"
+      }
+    ],
+    "pitfalls": [
+      "A high or lateral chorda origin makes the facial recess narrow; a narrow recess on CT is one reason to plan a wider or alternative CI approach.",
+      "In congenital ears the chorda may be absent or aberrant."
+    ],
+    "measurements": [
+      {
+        "label": "Origin above the stylomastoid foramen",
+        "value": "typically about 4-6 mm, but anywhere from the foramen itself to the upper mastoid segment"
+      },
+      {
+        "label": "Facial recess width (chorda to facial nerve)",
+        "value": "about 2-3 mm"
+      }
+    ],
+    "fellow": [
+      "Preoperative taste testing documents baseline function in revision ears where the chorda may already be damaged.",
+      "The chorda-facial angle is the key measurement for a safe posterior tympanotomy in children; the angle and recess width can be estimated on axial CT."
+    ],
+    "pathology": [
+      "Iatrogenic injury (dysgeusia), involvement by cholesteatoma in the facial recess."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Otology: facial nerve anatomy",
+      "Otology: posterior tympanotomy and cochlear implantation"
+    ],
+    "reviewed": null
+  },
+  {
+    "id": "stylomastoid_foramen",
+    "name": "Stylomastoid foramen",
+    "group": "facial",
+    "level": 2,
+    "color": "#e7bd55",
+    "aliases": [
+      "SMF"
+    ],
+    "summary": "The exit of the facial nerve from the temporal bone on the inferior surface, between the styloid process anteriorly and the mastoid process posteriorly, at the anterior end of the digastric groove. The stylomastoid artery enters here.",
+    "find": {
+      "axial": "On the lowest slices through the mastoid, the facial canal opens on the undersurface of the bone just posterolateral to the styloid base and anteromedial to the mastoid tip.",
+      "coronal": "The inferior end of the vertical facial canal, medial to the mastoid tip and lateral to the jugular foramen.",
+      "sagittal": "The canal exit posterior to the styloid."
+    },
+    "relations": [
+      "Styloid process anterior and the mastoid process posterior.",
+      "Digastric ridge (groove) posteriorly; the nerve exits at its anterior end.",
+      "Jugular bulb medial; the carotid is further anteromedial.",
+      "Parotid gland and the posterior belly of digastric below."
+    ],
+    "surgical": [
+      "Parotidectomy landmarks for the trunk: the tragal pointer (nerve about 1 cm deep and inferior), the tympanomastoid suture (nerve about 6-8 mm deep), and the posterior belly of digastric (nerve just superior to its insertion).",
+      "In mastoidectomy the digastric ridge is followed anteriorly to find the foramen when the lower mastoid segment must be skeletonised.",
+      "Children under about two years have no mastoid tip: the nerve exits superficially and is at risk in postauricular and canal incisions."
+    ],
+    "variants": [
+      {
+        "name": "Lateral exit in congenital aural atresia",
+        "note": "The foramen can lie lateral to its usual position, in the field of a canalplasty.",
+        "prevalence": "common in atresia"
+      }
+    ],
+    "pitfalls": [
+      "The nerve is immediately lateral to the styloid base: aggressive styloid dissection endangers it."
+    ],
+    "measurements": [
+      {
+        "label": "Depth from the tympanomastoid suture (parotid surgery)",
+        "value": "about 6-8 mm"
+      }
+    ],
+    "fellow": [
+      "The stylomastoid artery (from the posterior auricular) enters the foramen and supplies the mastoid segment; bleeding here is the usual 'venous ooze' at the lower end of a decompression."
+    ],
+    "pathology": [
+      "Facial schwannoma at the foramen; extratemporal spread of parotid malignancy along the nerve."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: facial nerve anatomy",
+      "Head and neck: parotid surgery"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "fn_mastoid",
+      "facial_nerve"
+    ]
+  },
+  {
+    "id": "second_genu",
+    "name": "Second genu of the facial nerve",
+    "group": "facial",
+    "level": 2,
+    "color": "#e7bd55",
+    "mesh": false,
+    "anchor": "second_genu",
+    "aliases": [
+      "pyramidal turn",
+      "posterior genu"
+    ],
+    "summary": "The bend where the tympanic segment turns inferiorly into the mastoid segment, at the posterior wall of the middle ear just below the lateral canal and lateral to the posterior canal. It is the single most important point to locate in a mastoidectomy.",
+    "find": {
+      "axial": "Where the facial canal changes from a posteriorly directed oval to a round vertical canal, at the level of the lateral canal's posterior limb and the fossa incudis.",
+      "coronal": "Just below the lateral canal in a posterior coronal slice; the vertical canal begins here.",
+      "sagittal": "Shows the bend well, posterior to the EAC and below the lateral canal."
+    },
+    "relations": [
+      "Lateral canal directly above (the nerve passes under its posterior limb).",
+      "Short process of the incus and fossa incudis lateral and slightly superior (the short process points at the genu).",
+      "Pyramidal eminence anterior; the sinus tympani medial and the facial recess lateral.",
+      "Posterior canal medial."
+    ],
+    "surgical": [
+      "Located by drilling along the lateral canal posteriorly and inferiorly with the fossa incudis as the lateral guide; the bone over the nerve looks pink-grey when thinned.",
+      "The second genu is the usual site of iatrogenic injury in mastoidectomy and in canal-wall-down surgery.",
+      "The posterior tympanotomy starts here: the facial recess is opened lateral to the genu and inferior to the fossa incudis."
+    ],
+    "variants": [
+      {
+        "name": "Genu displaced anteriorly or laterally",
+        "note": "Seen with congenital atresia; the nerve can lie lateral to the lateral canal level.",
+        "prevalence": "atresia and some syndromes"
+      }
+    ],
+    "pitfalls": [
+      "A pneumatised retrofacial cell can be mistaken for the antrum or the nerve canal; the genu is always inferior to the lateral canal and lateral to the posterior canal."
+    ],
+    "measurements": [
+      {
+        "label": "Below the lateral canal",
+        "value": "about 1-2 mm"
+      }
+    ],
+    "fellow": [
+      "The angle between the tympanic and mastoid segments is about 95-125 degrees; a more obtuse angle is seen in some congenital ears.",
+      "Stimulating the genu through thinned bone at 0.1-0.2 mA with the monitor confirms the plane before opening the recess."
+    ],
+    "pathology": [
+      "Iatrogenic injury; cholesteatoma in the facial recess and sinus tympani wrapping the genu."
+    ],
+    "sources": [
+      "Sanna M et al. The Temporal Bone: A Manual for Dissection and Surgical Approaches.",
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications."
+    ],
+    "curriculum": [
+      "Otology: mastoidectomy",
+      "Otology: facial nerve anatomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "fn_mastoid",
+      "facial_nerve"
+    ]
+  }
+]
