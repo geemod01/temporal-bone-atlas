@@ -95,7 +95,11 @@ export class QuizRunner {
     let ok = false, detail = '';
     if (q.type === 'identify') {
       const lab = ds.labelAt(c);
-      if (lab && lab === q.target) ok = true;
+      // accept the target itself, or a coarser structure the dataset uses in its place (e.g. the whole facial nerve for a segment)
+      const def = STRUCTURE_BY_ID.get(q.target);
+      const coarse = new Set((def && def.fallback) || []);
+      const hasOwn = ds.meshById.has(q.target) || (ds.labels && ds.labelValueOf.has(q.target));
+      if (lab && (lab === q.target || (!hasOwn && coarse.has(lab)))) ok = true;
       else {
         const a = this.anchor(q);
         const dist = a ? Math.hypot(c[0] - a[0], c[1] - a[1], c[2] - a[2]) : Infinity;
