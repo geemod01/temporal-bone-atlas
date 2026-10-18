@@ -428,6 +428,7 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping)
 
 # --------------------------------------------------------------------------
 def main(argv=None):
+    log('converter main() entered')
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--volume', required=True, help='DICOM folder or NIfTI/NRRD file')
     ap.add_argument('--meshes', help='folder with STL/OBJ/PLY files')

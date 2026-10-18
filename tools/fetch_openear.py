@@ -56,7 +56,8 @@ def _post_progress(force=False):
     repo = os.environ.get('GITHUB_REPOSITORY'); sha = os.environ.get('GITHUB_SHA'); tok = os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
     if not (repo and sha and tok):
         return
-    body = 'Conversion progress (run %s) at %s UTC\n\n```\n%s\n```' % (os.environ.get('GITHUB_RUN_ID', '?'), time.strftime('%H:%M:%S', time.gmtime()), '\n'.join(_progress['lines'][-80:])[-50000:])
+    head = [l for l in _progress['lines'][:6] if l.startswith('env')]
+    body = 'Conversion progress (run %s) at %s UTC\n\n```\n%s\n```' % (os.environ.get('GITHUB_RUN_ID', '?'), time.strftime('%H:%M:%S', time.gmtime()), '\n'.join(head + _progress['lines'][-120:])[-60000:])
     try:
         h = {'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json'}
         if _progress['id'] is None:
@@ -445,8 +446,20 @@ def main():
             cmd += ['--crop', 'none']
         log('running converter in-process: ' + ' '.join(cmd[2:]))
         _post_progress(force=True)
+        # instrumented imports: each library on its own line, posted immediately, so a kill is attributable
+        import importlib
+        for lib in ('numpy', 'SimpleITK', 'trimesh', 'fast_simplification'):
+            t0 = time.time()
+            try:
+                importlib.import_module(lib)
+                log('  import %s ok (%.1fs)' % (lib, time.time() - t0))
+            except Exception as e:
+                log('  import %s FAILED: %s' % (lib, e))
+            _post_progress(force=True)
         import convert_openear
         convert_openear.log = log          # route the converter's log lines through ours (progress comment)
+        log('  converter module loaded; starting main()')
+        _post_progress(force=True)
         convert_openear.main(cmd[2:])
         _post_progress(force=True)
         register(a.out, {'id': 'openear_%s' % spec, 'name': 'OpenEar %s' % spec.capitalize(), 'file': 'openear_%s.tba' % spec,
