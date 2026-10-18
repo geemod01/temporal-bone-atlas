@@ -38,10 +38,58 @@ jobs:
           python-version: "3.11"
       - name: Install converter dependencies
         run: pip install numpy SimpleITK trimesh fast-simplification requests
-      - name: Fetch and convert ${{ inputs.specimen }}
+      - name: Probe Zenodo and list the archive
+        id: probe
+        continue-on-error: true
         run: |
-          python3 tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --spacing "${{ inputs.spacing }}" --out data --work work ${{ inputs.full_download && '--full' || '' }}
+          set -o pipefail
+          {
+            echo "## Zenodo probe"
+            echo '```'
+            python3 - <<'PY' 2>&1 | tail -40
+          import requests, json
+          r = requests.get("https://zenodo.org/api/records/1473724", timeout=60)
+          print("api status", r.status_code)
+          j = r.json()
+          for f in j.get("files", []):
+              print(f.get("key"), f.get("size"), (f.get("links") or {}).get("self"))
+          PY
+            echo '```'
+            echo "## Archive listing (${{ inputs.specimen }})"
+            echo '```'
+            python3 tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --list --work work 2>&1 | tail -60
+            echo '```'
+          } | tee probe.md
+          cat probe.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Fetch and convert ${{ inputs.specimen }}
+        id: convert
+        run: |
+          set -o pipefail
+          python3 tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --spacing "${{ inputs.spacing }}" --out data --work work ${{ inputs.full_download && '--full' || '' }} 2>&1 | tee convert.log
           ls -la data
+      - name: Report (always)
+        if: always()
+        run: |
+          {
+            echo "## Conversion log (last 120 lines)"
+            echo '```'
+            tail -120 convert.log 2>/dev/null || echo "(no convert.log: the step did not start)"
+            echo '```'
+            echo "## Work folder"
+            echo '```'
+            find work -maxdepth 4 -type d 2>/dev/null | head -50
+            du -sh work 2>/dev/null
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload logs (always)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openear-logs-${{ inputs.specimen }}
+          path: |
+            probe.md
+            convert.log
+          if-no-files-found: ignore
       - name: Commit packs
         run: |
           git config user.name "github-actions[bot]"
