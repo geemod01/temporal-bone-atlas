@@ -68,6 +68,43 @@ def log(*a):
 # --------------------------------------------------------------------------
 # Volume
 # --------------------------------------------------------------------------
+class LazyVolume:
+    """Header-only handle on a volume file; reads voxels only for a requested index region."""
+
+    def __init__(self, path):
+        r = sitk.ImageFileReader(); r.SetFileName(path); r.ReadImageInformation()
+        self.path = path
+        self.size = tuple(int(x) for x in r.GetSize())
+        self.spacing = tuple(float(x) for x in r.GetSpacing())
+        self.origin = tuple(float(x) for x in r.GetOrigin())
+        self.direction = tuple(float(x) for x in r.GetDirection())
+        self.pixel_type = sitk.GetPixelIDValueAsString(r.GetPixelID())
+        # a tiny image carrying the geometry, so Transform*Point works without voxels
+        self._geo = sitk.Image([1, 1, 1], sitk.sitkUInt8)
+        self._geo.SetSpacing(self.spacing); self._geo.SetOrigin(self.origin); self._geo.SetDirection(self.direction)
+
+    def GetSize(self): return self.size
+    def GetSpacing(self): return self.spacing
+    def GetOrigin(self): return self.origin
+    def GetDirection(self): return self.direction
+    def TransformIndexToPhysicalPoint(self, idx): return self._geo.TransformIndexToPhysicalPoint(tuple(int(i) for i in idx))
+    def TransformPhysicalPointToContinuousIndex(self, p): return self._geo.TransformPhysicalPointToContinuousIndex(tuple(float(x) for x in p))
+
+    def read_region(self, index, size):
+        r = sitk.ImageFileReader(); r.SetFileName(self.path)
+        r.SetExtractIndex([int(x) for x in index]); r.SetExtractSize([int(x) for x in size])
+        try:
+            return r.Execute()
+        except Exception as e:
+            # some formats cannot stream (e.g. gzip-compressed NRRD): read whole, crop, release
+            log('  streaming read unavailable (%s); reading whole volume then cropping' % str(e).splitlines()[0][:80])
+            whole = sitk.ReadImage(self.path)
+            return sitk.RegionOfInterest(whole, [int(x) for x in size], [int(x) for x in index])
+
+    def read_all(self):
+        return sitk.ReadImage(self.path)
+
+
 def read_volume(path):
     if sitk is None:
         raise SystemExit('SimpleITK is required: pip install SimpleITK')
@@ -88,8 +125,8 @@ def read_volume(path):
         img = reader.Execute()
         log('read DICOM series: %d slices' % len(files))
         return img
-    log('reading volume', path)
-    return sitk.ReadImage(path)
+    log('opening volume header', path)
+    return LazyVolume(path)
 
 
 def lps_to_ras_point(p):
@@ -98,8 +135,8 @@ def lps_to_ras_point(p):
 
 def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if sitk else None):
     """Crop (in index space) to the requested RAS box, then resample to isotropic spacing with identity
-    direction (in LPS). Returns array in RAS order. The crop happens before any cast so a 2000^3 CBCT
-    never needs to be held as float."""
+    direction (in LPS). Returns array in RAS order. With a LazyVolume only the crop region is ever read."""
+    lazy = isinstance(img, LazyVolume)
     size = np.array(img.GetSize())
     corners = []
     for i in (0, size[0] - 1):
@@ -122,8 +159,14 @@ def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if
         i0 = np.maximum(np.floor(idx.min(0)).astype(int) - 2, 0)
         i1 = np.minimum(np.ceil(idx.max(0)).astype(int) + 3, size)
         if np.all(i1 > i0):
-            img = sitk.RegionOfInterest(img, [int(x) for x in (i1 - i0)], [int(x) for x in i0])
+            if lazy:
+                img = img.read_region(i0, i1 - i0)
+            else:
+                img = sitk.RegionOfInterest(img, [int(x) for x in (i1 - i0)], [int(x) for x in i0])
             log('cropped input to %s voxels before resampling' % list(img.GetSize()))
+    if isinstance(img, LazyVolume):
+        log('reading whole volume (no crop)')
+        img = img.read_all()
     out_size = np.maximum(1, np.ceil((hi - lo) / spacing).astype(int) + 1)
     ref = sitk.Image([int(x) for x in out_size], sitk.sitkFloat32)
     ref.SetSpacing([spacing] * 3)
