@@ -36,12 +36,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Free disk space on the runner
-        run: |
-          df -h / | tail -1
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/boost 2>/dev/null || true
-          sudo docker image prune -af >/dev/null 2>&1 || true
-          df -h / | tail -1
       - name: Install converter dependencies
         run: pip install numpy SimpleITK trimesh fast-simplification requests
       - name: Probe Zenodo and list the archive
