@@ -888,5 +888,69 @@
       "vestibule",
       "cochlea"
     ]
+  },
+  {
+    "id": "cochleovestibular_nerve",
+    "name": "Cochleovestibular nerve (VIII)",
+    "group": "inner",
+    "level": 2,
+    "color": "#b8a6e0",
+    "aliases": [
+      "vestibulocochlear nerve",
+      "CN VIII",
+      "cochlear nerve",
+      "superior vestibular nerve",
+      "inferior vestibular nerve",
+      "acoustic nerve"
+    ],
+    "summary": "The eighth nerve runs from the brainstem through the cerebellopontine angle into the IAC, where it divides into the cochlear nerve (anteroinferior at the fundus, entering the modiolus) and the superior and inferior vestibular nerves (posterior, entering the vestibule). On CT the nerve is not seen; its canal and aperture are. OpenEar segments it as one structure from micro-slicing.",
+    "find": {
+      "axial": "Occupies the IAC with the facial nerve; on CT infer it from the canal width and the cochlear aperture. On CISS/FIESTA MRI it is the larger posterior trunk in the canal.",
+      "coronal": "Fills the lower and posterior IAC in cross-section.",
+      "sagittal": "Oblique sagittal MRI through the canal shows its division into cochlear and vestibular nerves."
+    },
+    "relations": [
+      "Facial nerve anterosuperior to it in the IAC, separated by Bill's bar at the fundus.",
+      "Cochlear division enters the modiolus through the cochlear aperture; vestibular divisions pierce the fundus toward the utricle, saccule and ampullae.",
+      "AICA and the labyrinthine artery run with it; the nervus intermedius lies between it and the facial nerve."
+    ],
+    "surgical": [
+      "Vestibular schwannomas arise from the vestibular divisions (usually the superior) and splay the cochlear and facial nerves anteriorly.",
+      "Vestibular neurectomy sections the vestibular divisions sparing the cochlear nerve; the cleavage plane is found at the porus.",
+      "Cochlear nerve integrity (MRI) decides cochlear implant versus auditory brainstem implant."
+    ],
+    "variants": [
+      {
+        "name": "Cochlear nerve deficiency",
+        "note": "Hypoplastic or absent cochlear division with a narrow cochlear aperture and often a narrow IAC.",
+        "prevalence": "uncommon; important in paediatric implant candidacy"
+      }
+    ],
+    "pitfalls": [
+      "A normal-looking IAC on CT does not prove a cochlear nerve; MRI in the oblique sagittal plane is required when candidacy depends on it."
+    ],
+    "measurements": [
+      {
+        "label": "Cochlear nerve diameter",
+        "value": "about 1-1.2 mm at the fundus"
+      }
+    ],
+    "fellow": [
+      "Superior vestibular nerve supplies the utricle, superior and lateral canal ampullae; the inferior vestibular nerve the saccule and (via the singular nerve) the posterior canal ampulla, which is why cVEMP tests the inferior and oVEMP the superior division."
+    ],
+    "pathology": [
+      "Vestibular schwannoma, cochlear nerve aplasia/hypoplasia, vestibular neuritis (superior division predominance)."
+    ],
+    "sources": [
+      "Gulya AJ, Schuknecht HF. Anatomy of the Temporal Bone with Surgical Implications.",
+      "Brackmann DE, Shelton C, Arriaga MA. Otologic Surgery."
+    ],
+    "curriculum": [
+      "Neurotology: IAC and CPA anatomy"
+    ],
+    "reviewed": null,
+    "fallback": [
+      "iac"
+    ]
   }
 ]

@@ -185,47 +185,55 @@ def summarize(zf):
         log('  %8.0f MB  %s' % (zi.file_size / 1e6, zi.filename))
 
 
-def choose_members(zf):
-    """Decide which archive members to extract: the finest CBCT volume, the segmentation volume(s),
-    the surface models and small metadata. Raw DICOM/TIFF and micro-slicing volumes are skipped."""
+def choose_members(zf, prefer='embedded'):
+    """Pick the archive members the atlas needs.
+
+    OpenEar layout (verified on DELTA.zip):
+      05_Registred_Slicer_Volumes/CBCT_EMBEDDED_<Name>.nrrd    125 um HiRes CBCT, registered  (~125 MB)
+      05_Registred_Slicer_Volumes/CBCT_UNEMBEDDED_<Name>.nrrd  250 um CBCT of the unembedded bone (~320 MB)
+      06_Segmentation/Segmentation.seg.nrrd                    label map (~35 MB)
+      07_3D_Models/NN_<Structure>.ply                          surfaces (+ Bone.nrrd / 12_Bone.ply, large)
+    Everything else (raw DICOM, micro-slicing TIFF and NRRD) is skipped.
+    """
     members = [zi for zi in zf.infolist() if not zi.is_dir()]
     NRRD_PRESENT['yes'] = any(re.search(r'\.(nrrd|nhdr)$', zi.filename, re.I) for zi in members)
-    vols, segs, meshes, meta = [], [], [], []
-    for zi in members:
-        kind = classify(zi.filename)
-        if not kind:
-            continue
-        low = zi.filename.lower()
-        if kind == 'volume':
-            if re.search(r'(micro|slic|histo|colou?r|rgb)', low):
-                continue                                   # micro-slicing colour volumes: not needed
-            if re.search(r'(seg|label|mask)', os.path.basename(low)):
-                segs.append(zi)
-            else:
-                vols.append(zi)
-        elif kind == 'mesh':
-            meshes.append(zi)
-        else:
-            meta.append(zi)
-    # CBCT candidates: prefer names that say HiRes / high / 125; otherwise the largest NRRD (finest grid)
-    def vol_rank(zi):
-        name = os.path.basename(zi.filename).lower()
-        hint = 0 if re.search(r'(hires|hi-res|high|125)', name) else (2 if re.search(r'(unembedded|low|250|lores)', name) else 1)
-        return (hint, -zi.file_size)
-    vols.sort(key=vol_rank)
-    dicom = [zi for zi in vols if re.search(r'\.(dcm|dicom|ima)$', zi.filename, re.I)]
-    nrrd = [zi for zi in vols if zi not in dicom]
-    chosen_vols = [nrrd[0]] if nrrd else dicom           # one NRRD, or the whole DICOM series as a fallback
-    log('volume candidates:')
-    for zi in vols[:12]:
-        log('  %s %s (%.0f MB)' % ('*' if zi in chosen_vols else ' ', zi.filename, zi.file_size / 1e6))
-    if len(vols) > 12:
-        log('  ... %d more' % (len(vols) - 12))
-    return chosen_vols + segs + meshes + meta
+    def find(pattern):
+        return [zi for zi in members if re.search(pattern, zi.filename, re.I)]
+    emb = find(r'registr.*cbct_embedded.*\.nrrd$') or find(r'cbct_embedded.*\.nrrd$')
+    unemb = find(r'registr.*cbct_unembedded.*\.nrrd$') or find(r'cbct_unembedded.*\.nrrd$')
+    seg = find(r'segmentation.*\.seg\.nrrd$') or find(r'06_segmentation/.*\.nrrd$') or find(r'segmentation.*\.nrrd$')
+    ply = [zi for zi in find(r'3d_models/.*\.(ply|stl|obj)$') if not re.search(r'(^|/)(12_)?bone\.(ply|stl|obj)$', zi.filename, re.I)]
+    if not ply:
+        ply = [zi for zi in find(r'\.(ply|stl|obj)$') if zi.file_size < 40e6]
+    meta = find(r'(accuracy|readme|license|volumetric).*\.txt$')
+    vols = []
+    if prefer == 'unembedded' and unemb:
+        vols = [unemb[0]]
+    elif emb:
+        vols = [emb[0]]
+    elif unemb:
+        vols = [unemb[0]]
+    if not vols:
+        # generic fallback: largest NRRD that is not a label map / micro-slicing volume
+        cands = [zi for zi in find(r'\.(nrrd|nhdr|nii|nii\.gz|mha)$') if not re.search(r'(seg|label|mask|micro|slic|histo|bone\.nrrd)', zi.filename, re.I)]
+        cands.sort(key=lambda zi: -zi.file_size)
+        vols = cands[:1]
+        if not vols:
+            dicom = find(r'\.(dcm|dicom|ima)$')
+            if dicom:
+                # a whole series: take the folder with the most files
+                folders = {}
+                for zi in dicom:
+                    folders.setdefault(os.path.dirname(zi.filename), []).append(zi)
+                vols = max(folders.values(), key=len)
+    log('CBCT volume: %s' % (', '.join('%s (%.0f MB)' % (zi.filename, zi.file_size / 1e6) for zi in vols[:1]) or 'NONE FOUND'))
+    log('segmentation: %s' % (', '.join('%s (%.0f MB)' % (zi.filename, zi.file_size / 1e6) for zi in seg[:1]) or 'none'))
+    log('surfaces: %d files' % len(ply))
+    return vols + seg[:1] + ply + meta
 
 
-def extract_needed(zf, dest, budget_bytes=9 * 1024 ** 3):
-    chosen = choose_members(zf)
+def extract_needed(zf, dest, budget_bytes=9 * 1024 ** 3, prefer='embedded'):
+    chosen = choose_members(zf, prefer)
     total = sum(zi.file_size for zi in chosen)
     log('extracting %d files (%.1f MB uncompressed)' % (len(chosen), total / 1e6))
     if total > budget_bytes:
@@ -280,14 +288,17 @@ def find_inputs(dest):
                 vol_files.append(p)
             elif MESH_EXT.search(f):
                 mesh_dirs[root] = mesh_dirs.get(root, 0) + 1
-    labels = [p for p in vol_files if is_label_volume(p)]
-    cts = [p for p in vol_files if p not in labels and not re.search(r'(micro|slic|histo|color|colour|rgb)', p, re.I)]
+    labels = [p for p in vol_files if re.search(r'(segmentation|\.seg\.nrrd$)', os.path.basename(p), re.I)]
+    cts = [p for p in vol_files if p not in labels and re.search(r'cbct', os.path.basename(p), re.I)]
+    if not cts:
+        labels = [p for p in vol_files if is_label_volume(p)]
+        cts = [p for p in vol_files if p not in labels and not re.search(r'(micro|slic|histo|color|colour|rgb|bone\.nrrd$)', p, re.I)]
     volume = None
     if cts:
         # prefer the high-resolution CBCT: name hints first, then finest spacing, then size
         def key(p):
             name = os.path.basename(p).lower()
-            hint = 0 if re.search(r'(hires|hi-res|high|cbct|ct)', name) else 1
+            hint = 0 if re.search(r'(cbct_embedded|hires|hi-res|high)', name) else (1 if re.search(r'cbct', name) else 2)
             try:
                 import SimpleITK as sitk
                 r = sitk.ImageFileReader(); r.SetFileName(p); r.ReadImageInformation(); sp = min(r.GetSpacing())
@@ -318,6 +329,7 @@ def main():
     ap.add_argument('--full', action='store_true', help='download the whole archive instead of using range requests')
     ap.add_argument('--side', default='auto', help='R, L, or auto (from metadata if present)')
     ap.add_argument('--no-labels', action='store_true')
+    ap.add_argument('--volume-choice', default='embedded', choices=['embedded', 'unembedded'], help='embedded = 125 um HiRes scan of the epoxy-embedded bone (default); unembedded = 250 um scan with a wider field')
     ap.add_argument('--url', help='use this archive URL (or local .zip path) instead of the Zenodo API')
     a = ap.parse_args()
 
@@ -357,7 +369,7 @@ def main():
         summarize(zf)
         if a.list:
             continue
-        extract_needed(zf, dest)
+        extract_needed(zf, dest, prefer=a.volume_choice)
         volume, meshes, label_vol = find_inputs(dest)
         log('volume input: %s' % volume)
         log('label volume: %s' % label_vol)

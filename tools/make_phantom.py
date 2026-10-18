@@ -335,29 +335,7 @@ def build_labels():
     G = Grid(N_LAB, H_LAB, ORIGIN)
     whole = (-26, 22, -24, 24, -24, 24)
 
-    # ---- soft tissue around the bone (fossae, surfaces) -------------------
-    # middle fossa above the tegmen plane
-    G.paint("middle_fossa", halfspace((0, 0, 1), (0, 0, 8.8)), whole)
-    # posterior fossa: slanted posterior petrous surface + behind sigmoid + medial to porus
-    post = union(halfspace((-0.669, -0.743, 0), (-10, -9, 0)),   # y - (-9) < -0.9 (x + 10)
-                 halfspace((-1, 0, 0), (-22, 0, 0)),
-                 intersect(halfspace((0, -1, 0), (0, -21.0, 0)), halfspace((0, 0, 1), (0, 0, -12))))
-    G.paint("posterior_fossa", post, whole)
-    # inferior skull base surface: soft tissue below z=-16 anterior of the mastoid tip
-    inf_soft = intersect(halfspace((0, 0, -1), (0, 0, -16)), halfspace((0, 1, 0), (0, -6, 0)), halfspace((1, 0, 0), (-6, 0, 0)))
-    G.paint("posterior_fossa", inf_soft, whole)  # reuse soft-tissue label (parotid/neck), HU similar
-    # mastoid tip region keeps bone down to z=-22 between y -16..-8, x 5..13; below that soft
-    G.paint("posterior_fossa", intersect(halfspace((0, 0, -1), (0, 0, -16)), halfspace((0, -1, 0), (0, -6, 0)),
-                                         union(halfspace((0, 0, -1), (0, 0, -22)), halfspace((-1, 0, 0), (4.5, 0, 0)), halfspace((1, 0, 0), (13.5, 0, 0)),
-                                               halfspace((0, -1, 0), (0, -16.5, 0)))), whole)
-    # lateral soft tissue: x > 14 posterior to the canal; x > 17 around the bony canal
-    lat1 = intersect(halfspace((1, 0, 0), (14, 0, 0)), halfspace((0, -1, 0), (0, -3, 0)))
-    lat2 = intersect(halfspace((1, 0, 0), (17, 0, 0)), halfspace((0, 1, 0), (0, -3, 0)))
-    G.paint("posterior_fossa", union(lat1, lat2), whole)
-    # anterior: TMJ / glenoid soft tissue anterior to the canal (y > 7.5, x > 8.5, z < 4)
-    G.paint("posterior_fossa", intersect(halfspace((0, 1, 0), (0, 7.5, 0)), halfspace((1, 0, 0), (8.5, 0, 0)), halfspace((0, 0, -1), (0, 0, 4.0))), whole)
-    # outside air lateral to the skin: x > 20.5
-    G.paint("eac", halfspace((1, 0, 0), (20.5, 0, 0)), whole)
+    # (fossae, surfaces, scalp and outside air come from the context field; the core keeps only fine structures)
     # condyle (bone) inside the TMJ soft tissue
     G.paint("tmj", ellipsoid((12.5, 12.5, -3.0), (3.4, 3.8, 4.6)), (8, 17, 8, 17, -8, 2))
     # petrous apex marrow
@@ -506,67 +484,92 @@ def labels_to_ct(L256):
     return ct
 
 
+def _ell(X, Y, Z, c, r):
+    return ((X - c[0]) / r[0]) ** 2 + ((Y - c[1]) / r[1]) ** 2 + ((Z - c[2]) / r[2]) ** 2
+
+
 def context_field(core_ct, L128_core):
-    """Embed the 48 mm core into a 96 mm field with skull-base context (all synthetic, coarse).
+    """Embed the 48 mm core into a 96 mm field with smooth skull-base context.
 
     Frame: +x lateral (right ear), +y anterior, +z superior; vestibule at the origin.
-    Context: squamous temporal bone and middle fossa (temporal lobe) above the tegmen; the petrous
-    pyramid running medially to the clivus with the posterior fossa (cerebellum) behind; mastoid
-    process tapering to the tip with neck soft tissue below; TMJ/zygoma anteriorly; scalp and air
-    laterally. The core's own labelled soft-tissue regions take precedence where they overlap.
+    Everything here is built from ellipsoids and curved shells so the context has no straight
+    edges. The core contributes only (a) its labelled fine structures and (b) its bone texture
+    where the context is bone, feathered over several millimetres; so no seam is visible.
     """
     n = N_CT
     zs = (ORIGIN_FULL[2] + np.arange(n) * H_CT).astype(np.float32)[:, None, None]
     ys = (ORIGIN_FULL[1] + np.arange(n) * H_CT).astype(np.float32)[None, :, None]
     xs = (ORIGIN_FULL[0] + np.arange(n) * H_CT).astype(np.float32)[None, None, :]
     X = np.broadcast_to(xs, (n, n, n)); Y = np.broadcast_to(ys, (n, n, n)); Z = np.broadcast_to(zs, (n, n, n))
-    field = np.full((n, n, n), 40.0, np.float32)                       # soft tissue baseline (brain / muscle)
-    # bone of the skull base: a thick slab centred on the petrous axis, thinning toward the apex
-    petrous_axis = (X * 0.0 + 1.0)                                      # placeholder to keep shapes
-    # petrous pyramid: from the ear (x ~ 0) medially to the clivus (x ~ -46), tapering in y and z
-    t = np.clip((0.0 - X) / 46.0, 0, 1)                                 # 0 at the ear, 1 at the apex
-    half_y = 20.0 * (1.0 - 0.55 * t); half_z = 14.0 * (1.0 - 0.45 * t)
-    pyramid = (X < 2.0) & (np.abs(Y - 2.0 + 8.0 * t) < half_y) & (np.abs(Z + 3.0 - 4.0 * t) < half_z)
-    # squamous temporal bone: a curved plate lateral and superior, 3 mm thick, with the mastoid below
-    r_skull = np.sqrt((X - (-12.0)) ** 2 * 0.55 + (Z - 2.0) ** 2 * 0.35 + (Y - 0.0) ** 2 * 0.18)
-    skull_plate = (r_skull > 26.5) & (r_skull < 29.5) & (X > -4.0)
-    # mastoid process: bone lateral/posterior/inferior of the ear tapering to a tip at z ~ -36
-    mast = (X > -2.0) & (X < 24.0) & (Y < 0.0) & (Y > -30.0 + 0.5 * np.clip(-Z - 10.0, 0, 30)) & (Z > -36.0) & (Z < 10.0) & (np.abs(X - 11.0) < 13.0 - 0.35 * np.clip(-Z - 10.0, 0, 30))
-    # zygomatic root / glenoid anteriorly
-    zyg = (X > 4.0) & (X < 22.0) & (Y > 4.0) & (Y < 30.0) & (Z > -4.0) & (Z < 6.0)
-    # occipital bone behind the posterior fossa: a plate at y ~ -42
-    occ = (Y < -39.0) & (Y > -44.0) & (X < 20.0)
-    # clivus / basiocciput medially
-    cliv = (X < -42.0) & (X > -47.0) & (Y > -8.0) & (Y < 18.0) & (Z < 6.0) & (Z > -30.0)
-    bone = pyramid | skull_plate | mast | zyg | occ | cliv
     tex = ndi.gaussian_filter(RNG.normal(0, 1, size=(n, n, n)).astype(np.float32), 1.5)
     tex = tex / (tex.std() + 1e-6)
+
+    # ---- head: an ellipsoidal vault whose wall is the skull; centre far medial & superior ----
+    head_c = (-62.0, 6.0, 28.0); head_r = (84.0, 92.0, 70.0)
+    e_head = _ell(X, Y, Z, head_c, head_r)
+    inside_head = e_head < 1.0
+    skull = (e_head < 1.0) & (e_head > 0.86)            # ~6 mm vault
+    diploe = (e_head < 0.975) & (e_head > 0.905)
+    # ---- petrous pyramid: a long ellipsoid from the ear to the clivus, tilted anteromedially ----
+    # axis from (6, 2, -4) to (-46, 12, -8); half-width shrinks toward the apex via a second ellipsoid
+    ax0 = np.array([6.0, 2.0, -4.0]); ax1 = np.array([-46.0, 12.0, -8.0])
+    axv = ax1 - ax0; L = np.linalg.norm(axv); u = axv / L
+    px, py, pz = X - ax0[0], Y - ax0[1], Z - ax0[2]
+    tproj = (px * u[0] + py * u[1] + pz * u[2]) / L           # 0 at the ear, 1 at the apex
+    perp2 = px * px + py * py + pz * pz - (tproj * L) ** 2
+    rad = 19.0 * (1.0 - 0.55 * np.clip(tproj, 0, 1))           # taper
+    pyramid = (tproj > -0.12) & (tproj < 1.02) & (perp2 < rad * rad)
+    # flatten its superior surface to a petrous ridge and shape the posterior face
+    pyramid &= (Z < 9.5 - 6.0 * np.clip(tproj, 0, 1))
+    # ---- mastoid process: a drooping ellipsoid behind/below the canal, tapering to a tip ----
+    mast = (_ell(X, Y, Z, (12.0, -14.0, -12.0), (15.0, 17.0, 26.0)) < 1.0) & (Z < 10.0)
+    tip = _ell(X, Y, Z, (9.0, -12.0, -28.0), (8.0, 9.0, 12.0)) < 1.0
+    # ---- zygomatic root / glenoid: a bar running anteriorly from the canal ----
+    zyg = _ell(X, Y, Z, (14.0, 20.0, 1.0), (9.0, 16.0, 5.0)) < 1.0
+    # ---- bone union, then carve the fossae and canals that the context must respect ----
+    bone = skull | diploe | pyramid | mast | tip | zyg
+    glenoid = _ell(X, Y, Z, (13.0, 13.0, -4.0), (5.5, 6.0, 7.0)) < 1.0       # TMJ space
+    bone &= ~glenoid
+    # external auditory canal corridor through the context (matches the core EAC axis)
+    eac_dir = np.array([25.0, 2.2, 1.8]) - np.array([9.2, 0.3, 0.0]); eac_dir /= np.linalg.norm(eac_dir)
+    qx, qy, qz = X - 9.2, Y - 0.3, Z - 0.0
+    tq = qx * eac_dir[0] + qy * eac_dir[1] + qz * eac_dir[2]
+    d2 = qx * qx + qy * qy + qz * qz - tq * tq
+    eac_ctx = (tq > 1.0) & (d2 < 4.2 ** 2)
+    bone &= ~eac_ctx
+    # ---- intensities ----
+    field = np.full((n, n, n), 40.0, np.float32)
     field[bone] = 1250.0 + 260.0 * tex[bone]
-    # diploe inside the squamous plate and the mastoid (low density marrow / cells)
-    diploe = (r_skull > 27.3) & (r_skull < 28.7) & (X > -4.0) & (Z > 8.0)
-    field[diploe] = 300.0 + 200.0 * tex[diploe]
-    # brain: middle fossa above the pyramid/skull, posterior fossa behind
-    brain = (~bone) & (((Z > 10.0) & (X < 22.0)) | ((Y < -24.0) & (X < -2.0)))
+    field[diploe & bone & ~pyramid] = 320.0 + 220.0 * tex[diploe & bone & ~pyramid]
+    brain = inside_head & ~bone & (e_head < 0.86) & ((Z > 9.0) | ((Y < -24.0) & (X < 6.0))) & ~(mast | tip)
     field[brain] = 32.0 + 6.0 * tex[brain]
-    # CSF rim over the petrous ridge and posterior petrous face
-    csf = (~bone) & (((Z > 10.0) & (Z < 12.5) & (X < 2.0)) | ((Y < -24.0) & (Y > -26.5) & (X < -2.0)))
-    field[csf] = 8.0
-    # scalp and air laterally
-    field[(X > 26.0) & (X < 32.0)] = 45.0
-    field[X >= 32.0] = -1000.0
-    # outer air beyond the occiput and above the vertex
-    field[Y < -44.0] = -1000.0
-    field[(r_skull >= 29.5) & (X > -4.0) & (Z > 4.0)] = -1000.0
-    field[(r_skull >= 29.5) & (r_skull < 33.0) & (X > -4.0) & (Z > 4.0)] = 45.0   # scalp over the vault
-    # neck below the mastoid tip: muscle with the sternocleidomastoid and a jugular vein
-    neck = (Z < -36.0)
+    csf = brain & (((Z < 11.5) & (Z > 9.0)) | ((Y > -26.5) & (Y < -24.0)))
+    field[csf] = 10.0
+    scalp = (e_head >= 1.0) & (e_head < 1.12)
+    field[scalp] = 45.0 + 5.0 * tex[scalp]
+    field[e_head >= 1.12] = -1000.0
+    field[eac_ctx & (tq > 14.0)] = -1000.0          # canal open to the outside laterally
+    field[eac_ctx & (tq <= 14.0)] = -990.0
+    field[glenoid] = 50.0
+    # neck: below the skull base, muscle with the great vessels running down
+    neck = (Z < -30.0) & ~bone & (e_head < 1.0)
     field[neck] = 55.0 + 8.0 * tex[neck]
-    jug = (Z < -8.0) & (np.sqrt((X - 1.5) ** 2 + (Y + 9.0) ** 2) < 4.0)
-    field[jug & ~bone] = 60.0
-    # embed the core (its own CT carries air cells, labyrinth, vessels, etc.)
-    o = N_CT_OFF
-    field[o:o + N_CT_CORE, o:o + N_CT_CORE, o:o + N_CT_CORE] = core_ct
-    field = ndi.gaussian_filter(field, 0.4)
+    jug = (Z < -12.0) & (((X - 1.5) ** 2 + (Y + 9.0) ** 2) < 4.0 ** 2) & ~pyramid
+    field[jug] = 60.0
+    car = (Z < -10.0) & (((X + 3.5) ** 2 + (Y - 11.0) ** 2) < 3.2 ** 2) & ~pyramid
+    field[car] = 70.0
+    # ---- blend the core in ----
+    o = N_CT_OFF; sl = (slice(o, o + N_CT_CORE),) * 3
+    core_lab = L128_core > 0
+    dist = ndi.distance_transform_edt(~core_lab, sampling=(H_CT,) * 3)
+    w = np.clip(1.0 - (dist - 2.0) / 8.0, 0.0, 1.0).astype(np.float32)
+    ctx = field[sl]; core = core_ct.astype(np.float32); ctx_bone = bone[sl]
+    blended = ctx.copy()
+    mix = ctx_bone & ~core_lab
+    blended[mix] = w[mix] * core[mix] + (1.0 - w[mix]) * ctx[mix]
+    blended[core_lab] = core[core_lab]
+    field[sl] = blended
+    field = ndi.gaussian_filter(field, 0.45)
     field += RNG.normal(0, 14, size=field.shape).astype(np.float32)
     return np.clip(field, -1024, 3071).astype(np.int16)
 

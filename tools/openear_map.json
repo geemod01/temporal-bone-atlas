@@ -1,15 +1,19 @@
 {
   "cochlea": [
+    "01_scala",
+    "02_scala",
+    "cochlea-",
     "cochlea.",
     "cochlea_",
-    "cochlea-",
-    "scala",
-    "scalatympani",
-    "scala_tympani",
-    "scalavestibuli",
-    "scala_vestibuli",
     "inner_ear",
-    "innerear"
+    "innerear",
+    "scala",
+    "scala tympani",
+    "scala vestibuli",
+    "scala_tympani",
+    "scala_vestibuli",
+    "scalatympani",
+    "scalavestibuli"
   ],
   "vestibule": [
     "vestibule",
@@ -73,16 +77,20 @@
     "intracanalicular"
   ],
   "facial_nerve": [
-    "facialnerve",
-    "facial_nerve",
-    "nervus_facialis",
-    "nfacialis",
-    "n_facialis",
+    "06_facial",
+    "facial nerve",
+    "facial.",
     "facial.stl",
-    "facial."
+    "facial_nerve",
+    "facialnerve",
+    "n_facialis",
+    "nervus_facialis",
+    "nfacialis"
   ],
   "chorda_tympani": [
-    "chorda"
+    "07_chorda",
+    "chorda",
+    "chorda tympani"
   ],
   "malleus": [
     "malleus"
@@ -94,33 +102,41 @@
     "stapes"
   ],
   "tympanic_membrane": [
-    "tympanic_membrane",
-    "tympanicmembrane",
-    "eardrum",
+    "09_tympanic",
     "drum",
-    "membrana"
+    "eardrum",
+    "membrana",
+    "tympanic membrane",
+    "tympanic_membrane",
+    "tympanicmembrane"
   ],
   "eac": [
-    "external_auditory",
-    "externalauditory",
+    "auditory_canal",
+    "eac",
     "ear_canal",
     "earcanal",
-    "eac",
-    "auditory_canal",
+    "external auditory canal",
+    "external_auditory",
+    "external_auditory_canal",
+    "externalauditory",
     "meatus_externus"
   ],
   "sigmoid_sinus": [
+    "11_sinus",
+    "dura",
     "sigmoid",
-    "sinus_dura",
-    "sinusdura",
     "sinus-dura",
-    "dura"
+    "sinus_dura",
+    "sinusdura"
   ],
   "jugular_bulb": [
     "jugular"
   ],
   "carotid_canal": [
+    "10_carotis",
     "carotid",
+    "carotis",
+    "carotis interna",
     "ica"
   ],
   "bone_shell": [
@@ -205,5 +221,13 @@
     "semicircular",
     "labyrinth",
     "canals"
+  ],
+  "cochleovestibular_nerve": [
+    "cochleovestibular",
+    "vestibulocochlear",
+    "cochleo-vestibular",
+    "cn viii",
+    "nervus vestibulocochlearis",
+    "08_cochleovestibular"
   ]
 }
