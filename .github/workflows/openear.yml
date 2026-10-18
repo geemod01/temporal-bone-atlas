@@ -38,33 +38,16 @@ jobs:
           python-version: "3.11"
       - name: Install converter dependencies
         run: pip install numpy SimpleITK trimesh fast-simplification requests
-      - name: Probe Zenodo and list the archive
+      - name: Probe Zenodo and list the archive (no API calls before the conversion)
         id: probe
         continue-on-error: true
         run: |
-          set -o pipefail
           {
-            echo "## Zenodo probe"
-            echo '```'
-            python3 - <<'PY' 2>&1 | tail -40
-          import requests, json
-          r = requests.get("https://zenodo.org/api/records/1473724", timeout=60)
-          print("api status", r.status_code)
-          j = r.json()
-          for f in j.get("files", []):
-              print(f.get("key"), f.get("size"), (f.get("links") or {}).get("self"))
-          PY
-            echo '```'
             echo "## Archive listing (${{ inputs.specimen }})"
             echo '```'
             python3 tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --list --work work 2>&1 | tail -60
             echo '```'
           } | tee probe.md
-          cat probe.md >> "$GITHUB_STEP_SUMMARY"
-          df -h / | tail -1 >> probe.md
-          gh api repos/${{ github.repository }}/commits/${{ github.sha }}/comments -f body="$(printf 'Probe for run %s (%s)\n\n' "${{ github.run_id }}" "${{ inputs.specimen }}"; head -c 50000 probe.md)" >/dev/null && echo "probe comment posted" || echo "probe comment failed"
-        env:
-          GH_TOKEN: ${{ github.token }}
       - name: Fetch and convert ${{ inputs.specimen }}
         id: convert
         shell: bash
