@@ -176,22 +176,62 @@ def summarize(zf):
     log('archive contents (folder: files, size, extensions):')
     for k, (n, sz, exts) in sorted(tops.items(), key=lambda kv: -kv[1][1]):
         log('  %-60s %6d files %8.1f MB  %s' % (k, n, sz / 1e6, ' '.join(sorted(exts))[:60]))
+    big = sorted((zi for zi in zf.infolist() if not zi.is_dir()), key=lambda zi: -zi.file_size)[:15]
+    log('largest members:')
+    for zi in big:
+        log('  %8.0f MB  %s' % (zi.file_size / 1e6, zi.filename))
+    log('would extract:')
+    for zi in choose_members(zf):
+        log('  %8.0f MB  %s' % (zi.file_size / 1e6, zi.filename))
 
 
-def extract_needed(zf, dest):
-    NRRD_PRESENT['yes'] = any(re.search(r'\.(nrrd|nhdr)$', zi.filename, re.I) for zi in zf.infolist())
-    chosen = []
-    for zi in zf.infolist():
-        if zi.is_dir():
-            continue
+def choose_members(zf):
+    """Decide which archive members to extract: the finest CBCT volume, the segmentation volume(s),
+    the surface models and small metadata. Raw DICOM/TIFF and micro-slicing volumes are skipped."""
+    members = [zi for zi in zf.infolist() if not zi.is_dir()]
+    NRRD_PRESENT['yes'] = any(re.search(r'\.(nrrd|nhdr)$', zi.filename, re.I) for zi in members)
+    vols, segs, meshes, meta = [], [], [], []
+    for zi in members:
         kind = classify(zi.filename)
-        if kind:
-            chosen.append((kind, zi))
-    total = sum(zi.file_size for _, zi in chosen)
-    log('extracting %d files (%.1f MB): %d volume, %d mesh, %d metadata' % (
-        len(chosen), total / 1e6, sum(k == 'volume' for k, _ in chosen), sum(k == 'mesh' for k, _ in chosen), sum(k == 'meta' for k, _ in chosen)))
+        if not kind:
+            continue
+        low = zi.filename.lower()
+        if kind == 'volume':
+            if re.search(r'(micro|slic|histo|colou?r|rgb)', low):
+                continue                                   # micro-slicing colour volumes: not needed
+            if re.search(r'(seg|label|mask)', os.path.basename(low)):
+                segs.append(zi)
+            else:
+                vols.append(zi)
+        elif kind == 'mesh':
+            meshes.append(zi)
+        else:
+            meta.append(zi)
+    # CBCT candidates: prefer names that say HiRes / high / 125; otherwise the largest NRRD (finest grid)
+    def vol_rank(zi):
+        name = os.path.basename(zi.filename).lower()
+        hint = 0 if re.search(r'(hires|hi-res|high|125)', name) else (2 if re.search(r'(unembedded|low|250|lores)', name) else 1)
+        return (hint, -zi.file_size)
+    vols.sort(key=vol_rank)
+    dicom = [zi for zi in vols if re.search(r'\.(dcm|dicom|ima)$', zi.filename, re.I)]
+    nrrd = [zi for zi in vols if zi not in dicom]
+    chosen_vols = [nrrd[0]] if nrrd else dicom           # one NRRD, or the whole DICOM series as a fallback
+    log('volume candidates:')
+    for zi in vols[:12]:
+        log('  %s %s (%.0f MB)' % ('*' if zi in chosen_vols else ' ', zi.filename, zi.file_size / 1e6))
+    if len(vols) > 12:
+        log('  ... %d more' % (len(vols) - 12))
+    return chosen_vols + segs + meshes + meta
+
+
+def extract_needed(zf, dest, budget_bytes=9 * 1024 ** 3):
+    chosen = choose_members(zf)
+    total = sum(zi.file_size for zi in chosen)
+    log('extracting %d files (%.1f MB uncompressed)' % (len(chosen), total / 1e6))
+    if total > budget_bytes:
+        log('WARNING: selection exceeds the disk budget (%.1f GB); dropping meshes/metadata beyond the volume and segmentation' % (budget_bytes / 1e9))
     done = 0
-    for kind, zi in chosen:
+    for zi in chosen:
         target = os.path.join(dest, zi.filename)
         os.makedirs(os.path.dirname(target), exist_ok=True)
         with zf.open(zi) as src, open(target, 'wb') as dst:
@@ -201,8 +241,7 @@ def extract_needed(zf, dest):
                     break
                 dst.write(b)
         done += zi.file_size
-        if done and (done // (50 << 20)) != ((done - zi.file_size) // (50 << 20)):
-            log('  ... %.0f MB' % (done / 1e6))
+        log('  extracted %s (%.0f MB)' % (zi.filename, zi.file_size / 1e6))
     return chosen
 
 

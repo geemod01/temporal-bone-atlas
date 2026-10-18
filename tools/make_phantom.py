@@ -52,12 +52,17 @@ RNG = np.random.default_rng(7)
 # --------------------------------------------------------------------------
 # Grid definitions
 # --------------------------------------------------------------------------
-FOV = 48.0                 # mm cube
-N_CT = 128                 # CT grid (0.375 mm)
+FOV = 48.0                 # mm cube of the finely modelled core (labels, meshes)
+N_CT_CORE = 128            # core CT grid (0.375 mm)
 N_LAB = 256                # label grid (0.1875 mm) used for mesh extraction
-ORIGIN = np.array([-26.0, -24.0, -24.0], dtype=np.float32)   # RAS mm of voxel (0,0,0)
-H_CT = FOV / N_CT
+ORIGIN = np.array([-26.0, -24.0, -24.0], dtype=np.float32)   # RAS mm of core voxel (0,0,0)
+H_CT = FOV / N_CT_CORE
 H_LAB = FOV / N_LAB
+# full field: skull-base context around the core so a reader has the bearings of a clinical scan
+FOV_FULL = 96.0
+N_CT = 256
+ORIGIN_FULL = ORIGIN - (FOV_FULL - FOV) / 2.0   # core sits in the middle of the full field
+N_CT_OFF = int(round((FOV_FULL - FOV) / 2.0 / H_CT))   # core offset in full-grid voxels (64)
 
 # --------------------------------------------------------------------------
 # Structure table: id -> (label, name, group, HU, mesh?)
@@ -480,7 +485,7 @@ def build_labels():
 # HU synthesis on the CT grid
 # --------------------------------------------------------------------------
 def labels_to_ct(L256):
-    """Compute HU on the 256 grid, then block-average to 128 for partial volume."""
+    """Compute HU on the 256 core grid, then block-average to the 128 core grid for partial volume."""
     hu = np.full(L256.shape, 1500.0, dtype=np.float32)
     for sid, lab in LABEL_OF.items():
         hu[L256 == lab] = HU_OF[sid]
@@ -492,18 +497,78 @@ def labels_to_ct(L256):
     boost256 = np.repeat(np.repeat(np.repeat(capsule_boost, 2, 0), 2, 1), 2, 2)
     bone = (L256 == 0)
     hu[bone] += boost256[bone]
-    # trabecular texture in bone: low frequency noise
-    tex = RNG.normal(0, 1, size=(N_CT, N_CT, N_CT)).astype(np.float32)
+    tex = RNG.normal(0, 1, size=(N_CT_CORE, N_CT_CORE, N_CT_CORE)).astype(np.float32)
     tex = ndi.gaussian_filter(tex, 1.2)
     tex = tex / (tex.std() + 1e-6) * 240.0
     tex256 = np.repeat(np.repeat(np.repeat(tex, 2, 0), 2, 1), 2, 2)
-    hu[bone] += tex256[bone] * (1.0 - np.clip(boost256[bone] / 650.0, 0, 1))  # capsule is homogeneous
-    # block average 2x2x2 -> 128
-    ct = hu.reshape(N_CT, 2, N_CT, 2, N_CT, 2).mean(axis=(1, 3, 5))
-    ct = ndi.gaussian_filter(ct, 0.45)
-    ct += RNG.normal(0, 16, size=ct.shape).astype(np.float32)
-    ct = np.clip(ct, -1024, 3071).astype(np.int16)
+    hu[bone] += tex256[bone] * (1.0 - np.clip(boost256[bone] / 650.0, 0, 1))
+    ct = hu.reshape(N_CT_CORE, 2, N_CT_CORE, 2, N_CT_CORE, 2).mean(axis=(1, 3, 5))
     return ct
+
+
+def context_field(core_ct, L128_core):
+    """Embed the 48 mm core into a 96 mm field with skull-base context (all synthetic, coarse).
+
+    Frame: +x lateral (right ear), +y anterior, +z superior; vestibule at the origin.
+    Context: squamous temporal bone and middle fossa (temporal lobe) above the tegmen; the petrous
+    pyramid running medially to the clivus with the posterior fossa (cerebellum) behind; mastoid
+    process tapering to the tip with neck soft tissue below; TMJ/zygoma anteriorly; scalp and air
+    laterally. The core's own labelled soft-tissue regions take precedence where they overlap.
+    """
+    n = N_CT
+    zs = (ORIGIN_FULL[2] + np.arange(n) * H_CT).astype(np.float32)[:, None, None]
+    ys = (ORIGIN_FULL[1] + np.arange(n) * H_CT).astype(np.float32)[None, :, None]
+    xs = (ORIGIN_FULL[0] + np.arange(n) * H_CT).astype(np.float32)[None, None, :]
+    X = np.broadcast_to(xs, (n, n, n)); Y = np.broadcast_to(ys, (n, n, n)); Z = np.broadcast_to(zs, (n, n, n))
+    field = np.full((n, n, n), 40.0, np.float32)                       # soft tissue baseline (brain / muscle)
+    # bone of the skull base: a thick slab centred on the petrous axis, thinning toward the apex
+    petrous_axis = (X * 0.0 + 1.0)                                      # placeholder to keep shapes
+    # petrous pyramid: from the ear (x ~ 0) medially to the clivus (x ~ -46), tapering in y and z
+    t = np.clip((0.0 - X) / 46.0, 0, 1)                                 # 0 at the ear, 1 at the apex
+    half_y = 20.0 * (1.0 - 0.55 * t); half_z = 14.0 * (1.0 - 0.45 * t)
+    pyramid = (X < 2.0) & (np.abs(Y - 2.0 + 8.0 * t) < half_y) & (np.abs(Z + 3.0 - 4.0 * t) < half_z)
+    # squamous temporal bone: a curved plate lateral and superior, 3 mm thick, with the mastoid below
+    r_skull = np.sqrt((X - (-12.0)) ** 2 * 0.55 + (Z - 2.0) ** 2 * 0.35 + (Y - 0.0) ** 2 * 0.18)
+    skull_plate = (r_skull > 26.5) & (r_skull < 29.5) & (X > -4.0)
+    # mastoid process: bone lateral/posterior/inferior of the ear tapering to a tip at z ~ -36
+    mast = (X > -2.0) & (X < 24.0) & (Y < 0.0) & (Y > -30.0 + 0.5 * np.clip(-Z - 10.0, 0, 30)) & (Z > -36.0) & (Z < 10.0) & (np.abs(X - 11.0) < 13.0 - 0.35 * np.clip(-Z - 10.0, 0, 30))
+    # zygomatic root / glenoid anteriorly
+    zyg = (X > 4.0) & (X < 22.0) & (Y > 4.0) & (Y < 30.0) & (Z > -4.0) & (Z < 6.0)
+    # occipital bone behind the posterior fossa: a plate at y ~ -42
+    occ = (Y < -39.0) & (Y > -44.0) & (X < 20.0)
+    # clivus / basiocciput medially
+    cliv = (X < -42.0) & (X > -47.0) & (Y > -8.0) & (Y < 18.0) & (Z < 6.0) & (Z > -30.0)
+    bone = pyramid | skull_plate | mast | zyg | occ | cliv
+    tex = ndi.gaussian_filter(RNG.normal(0, 1, size=(n, n, n)).astype(np.float32), 1.5)
+    tex = tex / (tex.std() + 1e-6)
+    field[bone] = 1250.0 + 260.0 * tex[bone]
+    # diploe inside the squamous plate and the mastoid (low density marrow / cells)
+    diploe = (r_skull > 27.3) & (r_skull < 28.7) & (X > -4.0) & (Z > 8.0)
+    field[diploe] = 300.0 + 200.0 * tex[diploe]
+    # brain: middle fossa above the pyramid/skull, posterior fossa behind
+    brain = (~bone) & (((Z > 10.0) & (X < 22.0)) | ((Y < -24.0) & (X < -2.0)))
+    field[brain] = 32.0 + 6.0 * tex[brain]
+    # CSF rim over the petrous ridge and posterior petrous face
+    csf = (~bone) & (((Z > 10.0) & (Z < 12.5) & (X < 2.0)) | ((Y < -24.0) & (Y > -26.5) & (X < -2.0)))
+    field[csf] = 8.0
+    # scalp and air laterally
+    field[(X > 26.0) & (X < 32.0)] = 45.0
+    field[X >= 32.0] = -1000.0
+    # outer air beyond the occiput and above the vertex
+    field[Y < -44.0] = -1000.0
+    field[(r_skull >= 29.5) & (X > -4.0) & (Z > 4.0)] = -1000.0
+    field[(r_skull >= 29.5) & (r_skull < 33.0) & (X > -4.0) & (Z > 4.0)] = 45.0   # scalp over the vault
+    # neck below the mastoid tip: muscle with the sternocleidomastoid and a jugular vein
+    neck = (Z < -36.0)
+    field[neck] = 55.0 + 8.0 * tex[neck]
+    jug = (Z < -8.0) & (np.sqrt((X - 1.5) ** 2 + (Y + 9.0) ** 2) < 4.0)
+    field[jug & ~bone] = 60.0
+    # embed the core (its own CT carries air cells, labyrinth, vessels, etc.)
+    o = N_CT_OFF
+    field[o:o + N_CT_CORE, o:o + N_CT_CORE, o:o + N_CT_CORE] = core_ct
+    field = ndi.gaussian_filter(field, 0.4)
+    field += RNG.normal(0, 14, size=field.shape).astype(np.float32)
+    return np.clip(field, -1024, 3071).astype(np.int16)
 
 
 # --------------------------------------------------------------------------
@@ -575,8 +640,12 @@ def main(out_phantom="phantom", out_pack="dist/phantom.tba"):
     G = build_labels()
     L = G.L
     print("synthesising CT ...")
-    ct = labels_to_ct(L)
-    L128 = L[::2, ::2, ::2].copy()
+    core_ct = labels_to_ct(L)
+    L128_core = L[::2, ::2, ::2].copy()
+    ct = context_field(core_ct, L128_core)
+    L128 = np.zeros((N_CT, N_CT, N_CT), np.uint8)
+    o = N_CT_OFF
+    L128[o:o + N_CT_CORE, o:o + N_CT_CORE, o:o + N_CT_CORE] = L128_core
 
     # diagnostics: voxel counts
     counts = {sid: int((L == lab).sum()) for sid, lab in LABEL_OF.items()}
@@ -602,7 +671,7 @@ def main(out_phantom="phantom", out_pack="dist/phantom.tba"):
     # bone shell (context) from CT
     bone_mask = ct > 900
     bone_mask = ndi.binary_opening(bone_mask, iterations=1)
-    bm = extract_mesh(bone_mask, H_CT, ORIGIN, 1.0, 0.5, 30000)
+    bm = extract_mesh(bone_mask, H_CT, ORIGIN_FULL, 1.0, 0.5, 40000)
     if bm is not None:
         meshes["bone_shell"] = bm
         write_stl(os.path.join(out_phantom, "meshes", "bone_shell.stl"), *bm)
@@ -611,7 +680,7 @@ def main(out_phantom="phantom", out_pack="dist/phantom.tba"):
     # NIfTI export (RAS affine)
     if nib is not None:
         aff = np.diag([H_CT, H_CT, H_CT, 1.0])
-        aff[:3, 3] = ORIGIN
+        aff[:3, 3] = ORIGIN_FULL
         # nibabel expects (x,y,z) array order
         nib.save(nib.Nifti1Image(np.ascontiguousarray(ct.transpose(2, 1, 0)), aff), os.path.join(out_phantom, "volume.nii.gz"))
         nib.save(nib.Nifti1Image(np.ascontiguousarray(L128.transpose(2, 1, 0)), aff), os.path.join(out_phantom, "labels.nii.gz"))
@@ -634,7 +703,7 @@ def main(out_phantom="phantom", out_pack="dist/phantom.tba"):
             # representative point: the labelled voxel nearest the centroid (centroids of rings and tubes fall outside them)
             d2 = ((idx - c) ** 2).sum(1)
             c = idx[int(np.argmin(d2))]
-            landmarks.setdefault(sid, [float(ORIGIN[0] + c[2] * H_CT), float(ORIGIN[1] + c[1] * H_CT), float(ORIGIN[2] + c[0] * H_CT)])
+            landmarks.setdefault(sid, [float(ORIGIN_FULL[0] + c[2] * H_CT), float(ORIGIN_FULL[1] + c[1] * H_CT), float(ORIGIN_FULL[2] + c[0] * H_CT)])
 
     header = {
         "format": "tba",
@@ -643,8 +712,8 @@ def main(out_phantom="phantom", out_pack="dist/phantom.tba"):
         "kind": "phantom",
         "side": "R",
         "notes": "Procedurally generated. Correct topology and relationships, not patient anatomy. Replace with an OpenEar specimen or an institutional CT for real imaging.",
-        "volume": {"blob": "volume", "dims": [N_CT, N_CT, N_CT], "spacing": [H_CT, H_CT, H_CT], "origin": [float(x) for x in ORIGIN], "dtype": "int16", "units": "HU", "encoding": "delta-x"},
-        "labels": {"blob": "labels", "dims": [N_CT, N_CT, N_CT], "spacing": [H_CT, H_CT, H_CT], "origin": [float(x) for x in ORIGIN], "dtype": "uint8"},
+        "volume": {"blob": "volume", "dims": [N_CT, N_CT, N_CT], "spacing": [H_CT, H_CT, H_CT], "origin": [float(x) for x in ORIGIN_FULL], "dtype": "int16", "units": "HU", "encoding": "delta-x"},
+        "labels": {"blob": "labels", "dims": [N_CT, N_CT, N_CT], "spacing": [H_CT, H_CT, H_CT], "origin": [float(x) for x in ORIGIN_FULL], "dtype": "uint8"},
         "labelIds": {str(lab): sid for sid, lab in LABEL_OF.items()},
         "meshes": mesh_table,
         "landmarks": landmarks,
