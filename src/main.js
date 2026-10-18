@@ -195,8 +195,9 @@ function setDataset(ds) {
   const start = ds.anchorOf('vestibule') || ds.volume.center;
   store.setCrosshair(start, 'load');
   const chip = app.querySelector('.dataset-chip');
-  chip.textContent = ds.kind === 'phantom' ? 'Synthetic phantom' : ds.name;
+  chip.textContent = ds.kind === 'phantom' ? 'Synthetic phantom' : `${ds.name} (${ds.side === 'L' ? 'left' : 'right'} ear, real imaging)`;
   chip.classList.toggle('warn', ds.kind === 'phantom');
+  chip.classList.toggle('real', ds.kind !== 'phantom');
   chip.title = ds.kind === 'phantom' ? 'Synthetic phantom: correct relationships, not patient anatomy. Open a data pack for real imaging.' : ds.name;
   store.emit('toast', ds.kind === 'phantom' ? 'Synthetic phantom loaded (not patient anatomy). Click any structure; press ? for help.' : `Loaded ${ds.name}`);
   const banner = app.querySelector('.phantom-banner');

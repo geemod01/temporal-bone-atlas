@@ -41,6 +41,7 @@ a { color: var(--accent-2); }
 .chip { border: 1px solid var(--line-strong); background: var(--surface-2); border-radius: 999px; padding: 2px 10px; font-size: calc(var(--fs) - 1px); color: var(--text-2); cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 240px; }
 .chip:hover { color: var(--text); border-color: var(--text-3); }
 .chip.warn { color: var(--accent-2); border-color: rgba(230,176,66,0.45); }
+.chip.real { color: var(--ok); border-color: rgba(111,191,143,0.5); }
 .dial { display: inline-flex; background: var(--surface-2); border: 1px solid var(--line-strong); border-radius: 999px; padding: 2px; }
 .dial-btn { border: 0; background: transparent; border-radius: 999px; padding: 3px 14px; color: var(--text-2); cursor: pointer; }
 .dial-btn:hover { color: var(--text); }
