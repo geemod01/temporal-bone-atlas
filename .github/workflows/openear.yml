@@ -74,8 +74,12 @@ jobs:
       - name: Fetch and convert ${{ inputs.specimen }}
         id: convert
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PROGRESS_COMMENT: "1"
         run: |
-          free -m | head -2; df -h . | tail -1; nproc
+          free -m | head -2; df -h . | tail -1; nproc; ulimit -a | head -20
+          cat /proc/meminfo | head -3
           python3 -u tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --spacing "${{ inputs.spacing }}" --out data --work work ${{ inputs.full_download && '--full' || '' }} > convert.log 2>&1
           status=$?
           tail -60 convert.log

@@ -41,8 +41,39 @@ META_EXT = re.compile(r'\.(txt|md|json|csv|xml|pdf|rtf)$', re.I)
 SKIP_DIR = re.compile(r'(micro.?slic|microsection|slic(e|ing).?image|histolog|photo|png|jpg|tif)', re.I)
 
 
+_progress = {'lines': [], 'last': 0.0, 'id': None}
+
+
+def _post_progress(force=False):
+    """When PROGRESS_COMMENT is set (CI), mirror the log into a commit comment every ~15 s so the
+    tail survives even if the runner is killed."""
+    if not os.environ.get('PROGRESS_COMMENT'):
+        return
+    now = time.time()
+    if not force and now - _progress['last'] < 15:
+        return
+    _progress['last'] = now
+    repo = os.environ.get('GITHUB_REPOSITORY'); sha = os.environ.get('GITHUB_SHA'); tok = os.environ.get('GH_TOKEN') or os.environ.get('GITHUB_TOKEN')
+    if not (repo and sha and tok):
+        return
+    body = 'Conversion progress (run %s) at %s UTC\n\n```\n%s\n```' % (os.environ.get('GITHUB_RUN_ID', '?'), time.strftime('%H:%M:%S', time.gmtime()), '\n'.join(_progress['lines'][-80:])[-50000:])
+    try:
+        h = {'Authorization': 'Bearer ' + tok, 'Accept': 'application/vnd.github+json'}
+        if _progress['id'] is None:
+            r = requests.post('https://api.github.com/repos/%s/commits/%s/comments' % (repo, sha), json={'body': body}, headers=h, timeout=20)
+            if r.ok:
+                _progress['id'] = r.json().get('id')
+        else:
+            requests.patch('https://api.github.com/repos/%s/comments/%s' % (repo, _progress['id']), json={'body': body}, headers=h, timeout=20)
+    except Exception:
+        pass
+
+
 def log(*a):
-    print(*a, file=sys.stderr, flush=True)
+    line = ' '.join(str(x) for x in a)
+    print(line, file=sys.stderr, flush=True)
+    _progress['lines'].append(line)
+    _post_progress()
 
 
 # --------------------------------------------------------------------------
@@ -98,6 +129,8 @@ class HttpFile(io.RawIOBase):
                     raise
                 time.sleep(2 * (attempt + 1))
         self.bytes_fetched += len(data)
+        if (self.bytes_fetched // (50 << 20)) != ((self.bytes_fetched - len(data)) // (50 << 20)):
+            log('  %s fetched %.0f MB so far' % (time.strftime('%H:%M:%S'), self.bytes_fetched / 1e6))
         if len(self.cache) > 16:
             self.cache.pop(next(iter(self.cache)))
         self.cache[idx] = data
@@ -251,7 +284,8 @@ def extract_needed(zf, dest, budget_bytes=9 * 1024 ** 3, prefer='embedded'):
                     break
                 dst.write(b)
         done += zi.file_size
-        log('  extracted %s (%.0f MB)' % (zi.filename, zi.file_size / 1e6))
+        log('  %s extracted %s (%.0f MB)' % (time.strftime('%H:%M:%S'), zi.filename, zi.file_size / 1e6))
+        _post_progress(force=True)
     return chosen
 
 
@@ -373,6 +407,7 @@ def main():
         if a.list:
             continue
         extract_needed(zf, dest, prefer=a.volume_choice)
+        _post_progress(force=True)
         volume, meshes, label_vol = find_inputs(dest)
         log('volume input: %s' % volume)
         log('label volume: %s' % label_vol)
@@ -397,7 +432,14 @@ def main():
         if not meshes and not label_vol:
             cmd += ['--crop', 'none']
         log('running:', ' '.join(cmd))
-        subprocess.run(cmd, check=True)
+        _post_progress(force=True)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
+        for line in proc.stdout:
+            log('  | ' + line.rstrip())
+        proc.wait()
+        _post_progress(force=True)
+        if proc.returncode != 0:
+            raise SystemExit('converter exited with %d' % proc.returncode)
         register(a.out, {'id': 'openear_%s' % spec, 'name': 'OpenEar %s' % spec.capitalize(), 'file': 'openear_%s.tba' % spec,
                          'side': side, 'kind': 'openear', 'bytes': os.path.getsize(out_pack),
                          'license': 'CC BY 4.0', 'source': 'Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724.'})
