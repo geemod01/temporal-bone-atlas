@@ -10,7 +10,7 @@ import { Panel } from './panel.js';
 import { TourRunner } from './tours.js';
 import { QuizRunner } from './quiz.js';
 import { openSettings, openHelp, openAbout } from './settings.js';
-import { DEFAULT_HIDDEN, STRUCTURE_BY_ID } from './content.js';
+import { DEFAULT_HIDDEN, STRUCTURE_BY_ID, resolveAnchor, resolveBounds } from './content.js';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -79,6 +79,15 @@ function toggleMaximize(id) {
   store.saveSettings(); store.emit('settings', { key: 'layout', value: store.state.settings.layout }); applyLayout();
 }
 store.on('settings', (e) => { if (['layout', 'panelOpen', 'textSize', 'reducedMotion', '*'].includes(e.key)) applyLayout(); });
+store.on('zoomto', (id) => {
+  const ds = store.get('dataset'); if (!ds) return;
+  let b = resolveBounds(ds, id);
+  if (!b) { const p = resolveAnchor(ds, id); if (!p) return; b = { min: [p[0] - 4, p[1] - 4, p[2] - 4], max: [p[0] + 4, p[1] + 4, p[2] + 4] }; }
+  // pad small structures so they are not lost in the pane
+  const pad = 3;
+  b = { min: b.min.map(v => v - pad), max: b.max.map(v => v + pad) };
+  for (const p of Object.values(panes)) p.zoomToBounds(b);
+});
 store.on('focusplane', (plane) => {
   const s = store.get('settings');
   if (s.layout === 'single' && s.maximized !== plane) { store.state.settings.maximized = plane; store.saveSettings(); applyLayout(); }
@@ -255,7 +264,9 @@ async function loadLibrary() {
   } catch (e) { /* no library: file:// or not hosted with data */ }
 }
 async function fetchWithProgress(url, onProgress) {
-  const r = await fetch(url);
+  let r;
+  try { r = await fetch(url, { redirect: 'follow', mode: 'cors' }); }
+  catch (e) { throw new Error('download blocked or offline (' + e.message + ')'); }
   if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
   const total = +(r.headers.get('Content-Length') || 0);
   if (!r.body) return new Uint8Array(await r.arrayBuffer());

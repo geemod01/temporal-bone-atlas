@@ -120,12 +120,33 @@ jobs:
             probe.md
             convert.log
           if-no-files-found: ignore
-      - name: Commit packs
+      - name: Publish pack to the "data" release and update datasets.json
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -e
+          gh release view data --repo ${{ github.repository }} >/dev/null 2>&1 || gh release create data --repo ${{ github.repository }} --title "Data packs" --notes "Temporal bone data packs (.tba) served to the atlas. OpenEar packs: Sieber D et al., Sci Data 2019, CC BY 4.0 (Zenodo 1473724)."
+          for f in data/*.tba; do
+            gh release upload data "$f" --repo ${{ github.repository }} --clobber
+            echo "uploaded $f"
+          done
+          # rewrite datasets.json so each entry's file is the release download URL
+          python3 - <<'PY'
+          import json, os
+          repo = os.environ.get("GITHUB_REPOSITORY", "${{ github.repository }}")
+          p = "data/datasets.json"
+          lib = json.load(open(p))
+          for d in lib["datasets"]:
+              name = os.path.basename(d["file"])
+              d["file"] = "https://github.com/%s/releases/download/data/%s" % (repo, name)
+          json.dump(lib, open(p, "w"), indent=1)
+          print(open(p).read())
+          PY
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A data
-          git commit -m "Add OpenEar pack(s): ${{ inputs.specimen }} at ${{ inputs.spacing }} mm" || echo "nothing to commit"
+          git pull --rebase origin main || true
+          git add data/datasets.json
+          git commit -m "Register OpenEar pack(s): ${{ inputs.specimen }} at ${{ inputs.spacing }} mm" || echo "nothing to commit"
           git push
       - name: Upload pack as workflow artifact (also downloadable from this run)
         uses: actions/upload-artifact@v4

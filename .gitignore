@@ -5,3 +5,4 @@ phantom/
 __pycache__/
 work/
 site/
+data/*.tba

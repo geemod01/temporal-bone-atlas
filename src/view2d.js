@@ -141,6 +141,21 @@ export class SlicePane {
     requestAnimationFrame(() => { this.dirty = false; this.render(); });
   }
   resetView() { this.zoom = 1; this.panX = this.panY = 0; this.invalidate(); }
+  // Zoom so a world-space box (min/max RAS) fills about `fill` of the pane, centred on it.
+  zoomToBounds(bounds, fill = 0.45) {
+    if (!this.ds || !bounds) return;
+    const [u0, v0] = this.worldToImg(bounds.min), [u1, v1] = this.worldToImg(bounds.max);
+    const sd = this.sd;
+    const wmm = Math.max(1.5, Math.abs(u1 - u0) * sd.colSp), hmm = Math.max(1.5, Math.abs(v1 - v0) * sd.rowSp);
+    const base = this.fitScale();
+    const wanted = Math.min((this.w * fill) / wmm, (this.h * fill) / hmm);
+    this.zoom = Math.min(12, Math.max(0.4, wanted / base));
+    this.panX = this.panY = 0;
+    const t = this.transform();
+    const [cx, cy] = this.imgToScreen((u0 + u1) / 2, (v0 + v1) / 2, t);
+    this.panX = this.w / 2 - cx; this.panY = this.h / 2 - cy;
+    this.invalidate();
+  }
 
   // ---------- rendering ----------
   updateSlice() {

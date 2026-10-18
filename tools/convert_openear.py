@@ -475,8 +475,16 @@ def main():
     # --- crop box ---
     crop = None
     if a.crop == 'auto' and meshes:
-        allv = np.concatenate([m['v'] for m in meshes])
-        lo = allv.min(0) - a.margin; hi = allv.max(0) + a.margin
+        # crop around the ear itself: the compact structures define the box, long structures (dura/sinus,
+        # carotid, canal) that run to the edge of the block only extend it up to the margin
+        CORE = {'cochlea', 'vestibule', 'labyrinth', 'scc_lateral', 'scc_superior', 'scc_posterior', 'malleus', 'incus', 'stapes',
+                'facial_nerve', 'fn_tympanic', 'fn_mastoid', 'fn_labyrinthine', 'fn_meatal', 'geniculate', 'chorda_tympani',
+                'tympanic_membrane', 'cochleovestibular_nerve', 'iac', 'round_window'}
+        core = [m for m in meshes if m['id'] in CORE] or meshes
+        allv = np.concatenate([m['v'] for m in core])
+        margin = a.margin if core is meshes else max(a.margin, 14.0)
+        lo = allv.min(0) - margin; hi = allv.max(0) + margin
+        log('crop from %d core structures with %.0f mm margin' % (len(core), margin))
         crop = [lo[0], hi[0], lo[1], hi[1], lo[2], hi[2]]
         log('auto crop (RAS mm): x %.1f..%.1f  y %.1f..%.1f  z %.1f..%.1f' % tuple(crop))
     elif a.crop not in ('auto', 'none'):

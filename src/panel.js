@@ -1,5 +1,5 @@
 // Right panel: structure list (grouped, searchable) and the structure card with depth-gated sections.
-import { GROUPS, STRUCTURES, STRUCTURE_BY_ID, groupedStructures, sectionVisible, structureName, resolveAnchor } from './content.js';
+import { GROUPS, STRUCTURES, STRUCTURE_BY_ID, groupedStructures, sectionVisible, structureName, resolveAnchor, resolveBounds } from './content.js';
 import { DEPTH_NAMES } from './state.js';
 
 const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -86,6 +86,7 @@ export class Panel {
         <button class="btn-link back">All structures</button>
         <div class="card-actions">
           <button class="btn-ghost" data-action="locate" title="Move the cursor to this structure">Locate</button>
+          <button class="btn-ghost" data-action="zoom" title="Zoom the slice views in on this structure (double-click a view to zoom back out)">Zoom in</button>
           ${hasMesh ? `<button class="btn-ghost ${hidden ? '' : 'on'}" data-action="toggle3d">${hidden ? 'Show in 3D' : 'Shown in 3D'}</button>` : ''}
         </div>
       </div>
@@ -122,6 +123,7 @@ export class Panel {
     this.body.scrollTop = 0;
     this.body.querySelector('.back').addEventListener('click', () => { this.store.select(null); });
     this.body.querySelector('[data-action="locate"]').addEventListener('click', () => this.open(id, true));
+    this.body.querySelector('[data-action="zoom"]').addEventListener('click', () => { this.open(id, true); this.store.emit('zoomto', id); });
     const t3 = this.body.querySelector('[data-action="toggle3d"]'); if (t3) t3.addEventListener('click', () => this.store.setHidden(id, !this.store.state.hidden.has(id)));
     this.body.querySelectorAll('[data-plane]').forEach(b => b.addEventListener('click', () => { this.open(id, true); this.store.emit('focusplane', b.dataset.plane); }));
     const deeper = this.body.querySelector('[data-action="deeper"]'); if (deeper) deeper.addEventListener('click', () => this.store.setDepth(Math.min(3, depth + 1)));

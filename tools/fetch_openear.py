@@ -201,7 +201,9 @@ def choose_members(zf, prefer='embedded'):
         return [zi for zi in members if re.search(pattern, zi.filename, re.I)]
     emb = find(r'registr.*cbct_embedded.*\.nrrd$') or find(r'cbct_embedded.*\.nrrd$')
     unemb = find(r'registr.*cbct_unembedded.*\.nrrd$') or find(r'cbct_unembedded.*\.nrrd$')
-    seg = find(r'segmentation.*\.seg\.nrrd$') or find(r'06_segmentation/.*\.nrrd$') or find(r'segmentation.*\.nrrd$')
+    seg = (find(r'06_segmentation/segmentation\.seg\.nrrd$') or find(r'06_segmentation/.*\.seg\.nrrd$') or find(r'06_segmentation/.*\.nrrd$')
+           or [zi for zi in find(r'segmentation.*\.seg\.nrrd$') if not re.search(r'(accuracy|outline)', zi.filename, re.I)])
+    seg.sort(key=lambda zi: -zi.file_size)
     ply = [zi for zi in find(r'3d_models/.*\.(ply|stl|obj)$') if not re.search(r'(^|/)(12_)?bone\.(ply|stl|obj)$', zi.filename, re.I)]
     if not ply:
         ply = [zi for zi in find(r'\.(ply|stl|obj)$') if zi.file_size < 40e6]
@@ -288,7 +290,8 @@ def find_inputs(dest):
                 vol_files.append(p)
             elif MESH_EXT.search(f):
                 mesh_dirs[root] = mesh_dirs.get(root, 0) + 1
-    labels = [p for p in vol_files if re.search(r'(segmentation|\.seg\.nrrd$)', os.path.basename(p), re.I)]
+    labels = [p for p in vol_files if re.search(r'(segmentation|\.seg\.nrrd$)', os.path.basename(p), re.I) and not re.search(r'(accuracy|outline)', p, re.I)]
+    labels.sort(key=lambda p: (0 if re.search(r'06_segmentation', p, re.I) else 1, -os.path.getsize(p)))
     cts = [p for p in vol_files if p not in labels and re.search(r'cbct', os.path.basename(p), re.I)]
     if not cts:
         labels = [p for p in vol_files if is_label_volume(p)]
