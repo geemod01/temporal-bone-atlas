@@ -73,15 +73,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
       - name: Fetch and convert ${{ inputs.specimen }}
         id: convert
+        shell: bash
         run: |
-          set -o pipefail
           free -m | head -2; df -h . | tail -1; nproc
-          # memory watchdog: log RSS every 20 s so an OOM kill leaves a trace
-          ( while true; do echo "[mem $(date +%T)] $(free -m | awk '/Mem:/ {print $3" MB used of "$2}') | disk $(df -h / | awk 'NR==2 {print $4" free"}') | $(ps -o rss=,cmd= -C python3 | sort -rn | head -1 | awk '{printf "%d MB py", $1/1024}')"; sleep 20; done ) >> convert.log &
-          WATCH=$!
-          python3 -u tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --spacing "${{ inputs.spacing }}" --out data --work work ${{ inputs.full_download && '--full' || '' }} 2>&1 | tee -a convert.log
-          kill $WATCH || true
+          python3 -u tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --spacing "${{ inputs.spacing }}" --out data --work work ${{ inputs.full_download && '--full' || '' }} > convert.log 2>&1
+          status=$?
+          tail -60 convert.log
           ls -la data
+          exit $status
       - name: Post log as commit comment (readable without the Actions UI)
         if: always()
         env:
