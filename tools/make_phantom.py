@@ -492,9 +492,17 @@ def context_field(core_ct, L128_core):
     """Embed the 48 mm core into a 96 mm field with smooth skull-base context.
 
     Frame: +x lateral (right ear), +y anterior, +z superior; vestibule at the origin.
-    Everything here is built from ellipsoids and curved shells so the context has no straight
-    edges. The core contributes only (a) its labelled fine structures and (b) its bone texture
-    where the context is bone, feathered over several millimetres; so no seam is visible.
+    Construction (all smooth shapes, no straight edges):
+      * head: a large ellipsoid centred medially and superiorly; the ear lies on its inferolateral wall.
+        Scalp outside, cranial cavity (brain) inside above the skull base.
+      * skull: the ellipsoid shell, thickened at the base into the skull-base floor.
+      * petrous pyramid: a tapered ellipsoid from the ear medially to the clivus, lying IN the floor,
+        with its ridge (tegmen level z ~ 9) separating middle fossa brain above from the bone below.
+      * mastoid: a drooping ellipsoid continuous with the shell behind/below the canal, tapering to the tip.
+      * posterior fossa behind the pyramid (cerebellum), carved from the solid base.
+      * external canal, TMJ space and neck soft tissue below the base.
+    The core's labelled fine structures replace the context; its bone texture is blended in with a
+    feathered weight that also fades at the core boundary, so no seam is visible.
     """
     n = N_CT
     zs = (ORIGIN_FULL[2] + np.arange(n) * H_CT).astype(np.float32)[:, None, None]
@@ -504,65 +512,82 @@ def context_field(core_ct, L128_core):
     tex = ndi.gaussian_filter(RNG.normal(0, 1, size=(n, n, n)).astype(np.float32), 1.5)
     tex = tex / (tex.std() + 1e-6)
 
-    # ---- head: an ellipsoidal vault whose wall is the skull; centre far medial & superior ----
-    head_c = (-62.0, 6.0, 28.0); head_r = (84.0, 92.0, 70.0)
+    # ---- head and cranial cavity ----
+    head_c = (-64.0, 2.0, 40.0); head_r = (86.0, 96.0, 78.0)
     e_head = _ell(X, Y, Z, head_c, head_r)
-    inside_head = e_head < 1.0
-    skull = (e_head < 1.0) & (e_head > 0.86)            # ~6 mm vault
-    diploe = (e_head < 0.975) & (e_head > 0.905)
-    # ---- petrous pyramid: a long ellipsoid from the ear to the clivus, tilted anteromedially ----
-    # axis from (6, 2, -4) to (-46, 12, -8); half-width shrinks toward the apex via a second ellipsoid
-    ax0 = np.array([6.0, 2.0, -4.0]); ax1 = np.array([-46.0, 12.0, -8.0])
+    cavity_r = (80.0, 90.0, 72.0)
+    e_cav = _ell(X, Y, Z, head_c, cavity_r)
+    # skull-base floor: everything in the cavity below a gently curved floor surface is bone
+    floor_z = 9.0 - 0.10 * (X - 2.0) - 0.0025 * (Y - 0.0) ** 2          # tegmen at the ear, sloping down medially (petrous ridge)
+    scalp = (e_head >= 1.0) & (_ell(X, Y, Z, head_c, (92.0, 102.0, 84.0)) < 1.0)
+    shell = (e_head < 1.0) & (e_cav >= 1.0) & (Z > floor_z - 4.0)
+    base = (e_head < 1.0) & (Z < floor_z) & (Z > floor_z - 12.0)
+    # posterior fossa: a cavity behind the petrous pyramid, carved from the base, open to the cavity above
+    pf = _ell(X, Y, Z, (-26.0, -36.0, -6.0), (34.0, 24.0, 26.0)) < 1.0
+    # middle-fossa floor dips anteriorly (the glenoid and the greater wing region): keep bone there
+    # petrous pyramid: a tapered ellipsoid whose posterior face bounds the posterior fossa
+    ax0 = np.array([8.0, 2.0, -3.0]); ax1 = np.array([-48.0, 14.0, -9.0])
     axv = ax1 - ax0; L = np.linalg.norm(axv); u = axv / L
     px, py, pz = X - ax0[0], Y - ax0[1], Z - ax0[2]
-    tproj = (px * u[0] + py * u[1] + pz * u[2]) / L           # 0 at the ear, 1 at the apex
+    tproj = (px * u[0] + py * u[1] + pz * u[2]) / L
     perp2 = px * px + py * py + pz * pz - (tproj * L) ** 2
-    rad = 19.0 * (1.0 - 0.55 * np.clip(tproj, 0, 1))           # taper
-    pyramid = (tproj > -0.12) & (tproj < 1.02) & (perp2 < rad * rad)
-    # flatten its superior surface to a petrous ridge and shape the posterior face
-    pyramid &= (Z < 9.5 - 6.0 * np.clip(tproj, 0, 1))
-    # ---- mastoid process: a drooping ellipsoid behind/below the canal, tapering to a tip ----
-    mast = (_ell(X, Y, Z, (12.0, -14.0, -12.0), (15.0, 17.0, 26.0)) < 1.0) & (Z < 10.0)
-    tip = _ell(X, Y, Z, (9.0, -12.0, -28.0), (8.0, 9.0, 12.0)) < 1.0
-    # ---- zygomatic root / glenoid: a bar running anteriorly from the canal ----
-    zyg = _ell(X, Y, Z, (14.0, 20.0, 1.0), (9.0, 16.0, 5.0)) < 1.0
-    # ---- bone union, then carve the fossae and canals that the context must respect ----
-    bone = skull | diploe | pyramid | mast | tip | zyg
-    glenoid = _ell(X, Y, Z, (13.0, 13.0, -4.0), (5.5, 6.0, 7.0)) < 1.0       # TMJ space
+    rad = 20.0 * (1.0 - 0.5 * np.clip(tproj, 0, 1))
+    pyramid = (tproj > -0.1) & (tproj < 1.02) & (perp2 < rad * rad) & (Z < floor_z + 1.0)
+    # mastoid process behind/below the canal, continuous with the shell; tip at z ~ -34
+    mast = (_ell(X, Y, Z, (12.0, -13.0, -10.0), (16.0, 18.0, 26.0)) < 1.0) & (Z < 8.0)
+    tip = _ell(X, Y, Z, (9.0, -11.0, -27.0), (8.5, 9.5, 11.0)) < 1.0
+    # zygomatic arch root / glenoid anteriorly
+    zyg = (_ell(X, Y, Z, (16.0, 20.0, 1.0), (10.0, 18.0, 5.5)) < 1.0)
+    bone = shell | (base & ~pf) | pyramid | mast | tip | zyg
+    # the base below the mastoid/pyramid is not bone: it is the neck; limit 'base' bone to z > -14 except mastoid/pyramid/shell
+    # carve: TMJ space, external canal, jugular foramen region, and the cavity above the floor stays brain
+    glenoid = _ell(X, Y, Z, (13.0, 13.0, -4.5), (5.5, 6.5, 7.0)) < 1.0
     bone &= ~glenoid
-    # external auditory canal corridor through the context (matches the core EAC axis)
     eac_dir = np.array([25.0, 2.2, 1.8]) - np.array([9.2, 0.3, 0.0]); eac_dir /= np.linalg.norm(eac_dir)
     qx, qy, qz = X - 9.2, Y - 0.3, Z - 0.0
     tq = qx * eac_dir[0] + qy * eac_dir[1] + qz * eac_dir[2]
     d2 = qx * qx + qy * qy + qz * qz - tq * tq
     eac_ctx = (tq > 1.0) & (d2 < 4.2 ** 2)
     bone &= ~eac_ctx
+    # diploe inside the vault shell (not at the base)
+    diploe = (e_head < 0.985) & (e_cav > 1.02) & (Z > floor_z + 6.0)
+
     # ---- intensities ----
-    field = np.full((n, n, n), 40.0, np.float32)
-    field[bone] = 1250.0 + 260.0 * tex[bone]
-    field[diploe & bone & ~pyramid] = 320.0 + 220.0 * tex[diploe & bone & ~pyramid]
-    brain = inside_head & ~bone & (e_head < 0.86) & ((Z > 9.0) | ((Y < -24.0) & (X < 6.0))) & ~(mast | tip)
-    field[brain] = 32.0 + 6.0 * tex[brain]
-    csf = brain & (((Z < 11.5) & (Z > 9.0)) | ((Y > -26.5) & (Y < -24.0)))
-    field[csf] = 10.0
-    scalp = (e_head >= 1.0) & (e_head < 1.12)
+    field = np.full((n, n, n), -1000.0, np.float32)                  # outside: air
     field[scalp] = 45.0 + 5.0 * tex[scalp]
-    field[e_head >= 1.12] = -1000.0
-    field[eac_ctx & (tq > 14.0)] = -1000.0          # canal open to the outside laterally
+    inside = (e_head < 1.0) | ((Z < floor_z - 4.0) & (_ell(X, Y, Z, head_c, (92.0, 102.0, 84.0)) < 1.0))
+    brain = (e_head < 1.0) & ~bone & (Z > floor_z - 1.0)
+    field[brain] = 32.0 + 6.0 * tex[brain]
+    field[bone] = 1250.0 + 260.0 * tex[bone]
+    field[diploe & bone] = 320.0 + 220.0 * tex[diploe & bone]
+    # CSF over the floor and in the posterior fossa against bone
+    csf = brain & ((Z < floor_z + 2.5) | (pf & (_ell(X, Y, Z, (-26.0, -36.0, -6.0), (31.0, 21.0, 23.0)) >= 1.0)))
+    field[csf] = 10.0
+    # below the skull base: neck soft tissue with great vessels (where not bone and inside the head outline)
+    neck = inside & (Z <= floor_z - 1.0) & ~bone & ~(e_head < 1.0) | (inside & (Z < floor_z - 1.0) & ~bone)
+    field[neck] = 55.0 + 8.0 * tex[neck]
+    jug = (Z < -10.0) & (((X - 1.5) ** 2 + (Y + 9.0) ** 2) < 4.0 ** 2) & ~pyramid & inside
+    field[jug] = 60.0
+    car = (Z < -9.0) & (((X + 3.5) ** 2 + (Y - 11.0) ** 2) < 3.2 ** 2) & ~pyramid & inside
+    field[car] = 70.0
+    field[eac_ctx & (tq > 14.0)] = -1000.0
     field[eac_ctx & (tq <= 14.0)] = -990.0
     field[glenoid] = 50.0
-    # neck: below the skull base, muscle with the great vessels running down
-    neck = (Z < -30.0) & ~bone & (e_head < 1.0)
-    field[neck] = 55.0 + 8.0 * tex[neck]
-    jug = (Z < -12.0) & (((X - 1.5) ** 2 + (Y + 9.0) ** 2) < 4.0 ** 2) & ~pyramid
-    field[jug] = 60.0
-    car = (Z < -10.0) & (((X + 3.5) ** 2 + (Y - 11.0) ** 2) < 3.2 ** 2) & ~pyramid
-    field[car] = 70.0
+
     # ---- blend the core in ----
     o = N_CT_OFF; sl = (slice(o, o + N_CT_CORE),) * 3
     core_lab = L128_core > 0
     dist = ndi.distance_transform_edt(~core_lab, sampling=(H_CT,) * 3)
     w = np.clip(1.0 - (dist - 2.0) / 8.0, 0.0, 1.0).astype(np.float32)
+    fade = int(round(5.0 / H_CT))
+    ramp = np.linspace(0.0, 1.0, fade, dtype=np.float32)
+    edge = np.ones((N_CT_CORE,) * 3, np.float32)
+    for ax in range(3):
+        shp = [1, 1, 1]; shp[ax] = fade
+        r = ramp.reshape(shp)
+        s0 = [slice(None)] * 3; s0[ax] = slice(0, fade); edge[tuple(s0)] *= r
+        s1 = [slice(None)] * 3; s1[ax] = slice(N_CT_CORE - fade, N_CT_CORE); edge[tuple(s1)] *= np.flip(r, axis=ax)
+    w = w * edge
     ctx = field[sl]; core = core_ct.astype(np.float32); ctx_bone = bone[sl]
     blended = ctx.copy()
     mix = ctx_bone & ~core_lab
