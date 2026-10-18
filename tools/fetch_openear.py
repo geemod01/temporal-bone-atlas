@@ -370,6 +370,18 @@ def main():
     ap.add_argument('--url', help='use this archive URL (or local .zip path) instead of the Zenodo API')
     a = ap.parse_args()
 
+    try:
+        import resource, platform
+        mem = [l for l in open('/proc/meminfo').read().splitlines()[:3]]
+        lim = resource.getrlimit(resource.RLIMIT_AS)
+        log('env: python %s | %s | %s | RLIMIT_AS=%s | pid %d' % (platform.python_version(), ' '.join(mem), platform.platform()[:40], lim, os.getpid()))
+        cg = None
+        for cgp in ('/sys/fs/cgroup/memory.max', '/sys/fs/cgroup/memory/memory.limit_in_bytes'):
+            if os.path.exists(cgp):
+                cg = open(cgp).read().strip()
+        log('env: cgroup memory limit = %s' % cg)
+    except Exception as e:
+        log('env probe failed: %s' % e)
     specs = SPECIMENS if a.specimen == 'all' else [a.specimen]
     files = None
     for spec in specs:
