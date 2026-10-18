@@ -217,10 +217,13 @@ def is_label_volume(path):
         pid = r.GetPixelIDTypeAsString()
         if 'float' in pid:
             return False
-        img = sitk.ReadImage(path)
+        # integer volume: decide from a sub-sampled read of a central slab (never the whole volume)
         import numpy as np
-        a = sitk.GetArrayViewFromImage(img)
-        sample = a[::8, ::8, ::8]
+        size = r.GetSize()
+        r.SetExtractIndex([0, 0, int(size[2] // 2)])
+        r.SetExtractSize([int(size[0]), int(size[1]), 1])
+        a = sitk.GetArrayViewFromImage(r.Execute())
+        sample = a[:, ::4, ::4]
         return len(np.unique(sample)) <= 64
     except Exception:
         return False

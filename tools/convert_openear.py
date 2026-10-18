@@ -97,9 +97,9 @@ def lps_to_ras_point(p):
 
 
 def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if sitk else None):
-    """Resample to isotropic spacing with identity direction (in LPS), then return array in RAS order."""
-    img = sitk.Cast(img, sitk.sitkFloat32)
-    # bounding box of the input in LPS world coordinates (all 8 corners)
+    """Crop (in index space) to the requested RAS box, then resample to isotropic spacing with identity
+    direction (in LPS). Returns array in RAS order. The crop happens before any cast so a 2000^3 CBCT
+    never needs to be held as float."""
     size = np.array(img.GetSize())
     corners = []
     for i in (0, size[0] - 1):
@@ -109,10 +109,21 @@ def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if
     corners = np.array(corners)
     lo, hi = corners.min(0), corners.max(0)
     if crop_ras is not None:
-        # crop box given in RAS mm: x0,x1,y0,y1,z0,z1 -> LPS
         cx0, cx1, cy0, cy1, cz0, cz1 = crop_ras
         clo = np.array([-cx1, -cy1, cz0]); chi = np.array([-cx0, -cy0, cz1])
         lo = np.maximum(lo, clo); hi = np.minimum(hi, chi)
+        # index-space crop with a margin, so the resample only touches the region of interest
+        idx = []
+        for px in (lo[0], hi[0]):
+            for py in (lo[1], hi[1]):
+                for pz in (lo[2], hi[2]):
+                    idx.append(img.TransformPhysicalPointToContinuousIndex((float(px), float(py), float(pz))))
+        idx = np.array(idx)
+        i0 = np.maximum(np.floor(idx.min(0)).astype(int) - 2, 0)
+        i1 = np.minimum(np.ceil(idx.max(0)).astype(int) + 3, size)
+        if np.all(i1 > i0):
+            img = sitk.RegionOfInterest(img, [int(x) for x in (i1 - i0)], [int(x) for x in i0])
+            log('cropped input to %s voxels before resampling' % list(img.GetSize()))
     out_size = np.maximum(1, np.ceil((hi - lo) / spacing).astype(int) + 1)
     ref = sitk.Image([int(x) for x in out_size], sitk.sitkFloat32)
     ref.SetSpacing([spacing] * 3)
@@ -429,7 +440,7 @@ def main():
             log('mesh frame auto: %.0f%% of vertices inside the volume as RAS, %.0f%% as LPS' % (fr_ras * 100, fr_lps * 100))
             if abs(fr_lps - fr_ras) < 0.15 and max(fr_ras, fr_lps) > 0.2:
                 # ambiguous: surfaces sit on tissue boundaries, so the correct frame has the larger image gradient at the vertices
-                coarse, c_origin, c_sp = resample_to_ras(img, 1.0, None)
+                mb = (allv.min(0) - 5, allv.max(0) + 5); coarse, c_origin, c_sp = resample_to_ras(img, 1.0, [mb[0][0], mb[1][0], mb[0][1], mb[1][1], mb[0][2], mb[1][2]])
                 g = np.sqrt(sum(np.square(gr) for gr in np.gradient(coarse.astype(np.float32))))
                 def grad_at(pts):
                     idx = np.round((pts - c_origin) / c_sp).astype(int)
