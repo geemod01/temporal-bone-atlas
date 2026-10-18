@@ -431,15 +431,12 @@ def main():
             cmd.append('--labels')
         if not meshes and not label_vol:
             cmd += ['--crop', 'none']
-        log('running:', ' '.join(cmd))
+        log('running converter in-process: ' + ' '.join(cmd[2:]))
         _post_progress(force=True)
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1)
-        for line in proc.stdout:
-            log('  | ' + line.rstrip())
-        proc.wait()
+        import convert_openear
+        convert_openear.log = log          # route the converter's log lines through ours (progress comment)
+        convert_openear.main(cmd[2:])
         _post_progress(force=True)
-        if proc.returncode != 0:
-            raise SystemExit('converter exited with %d' % proc.returncode)
         register(a.out, {'id': 'openear_%s' % spec, 'name': 'OpenEar %s' % spec.capitalize(), 'file': 'openear_%s.tba' % spec,
                          'side': side, 'kind': 'openear', 'bytes': os.path.getsize(out_pack),
                          'license': 'CC BY 4.0', 'source': 'Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724.'})

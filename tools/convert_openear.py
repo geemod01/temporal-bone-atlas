@@ -384,7 +384,7 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping)
 
 
 # --------------------------------------------------------------------------
-def main():
+def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--volume', required=True, help='DICOM folder or NIfTI/NRRD file')
     ap.add_argument('--meshes', help='folder with STL/OBJ/PLY files')
@@ -404,7 +404,7 @@ def main():
     ap.add_argument('--side', default='R', choices=['R', 'L'])
     ap.add_argument('--notes', default='')
     ap.add_argument('--out', required=True)
-    a = ap.parse_args()
+    a = ap.parse_args(argv)
 
     if a.meshes and trimesh is None:
         raise SystemExit('trimesh is required for meshes: pip install trimesh')
