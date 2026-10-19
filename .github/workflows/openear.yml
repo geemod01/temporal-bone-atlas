@@ -13,6 +13,10 @@ on:
         description: "Voxel size of the pack in mm. 0.15 keeps nearly all of the 0.125 mm CBCT detail (~30 MB per ear); 0.2 is ~13 MB; 0.125 is native (~55 MB)"
         default: "0.15"
         required: true
+      probe_only:
+        description: "Only list the archive(s) and post the listing as a commit comment (no conversion)"
+        type: boolean
+        default: false
       full_download:
         description: "Download the whole archive instead of using range requests (slower, needs disk)"
         type: boolean
@@ -45,11 +49,12 @@ jobs:
           {
             echo "## Archive listing (${{ inputs.specimen }})"
             echo '```'
-            python3 tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --list --work work 2>&1 | tail -60
+            python3 tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --list --work work 2>&1 | grep -vE '^\s+[0-9.]+ MB  .*\.(dcm|tif|tiff)$' | tail -${{ inputs.probe_only && '2000' || '60' }}
             echo '```'
           } | tee probe.md
       - name: Fetch and convert ${{ inputs.specimen }}
         id: convert
+        if: ${{ !inputs.probe_only }}
         shell: bash
         run: |
           python3 -u tools/fetch_openear.py --specimen "${{ inputs.specimen }}" --spacing "${{ inputs.spacing }}" --out data --work work ${{ inputs.full_download && '--full' || '' }} > convert.log 2>&1
@@ -66,7 +71,7 @@ jobs:
             echo "OpenEar run ${{ github.run_id }} (${{ inputs.specimen }} @ ${{ inputs.spacing }} mm): job ${{ job.status }}"
             echo
             echo '```'
-            cat probe.md 2>/dev/null | tail -60
+            cat probe.md 2>/dev/null | tail -${{ inputs.probe_only && '2000' || '60' }}
             echo '--- convert.log (tail) ---'
             tail -150 convert.log 2>/dev/null || echo "(no convert.log)"
             echo '```'
@@ -96,6 +101,7 @@ jobs:
             convert.log
           if-no-files-found: ignore
       - name: Publish pack to the "data" release and update datasets.json
+        if: ${{ !inputs.probe_only }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -124,6 +130,7 @@ jobs:
           git commit -m "Register OpenEar pack(s): ${{ inputs.specimen }} at ${{ inputs.spacing }} mm" || echo "nothing to commit"
           git push
       - name: Upload pack as workflow artifact (also downloadable from this run)
+        if: ${{ !inputs.probe_only }}
         uses: actions/upload-artifact@v4
         with:
           name: openear-packs
@@ -133,5 +140,6 @@ jobs:
 
   deploy-site:
     needs: build-pack
+    if: ${{ !inputs.probe_only }}
     uses: ./.github/workflows/pages.yml
     secrets: inherit

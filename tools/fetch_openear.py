@@ -215,6 +215,10 @@ def summarize(zf):
     log('would extract:')
     for zi in choose_members(zf):
         log('  %8.0f MB  %s' % (zi.file_size / 1e6, zi.filename))
+    log('every member that is not a raw DICOM / TIFF slice:')
+    for zi in sorted(zf.infolist(), key=lambda zi: zi.filename):
+        if not zi.is_dir() and not re.search(r'\.(dcm|dicom|ima|tif|tiff|png|jpg|xcf|svg)$', zi.filename, re.I):
+            log('  %8.1f MB  %s' % (zi.file_size / 1e6, zi.filename))
 
 
 def choose_members(zf, prefer='embedded'):
