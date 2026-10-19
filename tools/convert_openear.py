@@ -33,11 +33,13 @@ Notes
   the whole specimen folder on disk.
 """
 import argparse
+import bz2
 import glob
 import json
 import os
 import re
 import sys
+import zlib
 
 import numpy as np
 
@@ -68,8 +70,174 @@ def log(*a):
 # --------------------------------------------------------------------------
 # Volume
 # --------------------------------------------------------------------------
+NRRD_TYPES = {
+    'signed char': np.int8, 'int8': np.int8, 'int8_t': np.int8,
+    'uchar': np.uint8, 'unsigned char': np.uint8, 'uint8': np.uint8, 'uint8_t': np.uint8,
+    'short': np.int16, 'short int': np.int16, 'signed short': np.int16, 'signed short int': np.int16, 'int16': np.int16, 'int16_t': np.int16,
+    'ushort': np.uint16, 'unsigned short': np.uint16, 'unsigned short int': np.uint16, 'uint16': np.uint16, 'uint16_t': np.uint16,
+    'int': np.int32, 'signed int': np.int32, 'int32': np.int32, 'int32_t': np.int32,
+    'uint': np.uint32, 'unsigned int': np.uint32, 'uint32': np.uint32, 'uint32_t': np.uint32,
+    'longlong': np.int64, 'long long': np.int64, 'long long int': np.int64, 'signed long long': np.int64, 'signed long long int': np.int64, 'int64': np.int64, 'int64_t': np.int64,
+    'ulonglong': np.uint64, 'unsigned long long': np.uint64, 'unsigned long long int': np.uint64, 'uint64': np.uint64, 'uint64_t': np.uint64,
+    'float': np.float32, 'double': np.float64,
+}
+
+
+class NrrdStream:
+    """Slice-by-slice access to an attached-data NRRD (raw, gzip or bzip2) without ever holding the
+    whole volume in memory: the stream is decoded sequentially and only the slices the caller keeps
+    survive. Handles 3-D images and 3D Slicer's 4-D segmentations (`kinds: list domain domain domain`,
+    one layer per overlapping segment group). Geometry is left to ITK (see LazyVolume); this class only
+    knows the data layout."""
+
+    def __init__(self, path):
+        self.path = path
+        fields, kv = {}, {}
+        with open(path, 'rb') as f:
+            if not f.readline().startswith(b'NRRD'):
+                raise ValueError('not a NRRD file')
+            while True:
+                line = f.readline()
+                if not line:
+                    raise ValueError('header never ends (detached data file?)')
+                if line in (b'\n', b'\r\n'):
+                    break
+                s = line.decode('utf-8', 'replace').rstrip('\r\n')
+                if s.startswith('#'):
+                    continue
+                if ':=' in s:
+                    k, v = s.split(':=', 1); kv[k.strip()] = v.strip()
+                elif ': ' in s:
+                    k, v = s.split(': ', 1); fields[k.strip().lower()] = v.strip()
+                elif s.endswith(':'):
+                    fields[s[:-1].strip().lower()] = ''
+            self.data_offset = f.tell()
+        self.fields, self.kv = fields, kv
+        if 'data file' in fields or 'datafile' in fields:
+            raise ValueError('detached data file')
+        self.encoding = {'gz': 'gzip', 'gzip': 'gzip', 'bz2': 'bzip2', 'bzip2': 'bzip2', 'raw': 'raw'}.get(fields.get('encoding', 'raw').lower())
+        if self.encoding is None:
+            raise ValueError('encoding %s' % fields.get('encoding'))
+        t = fields.get('type', '').lower()
+        if t not in NRRD_TYPES:
+            raise ValueError('type %s' % t)
+        dt = np.dtype(NRRD_TYPES[t])
+        if dt.itemsize > 1:
+            dt = dt.newbyteorder('>' if fields.get('endian', 'little').lower() == 'big' else '<')
+        self.dtype = dt
+        self.native_dtype = np.dtype(NRRD_TYPES[t])
+        for k in ('byte skip', 'byteskip', 'line skip', 'lineskip'):
+            if int(fields.get(k, '0') or 0):
+                raise ValueError('%s not supported' % k)
+        sizes = [int(x) for x in fields['sizes'].split()]
+        kinds = fields.get('kinds', '').lower().split()
+        self.list_axis = None
+        if len(sizes) == 3:
+            pass
+        elif len(sizes) == 4:
+            non_domain = [i for i, k in enumerate(kinds) if k not in ('domain', 'space', 'time')]
+            if kinds and len(non_domain) == 1:
+                self.list_axis = non_domain[0]
+            elif not kinds and fields.get('space directions', '').split(' ', 1)[0] == 'none':
+                self.list_axis = 0
+            if self.list_axis not in (0, 3):
+                raise ValueError('4-D layout with kinds %s' % (kinds or 'unknown'))
+        else:
+            raise ValueError('%d-D image' % len(sizes))
+        self.layers = 1 if self.list_axis is None else sizes[self.list_axis]
+        self.spatial = tuple(s for i, s in enumerate(sizes) if i != self.list_axis)   # (X, Y, Z), X fastest
+
+    def _read_slices(self, want, items):
+        """Yield (stored slice index, flat array) for every slice flagged in `want`, decoding in order and
+        stopping after the last one wanted. `items` = elements per stored slice."""
+        nbytes = items * self.dtype.itemsize
+        idx = np.nonzero(want)[0]
+        if len(idx) == 0:
+            return
+        last = int(idx[-1])
+        with open(self.path, 'rb') as f:
+            if self.encoding == 'raw':
+                for s in idx:
+                    f.seek(self.data_offset + int(s) * nbytes)
+                    b = f.read(nbytes)
+                    if len(b) < nbytes:
+                        raise ValueError('truncated NRRD data')
+                    yield int(s), np.frombuffer(b, self.dtype)
+                return
+            f.seek(self.data_offset)
+            gz = self.encoding == 'gzip'
+            dec = zlib.decompressobj(zlib.MAX_WBITS | 32) if gz else bz2.BZ2Decompressor()
+            cap = max(nbytes, 1 << 24)   # never inflate more than this per step: labels can expand 1000x
+            buf = bytearray()
+            pending = b''
+            eof = False
+            s = 0
+            while s <= last:
+                if gz:
+                    if dec.eof:
+                        eof = True
+                    elif pending:
+                        buf += dec.decompress(pending, cap)
+                        pending = dec.unconsumed_tail
+                    else:
+                        pending = f.read(1 << 20)
+                        if not pending:
+                            buf += dec.flush(); eof = True
+                else:
+                    if dec.eof:
+                        eof = True
+                    elif dec.needs_input:
+                        chunk = f.read(1 << 20)
+                        if not chunk:
+                            eof = True
+                        else:
+                            buf += dec.decompress(chunk, cap)
+                    else:
+                        buf += dec.decompress(b'', cap)
+                off = 0
+                while len(buf) - off >= nbytes and s <= last:
+                    if want[s]:
+                        yield s, np.frombuffer(bytes(memoryview(buf)[off:off + nbytes]), self.dtype)
+                    off += nbytes
+                    s += 1
+                if off:
+                    del buf[:off]
+                if eof and s <= last and len(buf) < nbytes:
+                    raise ValueError('NRRD data stream ended early (slice %d of %d)' % (s, last + 1))
+
+    def iter_slices(self, z0, z1, want_z=None, layers=None):
+        """Yield (layer, z, array[Y, X]) for z in [z0, z1) (further restricted to want_z[z] if given)."""
+        X, Y, Z = self.spatial
+        N = self.layers
+        layers = list(range(N)) if layers is None else [int(n) for n in layers]
+        sel = np.zeros(Z, bool); sel[max(0, z0):max(0, min(Z, z1))] = True
+        if want_z is not None:
+            sel &= np.asarray(want_z, bool)
+        if self.list_axis in (None, 0):           # one stored slice = every layer of that z (interleaved)
+            for s, flat in self._read_slices(sel, X * Y * N):
+                S = flat.reshape(Y, X, N)
+                for n in layers:
+                    yield n, s, S[:, :, n]
+        else:                                     # planar: layer n is stored as slices n*Z .. n*Z+Z-1
+            want = np.zeros(Z * N, bool)
+            for n in layers:
+                want[n * Z:(n + 1) * Z] = sel
+            for s, flat in self._read_slices(want, X * Y):
+                yield s // Z, s % Z, flat.reshape(Y, X)
+
+    def read_block(self, index, size, layer=0):
+        """Numpy block [z][y][x] (native byte order) of one layer, reading only the rows it needs."""
+        x0, y0, z0 = [int(v) for v in index]
+        sx, sy, sz = [int(v) for v in size]
+        out = np.zeros((sz, sy, sx), self.native_dtype)
+        for _, kz, S in self.iter_slices(z0, z0 + sz, layers=(layer,)):
+            out[kz - z0] = S[y0:y0 + sy, x0:x0 + sx]
+        return out
+
+
 class LazyVolume:
-    """Header-only handle on a volume file; reads voxels only for a requested index region."""
+    """Header-only handle on a volume file; reads voxels only for a requested index region.
+    NRRD files are streamed (NrrdStream), so even a multi-gigabyte volume costs only its crop."""
 
     def __init__(self, path):
         r = sitk.ImageFileReader(); r.SetFileName(path); r.ReadImageInformation()
@@ -79,9 +247,21 @@ class LazyVolume:
         self.origin = tuple(float(x) for x in r.GetOrigin())
         self.direction = tuple(float(x) for x in r.GetDirection())
         self.pixel_type = sitk.GetPixelIDValueAsString(r.GetPixelID())
+        self.components = int(r.GetNumberOfComponents())
+        self.meta = {k: r.GetMetaData(k) for k in r.GetMetaDataKeys()}
         # a tiny image carrying the geometry, so Transform*Point works without voxels
         self._geo = sitk.Image([1, 1, 1], sitk.sitkUInt8)
         self._geo.SetSpacing(self.spacing); self._geo.SetOrigin(self.origin); self._geo.SetDirection(self.direction)
+        self.nrrd = None
+        if re.search(r'\.nrrd$', path, re.I):
+            try:
+                ns = NrrdStream(path)
+                if tuple(ns.spatial) == self.size and ns.layers == self.components:
+                    self.nrrd = ns
+                else:
+                    log('  NRRD layout %s x%d does not match ITK %s x%d; not streaming' % (ns.spatial, ns.layers, self.size, self.components))
+            except Exception as e:
+                log('  NRRD streaming unavailable (%s); ITK will read the whole file' % e)
 
     def GetSize(self): return self.size
     def GetSpacing(self): return self.spacing
@@ -90,13 +270,24 @@ class LazyVolume:
     def TransformIndexToPhysicalPoint(self, idx): return self._geo.TransformIndexToPhysicalPoint(tuple(int(i) for i in idx))
     def TransformPhysicalPointToContinuousIndex(self, p): return self._geo.TransformPhysicalPointToContinuousIndex(tuple(float(x) for x in p))
 
+    def block_image(self, index, size, layer=0):
+        """One layer of a region as a SimpleITK image with the right geometry, via the NRRD stream."""
+        block = self.nrrd.read_block(index, size, layer)
+        img = sitk.GetImageFromArray(block)
+        img.SetSpacing(self.spacing); img.SetDirection(self.direction)
+        img.SetOrigin(self._geo.TransformIndexToPhysicalPoint(tuple(int(i) for i in index)))
+        return img
+
     def read_region(self, index, size):
+        if self.nrrd is not None and self.components == 1:
+            log('  streaming %s voxels from the NRRD' % [int(x) for x in size])
+            return self.block_image(index, size)
         r = sitk.ImageFileReader(); r.SetFileName(self.path)
         r.SetExtractIndex([int(x) for x in index]); r.SetExtractSize([int(x) for x in size])
         try:
             return r.Execute()
         except Exception as e:
-            # some formats cannot stream (e.g. gzip-compressed NRRD): read whole, crop, release
+            # some formats cannot stream (e.g. gzip-compressed NIfTI): read whole, crop, release
             log('  streaming read unavailable (%s); reading whole volume then cropping' % str(e).splitlines()[0][:80])
             whole = sitk.ReadImage(self.path)
             return sitk.RegionOfInterest(whole, [int(x) for x in size], [int(x) for x in index])
@@ -320,65 +511,189 @@ def voxelize(mesh_v, mesh_f, origin, spacing, dims, max_voxels=None):
     return mask
 
 
-def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping):
-    """Resample a label map onto the pack grid (nearest neighbour) and map its values to atlas ids.
+BACKGROUND_IDS = {'bone', 'bone_shell', 'temporal_bone'}   # bone is the CT itself; as a label it would swallow every click
 
-    Value -> name comes from (in order): --label-names JSON, Slicer .seg.nrrd header fields
-    (SegmentN_Name / SegmentN_LabelValue), 'labelN=name'-style header keys, or, failing all,
-    the mesh whose surface best overlaps each label value.
-    """
-    log('reading label volume', path)
-    img = sitk.ReadImage(path)
-    names = {}
-    if names_json and os.path.exists(names_json):
-        with open(names_json) as f:
-            names = {int(k): v for k, v in json.load(f).items()}
-    else:
-        keys = img.GetMetaDataKeys()
-        seg = {}
-        for k in keys:
-            m = re.match(r'Segment(\d+)_(Name|LabelValue)$', k)
-            if m:
-                seg.setdefault(int(m.group(1)), {})[m.group(2)] = img.GetMetaData(k)
-        for d in seg.values():
-            if 'Name' in d and 'LabelValue' in d:
-                try:
-                    names[int(d['LabelValue'])] = d['Name']
-                except ValueError:
-                    pass
-        if not names:
-            for k in keys:
-                m = re.match(r'(?:label|value)[_ ]?(\d+)$', k, re.I)
-                if m:
-                    names[int(m.group(1))] = img.GetMetaData(k)
-    # resample onto the pack grid: build the reference image in LPS matching our RAS grid
-    nx, ny, nz = dims
+
+def pack_grid_in_lps(origin, spacing, dims):
+    """SimpleITK reference image (LPS, identity direction) covering the pack's RAS grid; arrays sampled on
+    it become RAS order after [:, ::-1, ::-1]."""
+    nx, ny, nz = [int(x) for x in dims]
     ox, oy, oz = origin
     lo_lps = [-(ox + (nx - 1) * spacing[0]), -(oy + (ny - 1) * spacing[1]), oz]
-    ref = sitk.Image([int(nx), int(ny), int(nz)], sitk.sitkUInt16)
+    ref = sitk.Image([nx, ny, nz], sitk.sitkUInt8)
     ref.SetSpacing([float(x) for x in spacing]); ref.SetOrigin([float(x) for x in lo_lps]); ref.SetDirection([1, 0, 0, 0, 1, 0, 0, 0, 1])
-    if 'vector' in img.GetPixelIDTypeAsString().lower():
-        img = sitk.VectorIndexSelectionCast(img, 0)
-    img = sitk.Cast(img, sitk.sitkUInt16)
-    out = sitk.Resample(img, ref, sitk.Transform(), sitk.sitkNearestNeighbor, 0, sitk.sitkUInt16)
-    arr = sitk.GetArrayFromImage(out)[:, ::-1, ::-1]
-    values = [int(v) for v in np.unique(arr) if v != 0]
-    log('label volume: %d non-zero values%s' % (len(values), (' with names: ' + ', '.join('%d=%s' % (v, names.get(v, '?')) for v in values)) if names else ''))
-    # value -> atlas id
+    return ref
+
+
+def covering_index_box(src, origin, spacing, dims):
+    """Index range (i0, i1) of `src` that covers the pack grid (plus a voxel of slack), clamped to the image."""
+    nx, ny, nz = [int(x) for x in dims]
+    size = np.array(src.GetSize())
+    pts = []
+    for i in (0, nx - 1):
+        for j in (0, ny - 1):
+            for k in (0, nz - 1):
+                p_ras = np.array([origin[0] + i * spacing[0], origin[1] + j * spacing[1], origin[2] + k * spacing[2]])
+                pts.append(src.TransformPhysicalPointToContinuousIndex((float(-p_ras[0]), float(-p_ras[1]), float(p_ras[2]))))
+    pts = np.array(pts)
+    i0 = np.maximum(np.floor(pts.min(0)).astype(int) - 1, 0)
+    i1 = np.minimum(np.ceil(pts.max(0)).astype(int) + 2, size)
+    return i0, i1
+
+
+def sample_label_layers(src, origin, spacing, dims):
+    """Nearest-neighbour sample every layer of a label volume onto the pack grid, reading only the region
+    that lands on it. Returns a list of [z][y][x] arrays (RAS order), one per layer.
+
+    Fast path (axis-aligned volume, NRRD): each decoded slice is sampled straight into the output, so the
+    peak memory is one input slice plus the outputs. Otherwise the covering block is read and ITK
+    resamples it."""
+    nx, ny, nz = [int(x) for x in dims]
+    N = n_components(src)
+    Dir = np.array(src.GetDirection(), dtype=np.float64).reshape(3, 3)
+    F = np.diag([-1.0, -1.0, 1.0])
+    M = F @ Dir @ np.diag(np.array(src.GetSpacing(), dtype=np.float64))    # RAS mm per index step, columns = axes
+    o = F @ np.array(src.GetOrigin(), dtype=np.float64)
+    axis_aligned = np.allclose(M - np.diag(np.diag(M)), 0.0, atol=1e-6 * float(max(src.GetSpacing())))
+    nrrd = getattr(src, 'nrrd', None)
+    if axis_aligned and nrrd is not None:
+        maps, valid = [], []
+        for ax, n_out in ((0, nx), (1, ny), (2, nz)):
+            p = origin[ax] + np.arange(n_out) * spacing[ax]
+            k = np.rint((p - o[ax]) / M[ax, ax]).astype(np.int64)
+            ok = (k >= 0) & (k < src.GetSize()[ax])
+            maps.append(k); valid.append(np.nonzero(ok)[0])
+        vx, vy, vz = valid
+        out_dtype = np.uint8 if nrrd.native_dtype == np.uint8 else np.uint16
+        out = [np.zeros((nz, ny, nx), out_dtype) for _ in range(N)]
+        if not (len(vx) and len(vy) and len(vz)):
+            log('  WARNING: the label volume does not overlap the pack grid at all')
+            return out
+        mx, my, mz = maps[0][vx], maps[1][vy], maps[2][vz]
+        rows_for = {}
+        for k_out, k_in in zip(vz.tolist(), mz.tolist()):
+            rows_for.setdefault(k_in, []).append(k_out)
+        want_z = np.zeros(src.GetSize()[2], bool); want_z[list(rows_for)] = True
+        log('  streaming %d of %d label slices (%d layer%s) straight onto the pack grid' % (len(rows_for), src.GetSize()[2], N, '' if N == 1 else 's'))
+        ix = np.ix_(my, mx)
+        for n, kz, S in nrrd.iter_slices(int(mz.min()), int(mz.max()) + 1, want_z=want_z):
+            rows = rows_for.get(kz)
+            if not rows:
+                continue
+            block = S[ix]
+            if block.dtype != out[n].dtype:
+                block = block.astype(out[n].dtype)
+            out[n][np.ix_(rows, vy, vx)] = block[None]
+        return out
+    # general case: covering block, resampled by ITK layer by layer
+    i0, i1 = covering_index_box(src, origin, spacing, dims)
+    if not np.all(i1 > i0):
+        log('  WARNING: the label volume does not overlap the pack grid at all')
+        return [np.zeros((nz, ny, nx), np.uint8) for _ in range(N)]
+    ref = pack_grid_in_lps(origin, spacing, dims)
+    out = []
+    for n in range(N):
+        if nrrd is not None:
+            img = src.block_image(i0, i1 - i0, n)
+        else:
+            img = src.read_region(i0, i1 - i0) if isinstance(src, LazyVolume) else sitk.RegionOfInterest(src, [int(x) for x in (i1 - i0)], [int(x) for x in i0])
+            if img.GetNumberOfComponentsPerPixel() > 1:
+                img = sitk.VectorIndexSelectionCast(img, n)
+        if img.GetPixelID() not in (sitk.sitkUInt8, sitk.sitkUInt16):
+            img = sitk.Cast(img, sitk.sitkUInt16)
+        res = sitk.Resample(img, ref, sitk.Transform(), sitk.sitkNearestNeighbor, 0, img.GetPixelID())
+        del img
+        out.append(np.ascontiguousarray(sitk.GetArrayFromImage(res)[:, ::-1, ::-1]))
+        del res
+    log('  resampled %s input voxels (%d layer%s) onto the pack grid' % ([int(x) for x in (i1 - i0)], N, '' if N == 1 else 's'))
+    return out
+
+
+def n_components(src):
+    return src.components if isinstance(src, LazyVolume) else int(src.GetNumberOfComponentsPerPixel())
+
+
+def segment_names(src, names_json):
+    """(layer, value) -> name from --label-names JSON (any layer), Slicer SegmentN_* header fields,
+    or 'labelN'-style keys."""
+    names = {}
+    meta = getattr(src, 'meta', None)
+    if meta is None:
+        meta = {k: src.GetMetaData(k) for k in src.GetMetaDataKeys()}
+    N = n_components(src)
+    if names_json and os.path.exists(names_json):
+        with open(names_json) as f:
+            for k, v in json.load(f).items():
+                for n in range(N):
+                    names[(n, int(k))] = v
+        return names
+    seg = {}
+    for k, v in meta.items():
+        m = re.match(r'Segment(\d+)_(Name|LabelValue|Layer)$', k)
+        if m:
+            seg.setdefault(int(m.group(1)), {})[m.group(2)] = v
+    for d in seg.values():
+        if 'Name' in d and 'LabelValue' in d:
+            try:
+                names[(int(d.get('Layer', 0)), int(d['LabelValue']))] = d['Name']
+            except ValueError:
+                pass
+    if not names:
+        for k, v in meta.items():
+            m = re.match(r'(?:label|value)[_ ]?(\d+)$', k, re.I)
+            if m:
+                for n in range(N):
+                    names[(n, int(m.group(1)))] = v
+    return names
+
+
+def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping):
+    """Sample a segmentation (NRRD/NIfTI label map, including 3D Slicer's multi-layer .seg.nrrd) onto the
+    pack grid without loading it whole, and map its segments to atlas ids.
+
+    Segment -> name comes from (in order): --label-names JSON, Slicer header fields
+    (SegmentN_Name / SegmentN_LabelValue / SegmentN_Layer), 'labelN=name'-style header keys, or, failing
+    all, the mesh whose surface best overlaps the segment. Where segments overlap (Slicer layers), the
+    smaller structure wins, so the ossicles and nerves are never hidden under bone.
+    """
+    log('reading label volume', path)
+    src = read_volume(path)
+    N = n_components(src)
+    log('  label volume %s voxels at %s mm, %d layer%s, %s' % (list(src.GetSize()), tuple(round(s, 4) for s in src.GetSpacing()), N, '' if N == 1 else 's', getattr(src, 'pixel_type', '')))
+    names = segment_names(src, names_json)
+    layers = sample_label_layers(src, origin, spacing, dims)
+    nz, ny, nx = layers[0].shape
+    # inventory: (layer, value) -> voxel count, counted in slabs so no giant temporary appears
+    segs = []
+    for n, L in enumerate(layers):
+        counts = np.zeros(int(np.iinfo(L.dtype).max) + 1, np.int64)
+        for z in range(0, nz, 16):
+            bc = np.bincount(L[z:z + 16].ravel())
+            counts[:len(bc)] += bc
+        for v in np.nonzero(counts)[0]:
+            if v:
+                segs.append((n, int(v), int(counts[v])))
+    if not segs:
+        log('  WARNING: no label voxels inside the pack grid; check that the segmentation is registered to the volume')
+        return None, {}
+    log('label volume: %d segment%s on the pack grid%s' % (len(segs), '' if len(segs) == 1 else 's',
+        (': ' + ', '.join('%s%d=%s' % ('L%d/' % n if N > 1 else '', v, names.get((n, v), '?')) for n, v, _ in segs)) if names else ''))
+    # segment -> atlas id
     id_of = {}
     unmatched = []
-    for v in values:
-        nm = names.get(v)
+    for n, v, _ in segs:
+        nm = names.get((n, v))
         if nm:
             sid, ok = match_id(nm + '.x', mapping)
-            id_of[v] = sid
+            id_of[(n, v)] = sid
             if not ok:
-                unmatched.append((v, nm, sid))
-    if meshes and len(id_of) < len(values):
-        # overlap-based matching for unnamed values: which mesh's vertices fall inside each label
-        for v in values:
-            if v in id_of:
+                unmatched.append((n, v, nm, sid))
+    if meshes and len(id_of) < len(segs):
+        # overlap-based matching for unnamed segments: which mesh's vertices fall inside each one
+        for n, v, _ in segs:
+            if (n, v) in id_of:
                 continue
+            arr = layers[n]
             best, best_frac = None, 0.0
             for m in meshes:
                 pts = m['v'][::max(1, len(m['v']) // 4000)]
@@ -387,7 +702,6 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping)
                 if not ok.any():
                     continue
                 idx = idx[ok]
-                # surfaces sit on the boundary: look at the label 1 voxel inward along the vertex normal is overkill; use a small neighbourhood
                 hits = 0
                 for dz, dy, dx in ((0, 0, 0), (0, 0, 1), (0, 0, -1), (0, 1, 0), (0, -1, 0), (1, 0, 0), (-1, 0, 0)):
                     j = idx + np.array([dx, dy, dz]); j = np.clip(j, 0, np.array(dims) - 1)
@@ -396,33 +710,33 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping)
                 if frac > best_frac:
                     best, best_frac = m['id'], frac
             if best and best_frac > 0.05:
-                id_of[v] = best
+                id_of[(n, v)] = best
                 log('  label %d -> %s (by overlap %.0f%%)' % (v, best, best_frac * 100))
             else:
-                id_of[v] = 'label_%d' % v
-                unmatched.append((v, None, id_of[v]))
-    # merge values that map to the same id, renumber 1..n, drop to uint8
+                id_of[(n, v)] = 'label_%d' % v if N == 1 else 'label_%d_%d' % (n, v)
+                unmatched.append((n, v, None, id_of[(n, v)]))
+    # composite: largest segments first so the smallest structure wins wherever layers overlap
+    order = sorted(segs, key=lambda t: -t[2])
     ids = []
-    for v in values:
-        sid = id_of.get(v, 'label_%d' % v)
+    for n, v, cnt in order:
+        sid = id_of[(n, v)]
+        if sid in BACKGROUND_IDS:
+            log('  skipping %s (%d voxels): bone is the CT itself, not a label' % (names.get((n, v), sid), cnt))
+            continue
         if sid not in ids:
             ids.append(sid)
     if len(ids) > 255:
         log('WARNING: more than 255 labels; keeping the first 255')
         ids = ids[:255]
-    lut = np.zeros(int(arr.max()) + 1, np.uint8)
-    for v in values:
-        sid = id_of.get(v, 'label_%d' % v)
+    labels = np.zeros((nz, ny, nx), np.uint8)
+    for n, v, cnt in order:
+        sid = id_of[(n, v)]
         if sid in ids:
-            lut[v] = ids.index(sid) + 1
-    labels = lut[arr]
+            labels[layers[n] == v] = ids.index(sid) + 1
+    del layers
     label_ids = {str(i + 1): sid for i, sid in enumerate(ids)}
-    for v, nm, sid in unmatched:
-        log('  unmatched label value %d (%s) kept as %s' % (v, nm, sid))
-    for sid in ids:
-        if sid == 'bone_shell' or sid == 'bone':
-            # bone is background in the atlas; keep it only if the user wants it (rarely useful as a label)
-            pass
+    for n, v, nm, sid in unmatched:
+        log('  unmatched segment %d (%s) kept as %s' % (v, nm, sid))
     return labels, label_ids
 
 

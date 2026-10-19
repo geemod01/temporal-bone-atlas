@@ -36,3 +36,5 @@ jobs:
           PY
           python3 -u tools/convert_openear.py --volume /tmp/cbct.nrrd --meshes phantom/meshes --spacing 0.15 --labels --name "selftest-nrrd" --out /tmp/selftest2.tba 2>&1 | tail -20
           ls -la /tmp/selftest2.tba
+      - name: Convert a two-layer Slicer segmentation (.seg.nrrd) through the streaming label reader
+        run: python3 -u tools/selftest_labels.py phantom /tmp/selftest3.tba 2>&1 | grep -v "^  mesh " | tail -15
