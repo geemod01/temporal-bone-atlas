@@ -219,6 +219,15 @@ def summarize(zf):
     for zi in sorted(zf.infolist(), key=lambda zi: zi.filename):
         if not zi.is_dir() and not re.search(r'\.(dcm|dicom|ima|tif|tiff|png|jpg|xcf|svg)$', zi.filename, re.I):
             log('  %8.1f MB  %s' % (zi.file_size / 1e6, zi.filename))
+    for zi in sorted(zf.infolist(), key=lambda zi: zi.filename):
+        if not zi.is_dir() and re.search(r'\.(txt|md|json|csv)$', zi.filename, re.I) and zi.file_size < 20000 and not re.search(r'microslic|reconstruction', zi.filename, re.I):
+            try:
+                text = zf.read(zi).decode('utf-8', 'replace')
+                log('--- %s ---' % zi.filename)
+                for line in text.splitlines()[:40]:
+                    log('    ' + line.rstrip()[:200])
+            except Exception as e:
+                log('--- %s: unreadable (%s)' % (zi.filename, e))
 
 
 def choose_members(zf, prefer='embedded'):
@@ -237,6 +246,10 @@ def choose_members(zf, prefer='embedded'):
         return [zi for zi in members if re.search(pattern, zi.filename, re.I)]
     emb = find(r'registr.*cbct_embedded.*\.nrrd$') or find(r'cbct_embedded.*\.nrrd$')
     unemb = find(r'registr.*cbct_unembedded.*\.nrrd$') or find(r'cbct_unembedded.*\.nrrd$')
+    if not emb:
+        # Alpha-style naming (05_Registred_Slicer_Volumes/CBCT_Alpha.nrrd): any registered CBCT that is not the unembedded one
+        emb = [zi for zi in find(r'registr[^/]*/[^/]*cbct[^/]*\.nrrd$') if zi not in unemb and not re.search(r'accuracy|outline', zi.filename, re.I)]
+        emb.sort(key=lambda zi: zi.file_size)      # the embedded HiRes scan is the smaller file
     seg = (find(r'06_segmentation/segmentation\.seg\.nrrd$') or find(r'06_segmentation/.*\.seg\.nrrd$') or find(r'06_segmentation/.*\.nrrd$')
            or [zi for zi in find(r'segmentation.*\.seg\.nrrd$') if not re.search(r'(accuracy|outline)', zi.filename, re.I)])
     seg.sort(key=lambda zi: -zi.file_size)
@@ -253,7 +266,7 @@ def choose_members(zf, prefer='embedded'):
         vols = [unemb[0]]
     if not vols:
         # generic fallback: largest NRRD that is not a label map / micro-slicing volume
-        cands = [zi for zi in find(r'\.(nrrd|nhdr|nii|nii\.gz|mha)$') if not re.search(r'(seg|label|mask|micro|slic|histo|bone\.nrrd)', zi.filename, re.I)]
+        cands = [zi for zi in find(r'\.(nrrd|nhdr|nii|nii\.gz|mha)$') if not re.search(r'(seg|label|mask|micro|slicing|histo|outline|accuracy|bone\.nrrd)', zi.filename, re.I)]
         cands.sort(key=lambda zi: -zi.file_size)
         vols = cands[:1]
         if not vols:
@@ -422,13 +435,40 @@ def main():
     except Exception as e:
         log('env probe failed: %s' % e)
     specs = SPECIMENS if a.specimen == 'all' else [a.specimen]
-    files = None
+    files_cache = {'files': None}
+    failed = []
+    built = []
     for spec in specs:
         log('=== %s ===' % spec)
+        try:
+            _one_specimen(a, spec, files_cache)
+            if not a.list:
+                built.append(spec)
+        except SystemExit as e:
+            if len(specs) == 1:
+                raise
+            failed.append((spec, str(e))); log('FAILED %s: %s' % (spec, e))
+        except Exception as e:
+            if len(specs) == 1:
+                raise
+            failed.append((spec, '%s: %s' % (type(e).__name__, e))); log('FAILED %s: %s: %s' % (spec, type(e).__name__, e))
+    if failed:
+        log('specimens that failed: ' + '; '.join('%s (%s)' % f for f in failed))
+    if built:
+        log('packs built: ' + ', '.join(built))
+    log('done')
+    if failed and not built and not a.list:
+        raise SystemExit(1)
+
+
+def _one_specimen(a, spec, files_cache):
+    files = files_cache.get('files')
+    if True:
         if a.url:
             src = a.url
         else:
             files = files or zenodo_files()
+            files_cache['files'] = files
             f = pick(files, spec)
             src = f['url']
             log('archive %s (%.1f GB)' % (f['key'], (f['size'] or 0) / 1e9))
@@ -457,7 +497,7 @@ def main():
                 raise SystemExit(2)
         summarize(zf)
         if a.list:
-            continue
+            return
         extract_needed(zf, dest, prefer=a.volume_choice, hf=hf)
         _post_progress(force=True)
         volume, meshes, label_vol = find_inputs(dest)
@@ -487,7 +527,6 @@ def main():
         register(a.out, {'id': 'openear_%s' % spec, 'name': 'OpenEar %s' % spec.capitalize(), 'file': 'openear_%s.tba' % spec,
                          'side': pack_side(out_pack, side), 'kind': 'openear', 'bytes': os.path.getsize(out_pack),
                          'license': 'CC BY 4.0', 'source': 'Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724.'})
-    log('done')
 
 
 def pack_side(path, fallback):

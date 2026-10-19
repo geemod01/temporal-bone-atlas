@@ -430,7 +430,8 @@ def match_id(fname, mapping):
 
 
 def load_mesh_raw(path, scale):
-    m = trimesh.load(path, force='mesh')
+    big = os.path.getsize(path) > 20e6          # OpenEar bone blocks are 60-210 MB: skip trimesh's vertex merging
+    m = trimesh.load(path, force='mesh', process=not big)
     if m.is_empty:
         return None
     return np.asarray(m.vertices, dtype=np.float64) * scale, np.asarray(m.faces, dtype=np.int64)

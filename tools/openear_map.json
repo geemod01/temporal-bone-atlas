@@ -13,7 +13,10 @@
   "scala_tympani",
   "scala_vestibuli",
   "scalatympani",
-  "scalavestibuli"
+  "scalavestibuli",
+  "scala_tympany",
+  "scala tympany",
+  "tympany"
  ],
  "vestibule": [
   "vestibule",
@@ -113,7 +116,12 @@
   "membrana",
   "tympanic membrane",
   "tympanic_membrane",
-  "tympanicmembrane"
+  "tympanicmembrane",
+  "tympanic_drum",
+  "tympanic drum",
+  "tympanic-drum",
+  "ear drum",
+  "ear_drum"
  ],
  "eac": [
   "auditory_canal",
@@ -128,7 +136,9 @@
   "outer ear",
   "outer_ear",
   "ear canal",
-  "auditory canal"
+  "auditory canal",
+  "external auditory",
+  "outer ear canal"
  ],
  "sigmoid_sinus": [
   "sigmoid",
@@ -145,7 +155,9 @@
   "carotid",
   "carotis",
   "carotis interna",
-  "ica"
+  "ica",
+  "carotis_interna",
+  "internal carotid"
  ],
  "bone_shell": [
   "bone",
@@ -198,7 +210,10 @@
  "round_window": [
   "round_window",
   "roundwindow",
-  "fenestra_cochleae"
+  "fenestra_cochleae",
+  "round window",
+  "rw membrane",
+  "rwm"
  ],
  "oval_window": [
   "oval_window",
@@ -236,7 +251,19 @@
   "cochleo-vestibular",
   "cn viii",
   "nervus vestibulocochlearis",
-  "08_cochleovestibular"
+  "08_cochleovestibular",
+  "cochleo_vestibular",
+  "cochleo vestibular",
+  "vestibulo_cochlear",
+  "vestibulo-cochlear",
+  "vestibulo cochlear",
+  "cochlear_vestibular",
+  "cochlear-vestibular",
+  "cochlear vestibular",
+  "cochleovestibular nerve",
+  "cn_viii",
+  "cnviii",
+  "eighth nerve"
  ],
  "sinus_dura": [
   "11_sinus",
