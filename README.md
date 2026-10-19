@@ -4,7 +4,21 @@ A single-file, browser-based temporal bone CT atlas for otolaryngology training:
 
 Open `dist/TemporalBoneAtlas.html` in a current browser (Chrome, Edge, Safari 16.4+, Firefox 113+). It works offline from the file; nothing is sent anywhere.
 
-The file ships with a **synthetic phantom**: a procedurally generated right temporal bone with the correct topology and relationships (facial nerve segments, ossicles, labyrinth, IAC, sigmoid, jugular bulb, carotid, mastoid cells), every structure labelled. It is not patient anatomy. Real imaging is loaded as a data pack made with `tools/convert_openear.py` (see below).
+The hosted site (https://geemod01.github.io/temporal-bone-atlas/) opens on **real imaging**: seven of the eight OpenEar specimens (Sieber et al., Sci Data 2019, CC BY 4.0), each a 125 µm CBCT of a cadaveric temporal bone with the published micro-slicing segmentation and surfaces, resliced into true anatomical planes at 0.15 mm:
+
+| Pack | Side | Structures (labels + surfaces) |
+| --- | --- | --- |
+| OpenEar Alpha | right | cochlea (scalae), ossicles, facial nerve, chorda, cochleovestibular nerve, TM, EAC, carotid, round window, sinus/dura + bone (context) |
+| OpenEar Gamma | left | as above (no round window) |
+| OpenEar Delta | right | as above |
+| OpenEar Epsilon | left | as above |
+| OpenEar Zeta | right | as above |
+| OpenEar Eta | left | as above (the CBCT has an acquisition artefact, per the authors) |
+| OpenEar Theta | right | as above |
+
+OpenEar Beta ships no registered CBCT (its raw scan and its segmentation are in different frames; the archive's transform chain FlipXY -> InitialGuess -> BrainsFit would have to be applied first), so it is not in the library yet.
+
+The single-file build ships with a **synthetic phantom**: a procedurally generated right temporal bone with the correct topology and relationships (facial nerve segments, ossicles, labyrinth, IAC, sigmoid, jugular bulb, carotid, mastoid cells), every structure labelled. It is not patient anatomy; it exists so the app works with no download, and it is what the tours and quizzes were written against.
 
 ## What is in the box
 
