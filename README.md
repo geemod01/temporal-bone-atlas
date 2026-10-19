@@ -4,19 +4,20 @@ A single-file, browser-based temporal bone CT atlas for otolaryngology training:
 
 Open `dist/TemporalBoneAtlas.html` in a current browser (Chrome, Edge, Safari 16.4+, Firefox 113+). It works offline from the file; nothing is sent anywhere.
 
-The hosted site (https://geemod01.github.io/temporal-bone-atlas/) opens on **real imaging**: seven of the eight OpenEar specimens (Sieber et al., Sci Data 2019, CC BY 4.0), each a 125 µm CBCT of a cadaveric temporal bone with the published micro-slicing segmentation and surfaces, resliced into true anatomical planes at 0.15 mm:
+The hosted site (https://geemod01.github.io/temporal-bone-atlas/) opens on **real imaging**: all eight OpenEar specimens (Sieber et al., Sci Data 2019, CC BY 4.0), each a 125 µm CBCT of a cadaveric temporal bone with the published micro-slicing segmentation and surfaces, resliced into true anatomical planes at 0.15 mm (27-43 MB per ear, downloaded once and kept in the browser):
 
 | Pack | Side | Structures (labels + surfaces) |
 | --- | --- | --- |
-| OpenEar Alpha | right | cochlea (scalae), ossicles, facial nerve, chorda, cochleovestibular nerve, TM, EAC, carotid, round window, sinus/dura + bone (context) |
-| OpenEar Gamma | left | as above (no round window) |
+| OpenEar Alpha | right | cochlea (scalae), ossicles, facial nerve, chorda, cochleovestibular nerve, TM, EAC, carotid, round window, sinus/dura + bone block (context) |
+| OpenEar Beta | right | as above, no round window (its archive has no registered CBCT: the converter applied the shipped registration chain to the raw scan, see below) |
+| OpenEar Gamma | left | as above |
 | OpenEar Delta | right | as above |
 | OpenEar Epsilon | left | as above |
 | OpenEar Zeta | right | as above |
 | OpenEar Eta | left | as above (the CBCT has an acquisition artefact, per the authors) |
 | OpenEar Theta | right | as above |
 
-OpenEar Beta ships no registered CBCT (its raw scan and its segmentation are in different frames; the archive's transform chain FlipXY -> InitialGuess -> BrainsFit would have to be applied first), so it is not in the library yet.
+The segmentations do not include the vestibule, the semicircular canals or the IAC as separate pieces; those cards fall back to the cochlea / cochleovestibular nerve surfaces for *Locate*, and the CT shows them.
 
 The single-file build ships with a **synthetic phantom**: a procedurally generated right temporal bone with the correct topology and relationships (facial nerve segments, ossicles, labyrinth, IAC, sigmoid, jugular bulb, carotid, mastoid cells), every structure labelled. It is not patient anatomy; it exists so the app works with no download, and it is what the tours and quizzes were written against.
 
@@ -106,6 +107,7 @@ python3 tools/convert_openear.py --volume Delta/CBCT --meshes Delta/Models \
    * `--label-volume seg.nrrd` resamples a real segmentation (OpenEar ships one at 125 µm; 3D Slicer exports `.seg.nrrd`, including multi-layer ones with overlapping segments) onto the pack grid and reads structure names from its header. Prefer it over `--labels`, which voxelises meshes and needs closed surfaces. Where segments overlap the smaller structure wins, and a "Bone" segment is dropped (the CT already shows bone; as a label it would catch every click).
    * NRRD volumes (CT and segmentation) are streamed slice by slice, so the converter needs about 1.3 GB of RAM at 0.15 mm whatever the size of the input files (OpenEar's segmentation is 1202x1208x952 voxels in 13 layers, 18 GB uncompressed); NIfTI inputs are read whole.
    * `--orient auto` (default) puts the pack into the anatomical frame. Research volumes such as OpenEar's embedded blocks sit in the scanner frame, so their axes are not the patient's; the converter recovers true axial/coronal/sagittal planes from the segmented structures (the facial nerve's mastoid segment and the ossicles hang vertically, the EAC and IAC are horizontal, the cochlea-to-TM line is lateral), reads the side off the anatomy (carotid anterior, sigmoid sinus posterior) and puts the cochlea at the origin. The estimate, with each cue's residual, is logged and stored in the pack header under `orientation`. `--orient none --side R|L` keeps the volume's own axes.
+   * `--transforms DIR` applies a raw scan's shipped registration chain (ITK/Slicer `.h5` files). Which files apply, in which order and direction is not recorded, so the converter tries every composition and keeps the one that puts the surfaces on the bone edges of the volume (OpenEar Beta: `CBCT_BrainsFit then CBCT_InitialGuess`, edge score 934 against 133 untransformed). The fetch tool passes the transforms along automatically when an archive has only DICOM.
    * Large wrapping surfaces (`12_Bone.ply`, OpenEar's combined "Sinus_Dura", a dura) become *context surfaces*: translucent, off by default (toggle them in the 3D Layers menu or with B), never used for camera fitting, picking or Locate. OpenEar's sigmoid sinus is not separable from its dura in that segment (the piece is 24 cm3 and thick throughout), so the *Sigmoid sinus* card has no location in OpenEar packs; the CT shows it.
    * Unmatched file names are listed at the end; add them to `tools/openear_map.json` so they map onto atlas cards. Datasets that segment the whole facial nerve or the whole labyrinth as one surface map onto the *Facial nerve (whole course)* and *Bony labyrinth* overview cards, and the per-segment cards fall back to those surfaces for *Locate*.
 4. Open the pack from the dataset menu. The pack round-trips exactly: the phantom's NIfTI + STL export converted with this script reproduces the built-in pack (volume identical, labels Dice > 0.95 for closed meshes).
