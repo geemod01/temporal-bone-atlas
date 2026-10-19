@@ -1,7 +1,7 @@
 // Scene3D: structure surfaces plus the three CT slice planes at the crosshair, with a 3D cursor.
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { structureName, structureColor, STRUCTURE_BY_ID, visibleAtDepth, AIR_IDS, resolveAnchor } from './content.js';
+import { structureName, structureColor, STRUCTURE_BY_ID, visibleAtDepth, AIR_IDS, resolveAnchor, isContext } from './content.js';
 
 const ACCENT = new THREE.Color('#e6b042');
 
@@ -82,7 +82,7 @@ export class Scene3D {
       g.setAttribute('position', new THREE.BufferAttribute(m.positions, 3));
       g.setIndex(new THREE.BufferAttribute(m.indices, 1));
       g.computeVertexNormals();
-      const air = AIR_IDS.has(m.id), shell = m.id === 'bone_shell', membrane = m.id === 'tympanic_membrane';
+      const air = AIR_IDS.has(m.id), shell = isContext(m.id), membrane = m.id === 'tympanic_membrane';
       const mat = new THREE.MeshStandardMaterial({
         color: new THREE.Color(structureColor(m.id)), roughness: shell ? 0.9 : 0.55, metalness: 0.0,
         transparent: air || shell || membrane, opacity: shell ? 0.16 : air ? 0.22 : membrane ? 0.45 : 1.0, depthWrite: !(air || shell || membrane), side: THREE.DoubleSide
@@ -158,7 +158,7 @@ export class Scene3D {
   updateVisibility() {
     const st = this.store.state, hidden = st.hidden, s = st.settings;
     for (const [id, m] of this.meshes) {
-      if (id === 'bone_shell') m.visible = !!s.boneShell && !hidden.has(id);
+      if (isContext(id)) m.visible = !!s.boneShell && !hidden.has(id);
       else m.visible = !hidden.has(id);
     }
     this.updatePlaneOpacity();
@@ -179,7 +179,7 @@ export class Scene3D {
       let op = m.userData.baseOpacity;
       const wasTransparent = mat.transparent;
       if (focus && !focus.has(id) && !isSel) { op = Math.min(op, 0.18); mat.transparent = true; mat.depthWrite = false; }
-      else if (!AIR_IDS.has(id) && id !== 'bone_shell' && id !== 'tympanic_membrane') { mat.transparent = false; mat.depthWrite = true; }
+      else if (!AIR_IDS.has(id) && !isContext(id) && id !== 'tympanic_membrane') { mat.transparent = false; mat.depthWrite = true; }
       mat.opacity = op;
       if (wasTransparent !== mat.transparent) mat.needsUpdate = true;
     }
@@ -192,7 +192,7 @@ export class Scene3D {
     const want = new Set();
     if (mode !== 'off' && !quizHide) {
       for (const [id, m] of this.meshes) {
-        if (!m.visible || id === 'bone_shell') continue;
+        if (!m.visible || isContext(id)) continue;
         const def = STRUCTURE_BY_ID.get(id); if (!def) continue;
         if (id === st.selectedId || mode === 'all' || (mode === 'auto' && visibleAtDepth(def, st.depth) && !AIR_IDS.has(id))) want.add(id);
         if (mode === 'selected' && id !== st.selectedId) want.delete(id);
@@ -231,7 +231,7 @@ export class Scene3D {
     const vol = this.ds.volume;
     let e = null;
     for (const [id, m] of this.meshes) {
-      if (!m.visible || id === 'bone_shell' || AIR_IDS.has(id)) continue;
+      if (!m.visible || isContext(id) || AIR_IDS.has(id)) continue;
       const def = STRUCTURE_BY_ID.get(id); if (def && def.group === 'vascular') continue;
       const b = this.ds.meshById.get(id).bbox;
       e = e ? [Math.min(e[0], b[0]), Math.min(e[1], b[1]), Math.min(e[2], b[2]), Math.max(e[3], b[3]), Math.max(e[4], b[4]), Math.max(e[5], b[5])] : b.slice();
@@ -322,8 +322,8 @@ export class Scene3D {
     const st = this.store.state;
     const quizHide = st.quiz && st.quiz.hideNames;
     const candidates = [];
-    for (const m of this.meshes.values()) if (m.visible && m.userData.id !== 'bone_shell' && m.material.opacity > 0.3) candidates.push(m);
-    if (st.settings.boneShell && this.meshes.get('bone_shell') && this.meshes.get('bone_shell').visible) candidates.push(this.meshes.get('bone_shell'));
+    for (const m of this.meshes.values()) if (m.visible && !isContext(m.userData.id) && m.material.opacity > 0.3) candidates.push(m);
+    if (st.settings.boneShell) for (const m of this.meshes.values()) if (isContext(m.userData.id) && m.visible) candidates.push(m);
     if (st.settings.planes3d) for (const p of Object.values(this.planes)) candidates.push(p);
     const hits = this.raycaster.intersectObjects(candidates, false);
     if (!hits.length) { if (!click) { this.store.hover(null); this.tip.hidden = true; } return; }
@@ -364,7 +364,7 @@ export class Scene3D {
       const on = g.ids.some(id => !st.hidden.has(id));
       return `<label class="layer-row"><input type="checkbox" data-group="${g.key}" ${on ? 'checked' : ''}><span>${g.name}</span></label>`;
     }).join('') +
-      `<label class="layer-row"><input type="checkbox" data-setting="boneShell" ${st.settings.boneShell ? 'checked' : ''}><span>Bone surface (context)</span></label>` +
+      `<label class="layer-row"><input type="checkbox" data-setting="boneShell" ${st.settings.boneShell ? 'checked' : ''}><span>Bone and dura (context surfaces)</span></label>` +
       `<label class="layer-row"><input type="checkbox" data-setting="planes3d" ${st.settings.planes3d ? 'checked' : ''}><span>CT slice planes</span></label>` +
       `<label class="layer-row range"><span>Plane opacity</span><input type="range" min="0.2" max="1" step="0.05" value="${st.settings.planeOpacity}" data-setting="planeOpacity"></label>`;
     pop.hidden = false;

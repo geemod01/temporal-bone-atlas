@@ -236,7 +236,7 @@ def choose_members(zf, prefer='embedded'):
     seg = (find(r'06_segmentation/segmentation\.seg\.nrrd$') or find(r'06_segmentation/.*\.seg\.nrrd$') or find(r'06_segmentation/.*\.nrrd$')
            or [zi for zi in find(r'segmentation.*\.seg\.nrrd$') if not re.search(r'(accuracy|outline)', zi.filename, re.I)])
     seg.sort(key=lambda zi: -zi.file_size)
-    ply = [zi for zi in find(r'3d_models/.*\.(ply|stl|obj)$') if not re.search(r'(^|/)(12_)?bone\.(ply|stl|obj)$', zi.filename, re.I)]
+    ply = find(r'3d_models/.*\.(ply|stl|obj)$')          # includes 12_Bone.ply (~60 MB): the bone block becomes the translucent context surface
     if not ply:
         ply = [zi for zi in find(r'\.(ply|stl|obj)$') if zi.file_size < 40e6]
     meta = find(r'(accuracy|readme|license|volumetric).*\.txt$')
@@ -462,13 +462,11 @@ def main():
         log('mesh folder : %s' % meshes)
         if not volume:
             raise SystemExit('no CBCT/volume found; run with --list and extend VOLUME_EXT / classify()')
-        side = a.side
-        if side == 'auto':
-            side = 'L' if re.search(r'\b(left|links|sin)\b', ' '.join(os.listdir(dest)), re.I) else 'R'
+        side = a.side   # 'auto': the converter reads the side off the anatomy (carotid anterior, sinus posterior)
         out_pack = os.path.join(a.out, 'openear_%s.tba' % spec)
         os.makedirs(a.out, exist_ok=True)
         cmd = [sys.executable, os.path.join(HERE, 'convert_openear.py'), '--volume', volume, '--spacing', str(a.spacing),
-               '--intensity', 'auto', '--mesh-frame', 'auto', '--name', 'OpenEar %s' % spec.capitalize(), '--side', side,
+               '--intensity', 'auto', '--mesh-frame', 'auto', '--orient', 'auto', '--name', 'OpenEar %s' % spec.capitalize(), '--side', side,
                '--notes', 'OpenEar specimen %s (Sieber et al., Sci Data 2019, CC BY 4.0): cadaveric temporal bone, CBCT plus micro-slicing segmentation.' % spec.capitalize(),
                '--out', out_pack]
         if meshes:
@@ -483,9 +481,20 @@ def main():
         sys.stderr.flush()
         subprocess.run(cmd, check=True)
         register(a.out, {'id': 'openear_%s' % spec, 'name': 'OpenEar %s' % spec.capitalize(), 'file': 'openear_%s.tba' % spec,
-                         'side': side, 'kind': 'openear', 'bytes': os.path.getsize(out_pack),
+                         'side': pack_side(out_pack, side), 'kind': 'openear', 'bytes': os.path.getsize(out_pack),
                          'license': 'CC BY 4.0', 'source': 'Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724.'})
     log('done')
+
+
+def pack_side(path, fallback):
+    """The side the converter settled on (from the anatomy), read from the pack header."""
+    try:
+        sys.path.insert(0, HERE)
+        from tbapack import read_header
+        return read_header(path).get('side') or fallback
+    except Exception as e:
+        log('could not read the pack header for the side (%s)' % e)
+        return 'R' if fallback == 'auto' else fallback
 
 
 def register(out_dir, entry):

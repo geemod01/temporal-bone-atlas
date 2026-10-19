@@ -84,13 +84,15 @@ for every specimen.
 pip install SimpleITK trimesh fast-simplification numpy
 python3 tools/convert_openear.py --volume Delta/CBCT --meshes Delta/Models \
     --mesh-frame LPS --intensity auto --spacing 0.3 --labels \
-    --name "OpenEar Delta (right)" --side R --out dist/openear_delta.tba
+    --name "OpenEar Delta" --out dist/openear_delta.tba
 ```
 
    * `--mesh-frame`: STL files exported from 3D Slicer are in LPS; most research datasets are RAS. If the surfaces land mirrored or displaced relative to the CT in the app, switch this flag.
    * `--intensity auto` rescales CBCT grey values to a HU-like range when they are not HU already.
    * `--label-volume seg.nrrd` resamples a real segmentation (OpenEar ships one at 125 µm; 3D Slicer exports `.seg.nrrd`, including multi-layer ones with overlapping segments) onto the pack grid and reads structure names from its header. Prefer it over `--labels`, which voxelises meshes and needs closed surfaces. Where segments overlap the smaller structure wins, and a "Bone" segment is dropped (the CT already shows bone; as a label it would catch every click).
-   * NRRD volumes (CT and segmentation) are streamed slice by slice, so the converter needs about 1 GB of RAM at 0.15 mm whatever the size of the input files; NIfTI inputs are read whole.
+   * NRRD volumes (CT and segmentation) are streamed slice by slice, so the converter needs about 1.3 GB of RAM at 0.15 mm whatever the size of the input files (OpenEar's segmentation is 1202x1208x952 voxels in 13 layers, 18 GB uncompressed); NIfTI inputs are read whole.
+   * `--orient auto` (default) puts the pack into the anatomical frame. Research volumes such as OpenEar's embedded blocks sit in the scanner frame, so their axes are not the patient's; the converter recovers true axial/coronal/sagittal planes from the segmented structures (the facial nerve's mastoid segment and the ossicles hang vertically, the EAC and IAC are horizontal, the cochlea-to-TM line is lateral), reads the side off the anatomy (carotid anterior, sigmoid sinus posterior) and puts the cochlea at the origin. The estimate, with each cue's residual, is logged and stored in the pack header under `orientation`. `--orient none --side R|L` keeps the volume's own axes.
+   * Large wrapping surfaces (`12_Bone.ply`, OpenEar's combined "Sinus_Dura", a dura) become *context surfaces*: translucent, off by default (toggle them in the 3D Layers menu or with B), never used for camera fitting, picking or Locate. OpenEar's sigmoid sinus is not separable from its dura in that segment (the piece is 24 cm3 and thick throughout), so the *Sigmoid sinus* card has no location in OpenEar packs; the CT shows it.
    * Unmatched file names are listed at the end; add them to `tools/openear_map.json` so they map onto atlas cards. Datasets that segment the whole facial nerve or the whole labyrinth as one surface map onto the *Facial nerve (whole course)* and *Bony labyrinth* overview cards, and the per-segment cards fall back to those surfaces for *Locate*.
 4. Open the pack from the dataset menu. The pack round-trips exactly: the phantom's NIfTI + STL export converted with this script reproduces the built-in pack (volume identical, labels Dice > 0.95 for closed meshes).
 

@@ -50,7 +50,7 @@ export function openSettings(store, host) {
           <option value="false" ${!s.planes3d ? 'selected' : ''}>Hidden</option>
         </select></label>
       <label>Plane opacity <input type="range" min="0.2" max="1" step="0.05" data-k="planeOpacity" value="${s.planeOpacity}"></label>
-      <label>Bone surface in 3D
+      <label>Bone and dura surfaces in 3D (context)
         <select data-k="boneShell">
           <option value="false" ${!s.boneShell ? 'selected' : ''}>Hidden</option>
           <option value="true" ${s.boneShell ? 'selected' : ''}>Shown (translucent)</option>

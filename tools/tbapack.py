@@ -56,6 +56,15 @@ def write_pack(path, header, blobs, level=6):
     return len(raw)
 
 
+def read_header(path):
+    """Header JSON only (reads just the start of the gzip stream)."""
+    with gzip.open(path, "rb") as f:
+        head = f.read(8)
+        assert head[:4] == b"TBA1", "not a TBA pack"
+        hlen = struct.unpack("<I", head[4:8])[0]
+        return json.loads(f.read(hlen).decode("utf-8"))
+
+
 def read_pack(path):
     """Reads a pack back (used for tests and by the converter)."""
     with gzip.open(path, "rb") as f:

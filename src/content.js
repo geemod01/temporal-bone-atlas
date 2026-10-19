@@ -17,23 +17,29 @@ export const GROUPS = {
 
 // Which structures are air spaces (drawn translucent in 3D) and which are off by default.
 export const AIR_IDS = new Set(['eac', 'tympanic_cavity', 'epitympanum', 'aditus', 'antrum', 'mastoid_cells', 'eustachian_tube', 'sinus_tympani', 'facial_recess', 'prussak_space']);
-export const DEFAULT_HIDDEN = new Set(['eac', 'mastoid_cells', 'tympanic_cavity', 'epitympanum', 'aditus', 'antrum', 'eustachian_tube', 'tegmen', 'petrous_apex', 'tmj', 'styloid', 'digastric_ridge', 'emissary_vein', 'bone_shell', 'prussak_space', 'stapedius', 'endolymphatic_sac']);
+export const DEFAULT_HIDDEN = new Set(['eac', 'mastoid_cells', 'tympanic_cavity', 'epitympanum', 'aditus', 'antrum', 'eustachian_tube', 'tegmen', 'petrous_apex', 'tmj', 'styloid', 'digastric_ridge', 'emissary_vein', 'bone_shell', 'sinus_dura', 'dura', 'prussak_space', 'stapedius', 'endolymphatic_sac']);
 
 export const STRUCTURES = [...inner, ...facial, ...middle, ...vascular].map(s => ({ ...s, mesh: s.mesh !== false, anchor: s.anchor || s.id }));
 export const STRUCTURE_BY_ID = new Map(STRUCTURES.map(s => [s.id, s]));
 export const TOURS = toursJson;
 export const QUIZ = quizJson;
 
+// Context surfaces: large structures that wrap the ear (bone block, dura with the sigmoid sinus). Shown translucent,
+// off by default, never fitted to or picked, so they frame the anatomy without hiding it.
+export const CONTEXT_IDS = new Set(['bone_shell', 'sinus_dura', 'dura']);
+export const isContext = (id) => CONTEXT_IDS.has(id);
+const CONTEXT_NAMES = { bone_shell: 'Bone (context surface)', sinus_dura: 'Sigmoid sinus and dura (context surface)', dura: 'Dura (context surface)' };
+const CONTEXT_COLORS = { bone_shell: '#cfc3b0', sinus_dura: '#4e7ad6', dura: '#8c7bb5' };
 export function structureName(id) {
   const s = STRUCTURE_BY_ID.get(id);
   if (s) return s.name;
-  if (id === 'bone_shell') return 'Bone (context surface)';
+  if (CONTEXT_NAMES[id]) return CONTEXT_NAMES[id];
   return id.replace(/_/g, ' ');
 }
 export function structureColor(id) {
   const s = STRUCTURE_BY_ID.get(id);
   if (s && s.color) return s.color;
-  if (id === 'bone_shell') return '#cfc3b0';
+  if (CONTEXT_COLORS[id]) return CONTEXT_COLORS[id];
   return '#9aa3ad';
 }
 

@@ -324,50 +324,59 @@ def lps_to_ras_point(p):
     return np.array([-p[0], -p[1], p[2]], dtype=np.float64)
 
 
-def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if sitk else None):
-    """Crop (in index space) to the requested RAS box, then resample to isotropic spacing with identity
-    direction (in LPS). Returns array in RAS order. With a LazyVolume only the crop region is ever read."""
+FLIP_LPS = np.diag([-1.0, -1.0, 1.0])   # RAS <-> LPS
+
+
+def out_to_in_ras(rot):
+    """Map from the output (anatomical) RAS frame back to the input RAS frame: p_in = Rt p_out + c."""
+    if rot is None:
+        return np.eye(3), np.zeros(3)
+    return rot['R'].T, np.asarray(rot['center'], np.float64)
+
+
+def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if sitk else None, rot=None):
+    """Resample onto an isotropic RAS grid covering `crop_ras` (x0,x1,y0,y1,z0,z1 in the OUTPUT frame; the
+    volume's own bounds when None). With `rot` (see estimate_anatomical_frame) the output frame is the
+    anatomical one and the volume is rotated into it. Only the input region that lands on the grid is read.
+    Returns (array [z][y][x] RAS order, origin RAS, spacing)."""
     lazy = isinstance(img, LazyVolume)
     size = np.array(img.GetSize())
-    corners = []
-    for i in (0, size[0] - 1):
-        for j in (0, size[1] - 1):
-            for k in (0, size[2] - 1):
-                corners.append(img.TransformIndexToPhysicalPoint((int(i), int(j), int(k))))
-    corners = np.array(corners)
-    lo, hi = corners.min(0), corners.max(0)
+    Rt, c = out_to_in_ras(rot)
+    corners_in = np.array([img.TransformIndexToPhysicalPoint((int(i), int(j), int(k))) for i in (0, size[0] - 1) for j in (0, size[1] - 1) for k in (0, size[2] - 1)])
+    corners_out = (corners_in @ FLIP_LPS - c) @ Rt          # input LPS -> input RAS -> output RAS (Rt.T = R)
+    lo, hi = corners_out.min(0), corners_out.max(0)        # output-frame bounds of the volume (RAS)
     if crop_ras is not None:
         cx0, cx1, cy0, cy1, cz0, cz1 = crop_ras
-        clo = np.array([-cx1, -cy1, cz0]); chi = np.array([-cx0, -cy0, cz1])
-        lo = np.maximum(lo, clo); hi = np.minimum(hi, chi)
-        # index-space crop with a margin, so the resample only touches the region of interest
-        idx = []
-        for px in (lo[0], hi[0]):
-            for py in (lo[1], hi[1]):
-                for pz in (lo[2], hi[2]):
-                    idx.append(img.TransformPhysicalPointToContinuousIndex((float(px), float(py), float(pz))))
-        idx = np.array(idx)
-        i0 = np.maximum(np.floor(idx.min(0)).astype(int) - 2, 0)
-        i1 = np.minimum(np.ceil(idx.max(0)).astype(int) + 3, size)
-        if np.all(i1 > i0):
-            if lazy:
-                img = img.read_region(i0, i1 - i0)
-            else:
-                img = sitk.RegionOfInterest(img, [int(x) for x in (i1 - i0)], [int(x) for x in i0])
-            log('cropped input to %s voxels before resampling' % list(img.GetSize()))
-    if isinstance(img, LazyVolume):
+        lo = np.maximum(lo, [cx0, cy0, cz0]); hi = np.minimum(hi, [cx1, cy1, cz1])
+    out_size = np.maximum(1, np.ceil((hi - lo) / spacing).astype(int) + 1)
+    # input region covering the output box (its 8 corners, mapped back)
+    box = np.array([[x, y, z] for x in (lo[0], hi[0]) for y in (lo[1], hi[1]) for z in (lo[2], hi[2])])
+    box_in_lps = (box @ Rt.T + c) @ FLIP_LPS
+    idx = np.array([img.TransformPhysicalPointToContinuousIndex(tuple(float(x) for x in p)) for p in box_in_lps])
+    i0 = np.maximum(np.floor(idx.min(0)).astype(int) - 2, 0)
+    i1 = np.minimum(np.ceil(idx.max(0)).astype(int) + 3, size)
+    if not np.all(i1 > i0):
+        raise SystemExit('the requested crop box lies outside the volume')
+    if np.any(i0 > 0) or np.any(i1 < size):
+        img = img.read_region(i0, i1 - i0) if lazy else sitk.RegionOfInterest(img, [int(x) for x in (i1 - i0)], [int(x) for x in i0])
+        log('cropped input to %s voxels before resampling' % list(img.GetSize()))
+    elif lazy:
         log('reading whole volume (no crop)')
         img = img.read_all()
-    out_size = np.maximum(1, np.ceil((hi - lo) / spacing).astype(int) + 1)
+    # reference grid: identity direction in LPS; an affine maps output LPS points to input LPS points
+    nx, ny, nz = out_size
     ref = sitk.Image([int(x) for x in out_size], sitk.sitkFloat32)
     ref.SetSpacing([spacing] * 3)
-    ref.SetOrigin([float(x) for x in lo])
+    ref.SetOrigin([float(-hi[0]), float(-hi[1]), float(lo[2])])     # output RAS box in LPS
     ref.SetDirection([1, 0, 0, 0, 1, 0, 0, 0, 1])
-    out = sitk.Resample(img, ref, sitk.Transform(), interpolator, -1024.0, sitk.sitkFloat32)
+    tf = sitk.AffineTransform(3)
+    tf.SetMatrix([float(x) for x in (FLIP_LPS @ Rt @ FLIP_LPS).ravel()])
+    tf.SetTranslation([float(x) for x in (FLIP_LPS @ c)])
+    out = sitk.Resample(img, ref, tf, interpolator, -1024.0, sitk.sitkFloat32)
+    del img
     arr = sitk.GetArrayFromImage(out)  # (z, y, x) with +x = L, +y = P
     arr = arr[:, ::-1, ::-1]           # flip to +x = R, +y = A
-    nx, ny, nz = out_size
-    origin_ras = np.array([-(lo[0] + (nx - 1) * spacing), -(lo[1] + (ny - 1) * spacing), lo[2]])
+    origin_ras = np.array([hi[0] - (nx - 1) * spacing, hi[1] - (ny - 1) * spacing, lo[2]])
     return np.ascontiguousarray(arr), origin_ras, np.array([spacing] * 3)
 
 
@@ -512,6 +521,7 @@ def voxelize(mesh_v, mesh_f, origin, spacing, dims, max_voxels=None):
 
 
 BACKGROUND_IDS = {'bone', 'bone_shell', 'temporal_bone'}   # bone is the CT itself; as a label it would swallow every click
+CONTEXT_IDS = {'bone_shell', 'sinus_dura', 'dura'}            # large wrapping surfaces: kept as translucent context, no landmark
 
 
 def pack_grid_in_lps(origin, spacing, dims):
@@ -525,83 +535,127 @@ def pack_grid_in_lps(origin, spacing, dims):
     return ref
 
 
-def covering_index_box(src, origin, spacing, dims):
+def covering_index_box(src, origin, spacing, dims, rot=None):
     """Index range (i0, i1) of `src` that covers the pack grid (plus a voxel of slack), clamped to the image."""
     nx, ny, nz = [int(x) for x in dims]
     size = np.array(src.GetSize())
+    Rt, c = out_to_in_ras(rot)
     pts = []
     for i in (0, nx - 1):
         for j in (0, ny - 1):
             for k in (0, nz - 1):
-                p_ras = np.array([origin[0] + i * spacing[0], origin[1] + j * spacing[1], origin[2] + k * spacing[2]])
-                pts.append(src.TransformPhysicalPointToContinuousIndex((float(-p_ras[0]), float(-p_ras[1]), float(p_ras[2]))))
+                p_out = np.array([origin[0] + i * spacing[0], origin[1] + j * spacing[1], origin[2] + k * spacing[2]])
+                p_lps = FLIP_LPS @ (Rt @ p_out + c)
+                pts.append(src.TransformPhysicalPointToContinuousIndex(tuple(float(x) for x in p_lps)))
     pts = np.array(pts)
     i0 = np.maximum(np.floor(pts.min(0)).astype(int) - 1, 0)
     i1 = np.minimum(np.ceil(pts.max(0)).astype(int) + 2, size)
     return i0, i1
 
 
-def sample_label_layers(src, origin, spacing, dims):
-    """Nearest-neighbour sample every layer of a label volume onto the pack grid, reading only the region
-    that lands on it. Returns a list of [z][y][x] arrays (RAS order), one per layer.
+def index_affine(src, origin, spacing, rot=None):
+    """(B, b0) with  src continuous index = B @ (i, j, k) + b0  for pack grid indices (i, j, k)."""
+    Dir = np.array(src.GetDirection(), dtype=np.float64).reshape(3, 3)
+    M_inv = np.linalg.inv(Dir @ np.diag(np.array(src.GetSpacing(), dtype=np.float64)))
+    o_lps = np.array(src.GetOrigin(), dtype=np.float64)
+    Rt, c = out_to_in_ras(rot)
+    B = M_inv @ FLIP_LPS @ Rt @ np.diag(np.asarray(spacing, np.float64))
+    b0 = M_inv @ (FLIP_LPS @ (Rt @ np.asarray(origin, np.float64) + c) - o_lps)
+    return B, b0
 
-    Fast path (axis-aligned volume, NRRD): each decoded slice is sampled straight into the output, so the
-    peak memory is one input slice plus the outputs. Otherwise the covering block is read and ITK
-    resamples it."""
+
+def sample_label_layers(src, origin, spacing, dims, rot=None):
+    """Nearest-neighbour sample every layer of a label volume onto the pack grid (optionally rotated into the
+    anatomical frame), reading only the slices that land on it. Returns a list of [z][y][x] arrays (RAS
+    order), one per layer.
+
+    NRRD input is streamed: when the grids are aligned each decoded slice is sampled straight into the
+    output; otherwise the output voxels are bucketed by source slice first (about 20 bytes per output
+    voxel) and filled as the slices stream past. Other formats go through ITK on the covering block."""
     nx, ny, nz = [int(x) for x in dims]
     N = n_components(src)
-    Dir = np.array(src.GetDirection(), dtype=np.float64).reshape(3, 3)
-    F = np.diag([-1.0, -1.0, 1.0])
-    M = F @ Dir @ np.diag(np.array(src.GetSpacing(), dtype=np.float64))    # RAS mm per index step, columns = axes
-    o = F @ np.array(src.GetOrigin(), dtype=np.float64)
-    axis_aligned = np.allclose(M - np.diag(np.diag(M)), 0.0, atol=1e-6 * float(max(src.GetSpacing())))
     nrrd = getattr(src, 'nrrd', None)
-    if axis_aligned and nrrd is not None:
-        maps, valid = [], []
-        for ax, n_out in ((0, nx), (1, ny), (2, nz)):
-            p = origin[ax] + np.arange(n_out) * spacing[ax]
-            k = np.rint((p - o[ax]) / M[ax, ax]).astype(np.int64)
-            ok = (k >= 0) & (k < src.GetSize()[ax])
-            maps.append(k); valid.append(np.nonzero(ok)[0])
-        vx, vy, vz = valid
+    size = np.array(src.GetSize())
+    if nrrd is not None:
+        B, b0 = index_affine(src, origin, spacing, rot)
         out_dtype = np.uint8 if nrrd.native_dtype == np.uint8 else np.uint16
         out = [np.zeros((nz, ny, nx), out_dtype) for _ in range(N)]
-        if not (len(vx) and len(vy) and len(vz)):
+        if np.allclose(B - np.diag(np.diag(B)), 0.0, atol=1e-6):
+            maps, valid = [], []
+            for ax, n_out in ((0, nx), (1, ny), (2, nz)):
+                k = np.rint(B[ax, ax] * np.arange(n_out) + b0[ax]).astype(np.int64)
+                ok = (k >= 0) & (k < size[ax])
+                maps.append(k); valid.append(np.nonzero(ok)[0])
+            vx, vy, vz = valid
+            if not (len(vx) and len(vy) and len(vz)):
+                log('  WARNING: the label volume does not overlap the pack grid at all')
+                return out
+            mx, my, mz = maps[0][vx], maps[1][vy], maps[2][vz]
+            rows_for = {}
+            for k_out, k_in in zip(vz.tolist(), mz.tolist()):
+                rows_for.setdefault(k_in, []).append(k_out)
+            want_z = np.zeros(int(size[2]), bool); want_z[list(rows_for)] = True
+            log('  streaming %d of %d label slices (%d layer%s) straight onto the pack grid' % (len(rows_for), size[2], N, '' if N == 1 else 's'))
+            ix = np.ix_(my, mx)
+            for n, kz, S in nrrd.iter_slices(int(mz.min()), int(mz.max()) + 1, want_z=want_z):
+                rows = rows_for.get(kz)
+                if not rows:
+                    continue
+                block = S[ix]
+                if block.dtype != out[n].dtype:
+                    block = block.astype(out[n].dtype)
+                out[n][np.ix_(rows, vy, vx)] = block[None]
+            return out
+        # rotated: nearest source index of every output voxel, bucketed by source slice
+        V = nx * ny * nz
+        kx = np.empty(V, np.int16); ky = np.empty(V, np.int16); kz = np.full(V, -1, np.int32)
+        ii, jj = np.meshgrid(np.arange(nx, dtype=np.float64), np.arange(ny, dtype=np.float64), indexing='xy')   # (ny, nx)
+        base = B[:, 0:1] * ii.ravel()[None, :] + B[:, 1:2] * jj.ravel()[None, :] + b0[:, None]   # (3, ny*nx)
+        for k in range(nz):
+            idx = np.rint(base + B[:, 2:3] * float(k)).astype(np.int64)
+            ok = np.all((idx >= 0) & (idx < size[:, None]), axis=0)
+            sl = slice(k * ny * nx, (k + 1) * ny * nx)
+            kx[sl] = idx[0]; ky[sl] = idx[1]
+            kz[sl] = np.where(ok, idx[2], -1)
+        del base, ii, jj, idx, ok
+        valid = kz >= 0
+        n_valid = int(valid.sum())
+        if n_valid == 0:
             log('  WARNING: the label volume does not overlap the pack grid at all')
             return out
-        mx, my, mz = maps[0][vx], maps[1][vy], maps[2][vz]
-        rows_for = {}
-        for k_out, k_in in zip(vz.tolist(), mz.tolist()):
-            rows_for.setdefault(k_in, []).append(k_out)
-        want_z = np.zeros(src.GetSize()[2], bool); want_z[list(rows_for)] = True
-        log('  streaming %d of %d label slices (%d layer%s) straight onto the pack grid' % (len(rows_for), src.GetSize()[2], N, '' if N == 1 else 's'))
-        ix = np.ix_(my, mx)
-        for n, kz, S in nrrd.iter_slices(int(mz.min()), int(mz.max()) + 1, want_z=want_z):
-            rows = rows_for.get(kz)
-            if not rows:
-                continue
-            block = S[ix]
-            if block.dtype != out[n].dtype:
-                block = block.astype(out[n].dtype)
-            out[n][np.ix_(rows, vy, vx)] = block[None]
+        order = np.argsort(kz.astype(np.int16), kind='stable')[V - n_valid:].astype(np.int32)   # radix sort; valid voxels by source slice
+        kz_sorted = kz[order]
+        slices_used = np.unique(kz_sorted)
+        starts = np.searchsorted(kz_sorted, slices_used)
+        ends = np.r_[starts[1:], len(order)]
+        del kz, kz_sorted, valid
+        want_z = np.zeros(int(size[2]), bool); want_z[slices_used] = True
+        log('  streaming %d of %d label slices (%d layer%s) onto the rotated pack grid' % (len(slices_used), size[2], N, '' if N == 1 else 's'))
+        lookup = {int(z): (int(s0), int(s1)) for z, s0, s1 in zip(slices_used, starts, ends)}
+        flat = [o.reshape(-1) for o in out]
+        for n, z, S in nrrd.iter_slices(int(slices_used.min()), int(slices_used.max()) + 1, want_z=want_z):
+            s0, s1 = lookup[z]
+            sel = order[s0:s1]
+            flat[n][sel] = S[ky[sel], kx[sel]]
         return out
-    # general case: covering block, resampled by ITK layer by layer
-    i0, i1 = covering_index_box(src, origin, spacing, dims)
+    # other formats: covering block through ITK, layer by layer
+    i0, i1 = covering_index_box(src, origin, spacing, dims, rot)
     if not np.all(i1 > i0):
         log('  WARNING: the label volume does not overlap the pack grid at all')
         return [np.zeros((nz, ny, nx), np.uint8) for _ in range(N)]
     ref = pack_grid_in_lps(origin, spacing, dims)
+    Rt, c = out_to_in_ras(rot)
+    tf = sitk.AffineTransform(3)
+    tf.SetMatrix([float(x) for x in (FLIP_LPS @ Rt @ FLIP_LPS).ravel()])
+    tf.SetTranslation([float(x) for x in (FLIP_LPS @ c)])
     out = []
     for n in range(N):
-        if nrrd is not None:
-            img = src.block_image(i0, i1 - i0, n)
-        else:
-            img = src.read_region(i0, i1 - i0) if isinstance(src, LazyVolume) else sitk.RegionOfInterest(src, [int(x) for x in (i1 - i0)], [int(x) for x in i0])
-            if img.GetNumberOfComponentsPerPixel() > 1:
-                img = sitk.VectorIndexSelectionCast(img, n)
+        img = src.read_region(i0, i1 - i0) if isinstance(src, LazyVolume) else sitk.RegionOfInterest(src, [int(x) for x in (i1 - i0)], [int(x) for x in i0])
+        if img.GetNumberOfComponentsPerPixel() > 1:
+            img = sitk.VectorIndexSelectionCast(img, n)
         if img.GetPixelID() not in (sitk.sitkUInt8, sitk.sitkUInt16):
             img = sitk.Cast(img, sitk.sitkUInt16)
-        res = sitk.Resample(img, ref, sitk.Transform(), sitk.sitkNearestNeighbor, 0, img.GetPixelID())
+        res = sitk.Resample(img, ref, tf, sitk.sitkNearestNeighbor, 0, img.GetPixelID())
         del img
         out.append(np.ascontiguousarray(sitk.GetArrayFromImage(res)[:, ::-1, ::-1]))
         del res
@@ -654,7 +708,7 @@ def segment_names(src, names_json):
     return names
 
 
-def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping):
+def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping, rot=None):
     """Sample a segmentation (NRRD/NIfTI label map, including 3D Slicer's multi-layer .seg.nrrd) onto the
     pack grid without loading it whole, and map its segments to atlas ids.
 
@@ -668,7 +722,7 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping)
     N = n_components(src)
     log('  label volume %s voxels at %s mm, %d layer%s, %s' % (list(src.GetSize()), tuple(round(s, 4) for s in src.GetSpacing()), N, '' if N == 1 else 's', getattr(src, 'pixel_type', '')))
     names = segment_names(src, names_json)
-    layers = sample_label_layers(src, origin, spacing, dims)
+    layers = sample_label_layers(src, origin, spacing, dims, rot)
     nz, ny, nx = layers[0].shape
     # inventory: (layer, value) -> voxel count, counted in slabs so no giant temporary appears
     segs = []
@@ -755,6 +809,110 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping)
 
 
 # --------------------------------------------------------------------------
+# Anatomical orientation. Research volumes (OpenEar's embedded blocks among them) sit in the scanner frame,
+# so their axes are not the patient's. The atlas needs true axial/coronal/sagittal planes, and the
+# segmented structures carry enough anatomy to recover them:
+#   superior  - the mastoid segment of the facial nerve descends vertically; the malleus and incus hang
+#               with their heavy ends (head, body) up; the EAC and the IAC are horizontal lines
+#   lateral   - from the cochlea towards the tympanic membrane, along the EAC, and along the IAC from
+#               the porus to the fundus
+#   side      - the carotid is anterior to the cochlea, the sigmoid sinus / posterior fossa dura posterior
+# The result is the RAS frame of a right or left ear with the cochlea at the origin.
+# --------------------------------------------------------------------------
+def unit(v):
+    v = np.asarray(v, dtype=np.float64)
+    n = np.linalg.norm(v)
+    return v / n if n > 0 else v
+
+
+def principal_axis(v):
+    c = v.mean(0)
+    _, s, vt = np.linalg.svd(v - c, full_matrices=False)
+    return c, vt[0], s / np.sqrt(len(v))
+
+
+def estimate_anatomical_frame(meshes):
+    """Rotation into the anatomical RAS frame from segmented structures (RAS input frame, any orientation).
+
+    Returns {'R': 3x3 (rows = right, anterior, superior unit vectors in the input frame), 'center': cochlea
+    centroid, 'side': 'R'|'L', 'report': [...]} or None when the cues are missing."""
+    by = {m['id']: np.asarray(m['v'], np.float64) for m in meshes}
+    report = []
+    coch_id = next((i for i in ('cochlea', 'labyrinth', 'vestibule') if i in by), None)
+    if coch_id is None:
+        return None
+    coch = by[coch_id].mean(0)
+    horiz, vert, lateral = [], [], []          # (unit vector, weight, name)
+    if 'eac' in by:
+        c, ax, _ = principal_axis(by['eac']); ax = ax * np.sign(np.dot(ax, c - coch))
+        horiz.append((ax, 1.0, 'EAC axis')); lateral.append((ax, 0.5, 'EAC axis'))
+    iac_id = next((i for i in ('iac', 'cochleovestibular_nerve', 'fn_meatal') if i in by), None)
+    if iac_id:
+        c, ax, _ = principal_axis(by[iac_id]); ax = ax * np.sign(np.dot(ax, coch - c))
+        horiz.append((ax, 1.0, 'IAC axis')); lateral.append((ax, 1.0, 'IAC axis'))
+    if 'tympanic_membrane' in by:
+        d = unit(by['tympanic_membrane'].mean(0) - coch)
+        lateral.append((d, 1.0, 'cochlea->TM')); horiz.append((d, 0.5, 'cochlea->TM'))
+    h_mean = unit(sum(w * h for h, w, _ in horiz)) if horiz else None
+    fn_id = next((i for i in ('fn_mastoid', 'facial_nerve') if i in by), None)
+    if fn_id:
+        fn = by[fn_id]
+        dist = np.linalg.norm(fn - coch, axis=1)
+        # the stylomastoid foramen is the nerve's point farthest from the cochlea; the 9 mm above it are the
+        # mastoid segment, which hangs vertically. If that end turns out to lie in the axial plane (a nerve
+        # mesh whose meatal end is the far one), take the other extreme instead.
+        ends = [fn[np.argmax(dist)]]
+        ends.append(fn[np.argmax(np.linalg.norm(fn - ends[0], axis=1))])
+        for E in ends:
+            seg = fn[np.linalg.norm(fn - E, axis=1) < 9.0]
+            if len(seg) < 20:
+                continue
+            c, ax, sd = principal_axis(seg)
+            ax = -ax * np.sign(np.dot(ax, E - c))          # superior = away from the free (inferior) end
+            tilt = abs(np.dot(ax, h_mean)) if h_mean is not None else 0.0
+            if tilt < 0.7:
+                vert.append((ax, 2.0, 'facial nerve, mastoid segment'))
+                break
+    for oss in ('malleus', 'incus'):
+        if oss in by:
+            c, ax, _ = principal_axis(by[oss]); proj = (by[oss] - c) @ ax
+            mid = (proj.min() + proj.max()) / 2
+            ax = ax * (1.0 if mid < 0 else -1.0)         # the vertex centroid sits towards the heavy (superior) end
+            vert.append((ax, 1.0, oss + ' long axis'))
+    if not vert or not lateral:
+        return None
+    A = sum(w * np.outer(h, h) for h, w, _ in horiz) - sum(w * np.outer(v, v) for v, w, _ in vert)
+    _, evecs = np.linalg.eigh(A)
+    s_hat = evecs[:, 0]
+    s_hat = s_hat * np.sign(np.dot(s_hat, sum(w * v for v, w, _ in vert)))
+    l_sum = sum(w * d for d, w, _ in lateral)
+    l_hat = unit(l_sum - np.dot(l_sum, s_hat) * s_hat)
+    a_right = np.cross(s_hat, l_hat)                      # anterior if this is a right ear
+    votes = 0.0
+    for pid, sign in (('carotid_canal', 1.0), ('eustachian_tube', 1.0), ('sigmoid_sinus', -1.0), ('sinus_dura', -1.0), ('dura', -1.0), ('jugular_bulb', -1.0), ('scc_posterior', -1.0)):
+        if pid in by:
+            votes += sign * np.dot(by[pid].mean(0) - coch, a_right)
+    if votes == 0.0:
+        report.append('no anterior/posterior structure to tell the side; assuming a right ear')
+    side = 'L' if votes < 0 else 'R'
+    r_hat = l_hat if side == 'R' else -l_hat
+    a_hat = np.cross(s_hat, r_hat)
+    R = np.stack([r_hat, a_hat, s_hat])
+    deg = lambda a, b: np.degrees(np.arccos(np.clip(abs(np.dot(a, b)), -1.0, 1.0)))
+    for v, w, name in vert:
+        report.append('%s: %.0f deg from the final superior axis' % (name, deg(v, s_hat)))
+    for h, w, name in horiz:
+        report.append('%s: %.0f deg from the axial plane' % (name, 90.0 - deg(h, s_hat)))
+    for d, w, name in lateral:
+        report.append('%s: %.0f deg from the final lateral axis' % (name, deg(d, l_hat)))
+    report.append('side %s (anterior/posterior vote %.1f mm)' % (side, votes))
+    return {'R': R, 'center': coch, 'side': side, 'report': report}
+
+
+def rotation_angle_deg(R):
+    return float(np.degrees(np.arccos(np.clip((np.trace(R) - 1) / 2, -1.0, 1.0))))
+
+
 def main(argv=None):
     log('converter main() entered')
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -764,6 +922,7 @@ def main(argv=None):
     ap.add_argument('--mesh-frame', default='auto', choices=['RAS', 'LPS', 'ras', 'lps', 'auto'], help='frame of the mesh coordinates; auto picks the one that lands inside the volume')
     ap.add_argument('--mesh-scale', type=float, default=1.0, help='multiply mesh coordinates (e.g. 0.001 for micrometres)')
     ap.add_argument('--target-faces', type=int, default=12000, help='decimate meshes above this many faces')
+    ap.add_argument('--context-faces', type=int, default=90000, help='face budget for context surfaces (bone block, dura), which are large')
     ap.add_argument('--spacing', type=float, default=0.3, help='output isotropic voxel size in mm')
     ap.add_argument('--crop', default='auto', help="'auto' (meshes bbox + margin), 'none', or x0,x1,y0,y1,z0,z1 in RAS mm")
     ap.add_argument('--margin', type=float, default=6.0, help='margin around the mesh bbox for auto crop (mm)')
@@ -772,8 +931,9 @@ def main(argv=None):
     ap.add_argument('--label-volume', help='segmentation volume (NRRD/NIfTI label map, e.g. OpenEar segmentation) resampled onto the pack grid; preferred over --labels')
     ap.add_argument('--label-names', help='JSON {value: name} for --label-volume when the file carries no names')
     ap.add_argument('--landmarks', help='landmarks.json (from the app or hand-written) to merge')
+    ap.add_argument('--orient', default='auto', choices=['auto', 'none'], help="'auto' rotates everything into the anatomical frame estimated from the segmented structures (cochlea at the origin); 'none' keeps the volume's own axes")
     ap.add_argument('--name', default=None)
-    ap.add_argument('--side', default='R', choices=['R', 'L'])
+    ap.add_argument('--side', default='auto', choices=['R', 'L', 'auto'], help='auto = from the anatomy (needs --orient auto); otherwise R or L')
     ap.add_argument('--notes', default='')
     ap.add_argument('--out', required=True)
     a = ap.parse_args(argv)
@@ -834,7 +994,7 @@ def main(argv=None):
             if not ok:
                 unmatched.append((os.path.basename(f), sid))
             v, fc = to_frame(v, fc, frame)
-            v, fc = decimate(v, fc, a.target_faces)
+            v, fc = decimate(v, fc, a.context_faces if sid in CONTEXT_IDS else a.target_faces)
             if any(m['id'] == sid for m in meshes):
                 # merge duplicates (e.g. scala tympani + scala vestibuli -> cochlea)
                 prev = next(m for m in meshes if m['id'] == sid)
@@ -843,6 +1003,27 @@ def main(argv=None):
             else:
                 meshes.append({'id': sid, 'v': v, 'f': fc, 'file': os.path.basename(f)})
             log('  mesh %-26s <- %s (%d faces)' % (sid, os.path.basename(f), len(fc)))
+
+    # --- anatomical frame ---
+    rot = None
+    side = a.side if a.side != 'auto' else 'R'
+    if a.orient == 'auto' and meshes:
+        est = estimate_anatomical_frame(meshes)
+        if est is None:
+            log('anatomical frame: not enough structures to estimate it (need the cochlea plus EAC/IAC/TM and a facial nerve or ossicle); keeping the volume axes')
+        else:
+            rot = est
+            ang = rotation_angle_deg(est['R'])
+            log('anatomical frame from the structures: rotating by %.0f deg; %s ear; cochlea at the origin' % (ang, 'right' if est['side'] == 'R' else 'left'))
+            for line in est['report']:
+                log('  ' + line)
+            if a.side != 'auto' and a.side != est['side']:
+                log('  WARNING: --side %s disagrees with the anatomy, which says %s; using %s' % (a.side, est['side'], est['side']))
+            side = est['side']
+            for m in meshes:
+                m['v'] = ((m['v'] - est['center']) @ est['R'].T).astype(np.float64)
+    elif a.orient == 'auto':
+        log('anatomical frame: no meshes, keeping the volume axes')
 
     # --- crop box ---
     crop = None
@@ -863,7 +1044,7 @@ def main(argv=None):
         crop = [float(x) for x in a.crop.split(',')]
 
     # --- volume ---
-    arr, origin, spacing = resample_to_ras(img, a.spacing, crop)
+    arr, origin, spacing = resample_to_ras(img, a.spacing, crop, rot=rot)
     arr = intensity_to_hu(arr, a.intensity)
     arr = np.clip(arr, -1024, 3071).astype(np.int16)
     dims = [arr.shape[2], arr.shape[1], arr.shape[0]]
@@ -873,7 +1054,7 @@ def main(argv=None):
     label_ids = {}
     labels = None
     if a.label_volume:
-        labels, label_ids = labels_from_volume(a.label_volume, a.label_names, origin, spacing, dims, meshes, load_map(a.map) if os.path.exists(a.map) else {})
+        labels, label_ids = labels_from_volume(a.label_volume, a.label_names, origin, spacing, dims, meshes, load_map(a.map) if os.path.exists(a.map) else {}, rot)
     if labels is None and a.labels and meshes:
         labels = np.zeros(arr.shape, np.uint8)
         # bigger meshes first so small ones override
@@ -894,6 +1075,8 @@ def main(argv=None):
     # --- landmarks: representative point per mesh (vertex nearest the centroid) ---
     landmarks = {}
     for m in meshes:
+        if m['id'] in CONTEXT_IDS:
+            continue
         c = m['v'].mean(0)
         v = m['v'][int(np.argmin(((m['v'] - c) ** 2).sum(1)))]
         landmarks[m['id']] = [float(x) for x in v]
@@ -908,8 +1091,11 @@ def main(argv=None):
         'format': 'tba', 'version': 1,
         'name': a.name or os.path.basename(a.out).replace('.tba', ''),
         'kind': 'openear' if 'openear' in (a.name or '').lower() else 'clinical',
-        'side': a.side,
+        'side': side,
         'notes': a.notes,
+        'orientation': ({'source': 'estimated from the segmented structures', 'rotation_deg': round(rotation_angle_deg(rot['R']), 1),
+                         'R_rows_in_source_frame': [[round(float(x), 6) for x in row] for row in rot['R']], 'center_source_ras': [round(float(x), 4) for x in rot['center']],
+                         'report': rot['report']} if rot else {'source': 'volume axes as stored'}),
         'volume': {'blob': 'volume', 'dims': dims, 'spacing': [float(a.spacing)] * 3, 'origin': [float(x) for x in origin], 'dtype': 'int16', 'units': 'HU', 'encoding': 'delta-x'},
         'labelIds': label_ids,
         'meshes': [],

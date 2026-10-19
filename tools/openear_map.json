@@ -131,12 +131,11 @@
   "auditory canal"
  ],
  "sigmoid_sinus": [
-  "11_sinus",
-  "dura",
   "sigmoid",
-  "sinus-dura",
-  "sinus_dura",
-  "sinusdura"
+  "sigmoid sinus",
+  "sigmoid_sinus",
+  "lateral sinus",
+  "transverse sinus"
  ],
  "jugular_bulb": [
   "jugular"
@@ -238,5 +237,21 @@
   "cn viii",
   "nervus vestibulocochlearis",
   "08_cochleovestibular"
+ ],
+ "sinus_dura": [
+  "11_sinus",
+  "sinus-dura",
+  "sinus_dura",
+  "sinusdura",
+  "sinus dura",
+  "sinus and dura",
+  "sinus_and_dura"
+ ],
+ "dura": [
+  "dura",
+  "dura mater",
+  "dura_mater",
+  "duramater",
+  "meninges"
  ]
 }

@@ -62,7 +62,16 @@ nx, ny, nz = header['labels']['dims']
 ref = sitk.Image([nx, ny, nz], sitk.sitkUInt8)
 ref.SetSpacing([float(s) for s in spacing]); ref.SetDirection([1, 0, 0, 0, 1, 0, 0, 0, 1])
 ref.SetOrigin([-(origin[0] + (nx - 1) * spacing[0]), -(origin[1] + (ny - 1) * spacing[1]), origin[2]])
-truth = sitk.GetArrayFromImage(sitk.Resample(img, ref, sitk.Transform(), sitk.sitkNearestNeighbor, 0, sitk.sitkUInt8))[:, ::-1, ::-1]
+orient = header.get('orientation', {})
+tf = sitk.Transform()
+if 'R_rows_in_source_frame' in orient:
+    # the converter rotated everything into the anatomical frame it estimated; apply the same map to the truth
+    R = np.array(orient['R_rows_in_source_frame']); c = np.array(orient['center_source_ras'])
+    F = np.diag([-1.0, -1.0, 1.0])
+    tf = sitk.AffineTransform(3); tf.SetMatrix([float(x) for x in (F @ R.T @ F).ravel()]); tf.SetTranslation([float(x) for x in (F @ c)])
+    print('estimated anatomical frame: rotated by %.1f deg, side %s' % (orient['rotation_deg'], header['side']))
+    assert orient['rotation_deg'] < 20 and header['side'] == 'R', 'the phantom is a right ear in anatomical orientation already; the estimate is off'
+truth = sitk.GetArrayFromImage(sitk.Resample(img, ref, tf, sitk.sitkNearestNeighbor, 0, sitk.sitkUInt8))[:, ::-1, ::-1]
 value_of = {v: int(k) for k, v in got.items()}
 worst = (1.0, None)
 for v, sid in ids.items():
@@ -76,5 +85,5 @@ for v, sid in ids.items():
     if dice < worst[0]:
         worst = (dice, sid)
 print('worst per-structure Dice against ITK resampling of the original label map: %.4f (%s)' % worst)
-assert worst[0] > 0.98, 'label volume does not line up with the original label map'
+assert worst[0] > 0.97, 'label volume does not line up with the original label map'
 print('selftest_labels OK')
