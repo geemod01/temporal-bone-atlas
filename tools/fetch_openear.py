@@ -196,7 +196,7 @@ def classify(name):
 NRRD_PRESENT = {}
 
 
-def summarize(zf):
+def summarize(zf, show_text=False):
     tops = {}
     for zi in zf.infolist():
         parts = zi.filename.split('/')
@@ -219,7 +219,7 @@ def summarize(zf):
     for zi in sorted(zf.infolist(), key=lambda zi: zi.filename):
         if not zi.is_dir() and not re.search(r'\.(dcm|dicom|ima|tif|tiff|png|jpg|xcf|svg)$', zi.filename, re.I):
             log('  %8.1f MB  %s' % (zi.file_size / 1e6, zi.filename))
-    for zi in sorted(zf.infolist(), key=lambda zi: zi.filename):
+    for zi in sorted(zf.infolist(), key=lambda zi: zi.filename) if show_text else []:
         if not zi.is_dir() and re.search(r'\.(txt|md|json|csv)$', zi.filename, re.I) and zi.file_size < 20000 and not re.search(r'microslic|reconstruction', zi.filename, re.I):
             try:
                 text = zf.read(zi).decode('utf-8', 'replace')
@@ -320,23 +320,98 @@ def _stream_member(hf, zi, target):
     hf.bytes_fetched += zi.compress_size
 
 
+def _read_exact(raw, n):
+    out = bytearray()
+    while len(out) < n:
+        b = raw.read(n - len(out))
+        if not b:
+            raise IOError('connection ended early (%d of %d bytes)' % (len(out), n))
+        out += b
+    return bytes(out)
+
+
+def _stream_run(hf, members, dest, max_gap=4 << 20):
+    """Stream a run of members that sit next to each other in the archive (a DICOM series, the model
+    folder) with ONE range request, so a 482-slice series costs one request instead of 482 (Zenodo
+    rate-limits bursts of requests). Gaps up to max_gap between members are read and discarded."""
+    import struct as st
+    import zlib
+    members = sorted(members, key=lambda zi: zi.header_offset)
+    # data end of the last member needs its local header (name/extra lengths)
+    last = members[-1]
+    hf.seek(last.header_offset)
+    hdr = hf.read(30)
+    name_len, extra_len = st.unpack('<HH', hdr[26:30])
+    end = last.header_offset + 30 + name_len + extra_len + last.compress_size - 1
+    start = members[0].header_offset
+    with hf.s.get(hf.url, headers={'Range': 'bytes=%d-%d' % (start, end)}, stream=True, timeout=900) as r:
+        if r.status_code != 206:
+            raise IOError('range request refused (%d) for %s..%s' % (r.status_code, members[0].filename, last.filename))
+        raw = r.raw
+        pos = start
+        for zi in members:
+            gap = zi.header_offset - pos
+            if gap < 0:
+                raise IOError('overlapping members in the archive run')
+            while gap > 0:
+                skip = len(_read_exact(raw, min(gap, 1 << 20))); gap -= skip
+            hdr = _read_exact(raw, 30)
+            if hdr[:4] != b'PK\x03\x04':
+                raise IOError('bad local header for ' + zi.filename)
+            name_len, extra_len = st.unpack('<HH', hdr[26:30])
+            _read_exact(raw, name_len + extra_len)
+            target = os.path.join(dest, zi.filename)
+            os.makedirs(os.path.dirname(target), exist_ok=True)
+            left = zi.compress_size
+            d = zlib.decompressobj(-15) if zi.compress_type == zipfile.ZIP_DEFLATED else None
+            if zi.compress_type not in (zipfile.ZIP_STORED, zipfile.ZIP_DEFLATED):
+                raise IOError('unsupported compression %d for %s' % (zi.compress_type, zi.filename))
+            with open(target, 'wb') as dst:
+                while left > 0:
+                    chunk = _read_exact(raw, min(left, 4 << 20)); left -= len(chunk)
+                    dst.write(d.decompress(chunk) if d else chunk)
+                if d:
+                    dst.write(d.flush())
+            pos = zi.header_offset + 30 + name_len + extra_len + zi.compress_size
+            hf.bytes_fetched += zi.compress_size
+
+
 def extract_needed(zf, dest, budget_bytes=9 * 1024 ** 3, prefer='embedded', hf=None):
     chosen = choose_members(zf, prefer)
     total = sum(zi.file_size for zi in chosen)
     log('extracting %d files (%.1f MB uncompressed)' % (len(chosen), total / 1e6))
+    if hf is not None:
+        # group members that are adjacent in the archive into runs: one request per run
+        ordered = sorted(chosen, key=lambda zi: zi.header_offset)
+        runs, run = [], []
+        for zi in ordered:
+            if run and zi.header_offset - (run[-1].header_offset + run[-1].compress_size) > (4 << 20):
+                runs.append(run); run = []
+            run.append(zi)
+        if run:
+            runs.append(run)
+        log('  %d request%s for %d files' % (len(runs), '' if len(runs) == 1 else 's', len(chosen)))
+        for run in runs:
+            t0 = time.time()
+            if len(run) == 1:
+                target = os.path.join(dest, run[0].filename)
+                os.makedirs(os.path.dirname(target), exist_ok=True)
+                _stream_member(hf, run[0], target)
+            else:
+                _stream_run(hf, run, dest)
+            sz = sum(zi.file_size for zi in run)
+            log('  %s extracted %s (%.0f MB in %.0fs)' % (time.strftime('%H:%M:%S'), run[0].filename if len(run) == 1 else '%d files %s .. %s' % (len(run), os.path.basename(run[0].filename), os.path.basename(run[-1].filename)), sz / 1e6, time.time() - t0))
+        return chosen
     for zi in chosen:
         target = os.path.join(dest, zi.filename)
         os.makedirs(os.path.dirname(target), exist_ok=True)
         t0 = time.time()
-        if hf is not None:
-            _stream_member(hf, zi, target)
-        else:
-            with zf.open(zi) as src, open(target, 'wb') as dst:
-                while True:
-                    b = src.read(1 << 20)
-                    if not b:
-                        break
-                    dst.write(b)
+        with zf.open(zi) as src, open(target, 'wb') as dst:
+            while True:
+                b = src.read(1 << 20)
+                if not b:
+                    break
+                dst.write(b)
         log('  %s extracted %s (%.0f MB in %.0fs)' % (time.strftime('%H:%M:%S'), zi.filename, zi.file_size / 1e6, time.time() - t0))
     return chosen
 
@@ -495,7 +570,7 @@ def _one_specimen(a, spec, files_cache):
             except Exception as e:
                 log('range requests failed (%s); use --full to download the archive' % e)
                 raise SystemExit(2)
-        summarize(zf)
+        summarize(zf, show_text=a.list)
         if a.list:
             return
         extract_needed(zf, dest, prefer=a.volume_choice, hf=hf)
