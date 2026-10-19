@@ -334,7 +334,7 @@ def out_to_in_ras(rot):
     return rot['R'].T, np.asarray(rot['center'], np.float64)
 
 
-def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if sitk else None, rot=None):
+def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if sitk else None, rot=None, pre=None):
     """Resample onto an isotropic RAS grid covering `crop_ras` (x0,x1,y0,y1,z0,z1 in the OUTPUT frame; the
     volume's own bounds when None). With `rot` (see estimate_anatomical_frame) the output frame is the
     anatomical one and the volume is rotated into it. Only the input region that lands on the grid is read.
@@ -342,7 +342,10 @@ def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if
     lazy = isinstance(img, LazyVolume)
     size = np.array(img.GetSize())
     Rt, c = out_to_in_ras(rot)
-    corners_in = np.array([img.TransformIndexToPhysicalPoint((int(i), int(j), int(k))) for i in (0, size[0] - 1) for j in (0, size[1] - 1) for k in (0, size[2] - 1)])
+    P, p0 = (np.eye(3), np.zeros(3)) if pre is None else linear_matrix(pre)      # registered LPS -> raw (stored) LPS
+    P_inv = np.linalg.inv(P)
+    corners_raw = np.array([img.TransformIndexToPhysicalPoint((int(i), int(j), int(k))) for i in (0, size[0] - 1) for j in (0, size[1] - 1) for k in (0, size[2] - 1)])
+    corners_in = (corners_raw - p0) @ P_inv.T                 # raw LPS -> registered LPS
     corners_out = (corners_in @ FLIP_LPS - c) @ Rt          # input LPS -> input RAS -> output RAS (Rt.T = R)
     lo, hi = corners_out.min(0), corners_out.max(0)        # output-frame bounds of the volume (RAS)
     if crop_ras is not None:
@@ -351,7 +354,7 @@ def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if
     out_size = np.maximum(1, np.ceil((hi - lo) / spacing).astype(int) + 1)
     # input region covering the output box (its 8 corners, mapped back)
     box = np.array([[x, y, z] for x in (lo[0], hi[0]) for y in (lo[1], hi[1]) for z in (lo[2], hi[2])])
-    box_in_lps = (box @ Rt.T + c) @ FLIP_LPS
+    box_in_lps = ((box @ Rt.T + c) @ FLIP_LPS) @ P.T + p0
     idx = np.array([img.TransformPhysicalPointToContinuousIndex(tuple(float(x) for x in p)) for p in box_in_lps])
     i0 = np.maximum(np.floor(idx.min(0)).astype(int) - 2, 0)
     i1 = np.minimum(np.ceil(idx.max(0)).astype(int) + 3, size)
@@ -372,6 +375,8 @@ def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if
     tf = sitk.AffineTransform(3)
     tf.SetMatrix([float(x) for x in (FLIP_LPS @ Rt @ FLIP_LPS).ravel()])
     tf.SetTranslation([float(x) for x in (FLIP_LPS @ c)])
+    if pre is not None:
+        tf = sitk.CompositeTransform([pre, tf])          # tf first (anatomical -> registered), then pre (registered -> raw)
     out = sitk.Resample(img, ref, tf, interpolator, -1024.0, sitk.sitkFloat32)
     del img
     arr = sitk.GetArrayFromImage(out)  # (z, y, x) with +x = L, +y = P
@@ -828,6 +833,87 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping,
 
 
 # --------------------------------------------------------------------------
+# Registration transforms shipped with a raw scan (OpenEar Beta: no registered CBCT, but the Slicer
+# chain FlipXY / InitialGuess / BrainsFit as ITK .h5 files). Which of them apply, in which order and in
+# which direction is not recorded, so the converter tries the compositions and keeps the one that puts
+# the surfaces on bone edges, exactly the test it uses to tell RAS from LPS surfaces.
+# --------------------------------------------------------------------------
+def linear_matrix(tf):
+    """(A, t) with tf(p) = A p + t, probed numerically (works for any linear ITK transform, composite included)."""
+    t = np.array(tf.TransformPoint((0.0, 0.0, 0.0)), dtype=np.float64)
+    A = np.column_stack([np.array(tf.TransformPoint(tuple(float(x) for x in e)), dtype=np.float64) - t for e in np.eye(3)])
+    return A, t
+
+
+def affine_from_matrix(A, t):
+    tf = sitk.AffineTransform(3)
+    tf.SetMatrix([float(x) for x in np.asarray(A).ravel()]); tf.SetTranslation([float(x) for x in t])
+    return tf
+
+
+def choose_pretransform(img, raw_meshes, files):
+    """Pick the composition of the shipped transforms (and the surface frame) that lands the surfaces on the
+    bone of the raw volume. Returns (pre: sitk.Transform registered-LPS -> raw-LPS or None, frame, report)."""
+    import itertools
+    mats = []
+    for f in files:
+        try:
+            A, t = linear_matrix(sitk.ReadTransform(f))
+            mats.append((os.path.basename(f), A, t))
+        except Exception as e:
+            log('  transform %s unreadable (%s)' % (os.path.basename(f), e))
+    allv = np.concatenate([v for _, v, _ in raw_meshes])
+    sample = allv[::max(1, len(allv) // 6000)]
+    # a 1 mm copy of the raw volume and its edge strength, in the raw (stored) frame
+    whole = img.read_all() if isinstance(img, LazyVolume) else img
+    size = np.array(whole.GetSize()); sp = np.array(whole.GetSpacing())
+    coarse_sp = 1.0
+    out_size = np.maximum(1, np.ceil(size * sp / coarse_sp).astype(int))
+    ref = sitk.Image([int(x) for x in out_size], sitk.sitkFloat32)
+    ref.SetSpacing([coarse_sp] * 3); ref.SetOrigin(whole.GetOrigin()); ref.SetDirection(whole.GetDirection())
+    coarse = sitk.GetArrayFromImage(sitk.Resample(whole, ref, sitk.Transform(), sitk.sitkLinear, -1024.0, sitk.sitkFloat32))
+    g = np.sqrt(sum(np.square(gr) for gr in np.gradient(coarse)))
+    Dir = np.array(ref.GetDirection()).reshape(3, 3); M_inv = np.linalg.inv(Dir * coarse_sp); o = np.array(ref.GetOrigin())
+    def score(A, t, frame):
+        pts_lps = sample * (np.array([-1.0, -1.0, 1.0]) if frame == 'RAS' else np.array([1.0, 1.0, 1.0]))
+        raw_lps = pts_lps @ A.T + t
+        idx = np.rint((raw_lps - o) @ M_inv.T).astype(int)
+        ok = np.all((idx >= 0) & (idx < out_size), axis=1)
+        inside = float(ok.mean())
+        if not ok.any():
+            return 0.0, inside
+        return float(g[idx[ok, 2], idx[ok, 1], idx[ok, 0]].mean()) * inside, inside
+    results = []
+    for frame in ('RAS', 'LPS'):
+        sc, ins = score(np.eye(3), np.zeros(3), frame)
+        results.append((sc, ins, 'none', frame, np.eye(3), np.zeros(3)))
+        for k in range(1, len(mats) + 1):
+            for subset in itertools.permutations(range(len(mats)), k):
+                for inv in itertools.product((False, True), repeat=k):
+                    A, t = np.eye(3), np.zeros(3)
+                    names = []
+                    for i, iv in zip(subset, inv):
+                        nm, Ai, ti = mats[i]
+                        if iv:
+                            Ai = np.linalg.inv(Ai); ti = -Ai @ ti
+                        # composition: apply the current (A, t) first, then (Ai, ti)
+                        A, t = Ai @ A, Ai @ t + ti
+                        names.append(nm.replace('.h5', '') + ('^-1' if iv else ''))
+                    sc, ins = score(A, t, frame)
+                    results.append((sc, ins, ' then '.join(names), frame, A, t))
+    results.sort(key=lambda r: -r[0])
+    report = ['transform search over %d candidates (%d files):' % (len(results), len(mats))]
+    for sc, ins, nm, frame, _, _ in results[:6]:
+        report.append('  edge %6.1f  inside %3.0f%%  %s surfaces, %s' % (sc, ins * 100, frame, nm))
+    base = max(r[0] for r in results if r[2] == 'none')
+    best = results[0]
+    report.append('  (no transform: edge %.1f)' % base)
+    if best[2] == 'none' or best[1] < 0.85 or best[0] < 1.3 * base:
+        return None, None, report
+    return affine_from_matrix(best[4], best[5]), best[3], report
+
+
+# --------------------------------------------------------------------------
 # Anatomical orientation. Research volumes (OpenEar's embedded blocks among them) sit in the scanner frame,
 # so their axes are not the patient's. The atlas needs true axial/coronal/sagittal planes, and the
 # segmented structures carry enough anatomy to recover them:
@@ -951,6 +1037,7 @@ def main(argv=None):
     ap.add_argument('--label-names', help='JSON {value: name} for --label-volume when the file carries no names')
     ap.add_argument('--landmarks', help='landmarks.json (from the app or hand-written) to merge')
     ap.add_argument('--allow-misregistered', action='store_true', help='build even when most surface vertices fall outside the volume')
+    ap.add_argument('--transforms', help='folder of ITK/Slicer .h5 transforms shipped with a raw (unregistered) scan: their compositions are tried and the one that lands the surfaces on bone is applied to the volume')
     ap.add_argument('--orient', default='auto', choices=['auto', 'none'], help="'auto' rotates everything into the anatomical frame estimated from the segmented structures (cochlea at the origin); 'none' keeps the volume's own axes")
     ap.add_argument('--name', default=None)
     ap.add_argument('--side', default='auto', choices=['R', 'L', 'auto'], help='auto = from the anatomy (needs --orient auto); otherwise R or L')
@@ -973,6 +1060,7 @@ def main(argv=None):
     # --- meshes (needed for auto crop) ---
     meshes = []
     unmatched = []
+    pre = None               # registration transform for a raw scan (see choose_pretransform)
     if a.meshes:
         mapping = load_map(a.map) if os.path.exists(a.map) else {}
         files = sorted(f for f in glob.glob(os.path.join(a.meshes, '*')) if re.search(r'\.(stl|obj|ply|off)$', f, re.I))
@@ -984,7 +1072,18 @@ def main(argv=None):
             if res is not None:
                 raw.append((f, res[0], res[1]))
         frame = a.mesh_frame.upper()
-        if frame == 'AUTO' and raw:
+        tfiles = sorted(glob.glob(os.path.join(a.transforms, '*.h5'))) + sorted(glob.glob(os.path.join(a.transforms, '*.tfm'))) if a.transforms else []
+        if tfiles and raw:
+            pre, pre_frame, report = choose_pretransform(img, raw, tfiles)
+            for line in report:
+                log(line)
+            if pre is not None:
+                log('applying the registration chain to the volume; surfaces are %s' % pre_frame)
+                if frame == 'AUTO':
+                    frame = pre_frame
+            else:
+                log('no composition of the shipped transforms puts the surfaces on bone; the volume keeps its stored frame')
+        if frame == 'AUTO' and raw and pre is None:
             allv = np.concatenate([v for _, v, _ in raw])
             fr_ras = inside_fraction(allv, vol_bounds)
             fr_lps = inside_fraction(allv * np.array([-1.0, -1.0, 1.0]), vol_bounds)
@@ -1066,7 +1165,7 @@ def main(argv=None):
         crop = [float(x) for x in a.crop.split(',')]
 
     # --- volume ---
-    arr, origin, spacing = resample_to_ras(img, a.spacing, crop, rot=rot)
+    arr, origin, spacing = resample_to_ras(img, a.spacing, crop, rot=rot, pre=pre)
     arr = intensity_to_hu(arr, a.intensity)
     arr = np.clip(arr, -1024, 3071).astype(np.int16)
     dims = [arr.shape[2], arr.shape[1], arr.shape[0]]
@@ -1115,6 +1214,7 @@ def main(argv=None):
         'kind': 'openear' if 'openear' in (a.name or '').lower() else 'clinical',
         'side': side,
         'notes': a.notes,
+        'registration': ('shipped transform chain applied to the raw scan (see the conversion log)' if pre is not None else 'volume as stored (registered by the dataset authors)'),
         'orientation': ({'source': 'estimated from the segmented structures', 'rotation_deg': round(rotation_angle_deg(rot['R']), 1),
                          'R_rows_in_source_frame': [[round(float(x), 6) for x in row] for row in rot['R']], 'center_source_ras': [round(float(x), 4) for x in rot['center']],
                          'report': rot['report']} if rot else {'source': 'volume axes as stored'}),

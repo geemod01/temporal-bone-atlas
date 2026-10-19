@@ -277,10 +277,14 @@ def choose_members(zf, prefer='embedded'):
                 for zi in dicom:
                     folders.setdefault(os.path.dirname(zi.filename), []).append(zi)
                 vols = max(folders.values(), key=len)
+    tfs = []
+    if vols and re.search(r'\.(dcm|dicom|ima)$', vols[0].filename, re.I):
+        # a raw scan: bring the registration chain along, the converter works out how to apply it
+        tfs = find(r'transformations?/.*\.(h5|tfm)$')
     log('CBCT volume: %s' % (', '.join('%s (%.0f MB)' % (zi.filename, zi.file_size / 1e6) for zi in vols[:1]) or 'NONE FOUND'))
     log('segmentation: %s' % (', '.join('%s (%.0f MB)' % (zi.filename, zi.file_size / 1e6) for zi in seg[:1]) or 'none'))
-    log('surfaces: %d files' % len(ply))
-    return vols + seg[:1] + ply + meta
+    log('surfaces: %d files%s' % (len(ply), ('; registration transforms: ' + ', '.join(os.path.basename(zi.filename) for zi in tfs)) if tfs else ''))
+    return vols + seg[:1] + ply + meta + tfs
 
 
 def _stream_member(hf, zi, target):
@@ -602,6 +606,9 @@ def _one_specimen(a, spec, files_cache):
                '--out', out_pack]
         if meshes:
             cmd += ['--meshes', meshes]
+        tdirs = sorted({root for root, _, files in os.walk(dest) if any(f.lower().endswith(('.h5', '.tfm')) for f in files)})
+        if tdirs and os.path.isdir(volume):           # raw DICOM scan + shipped transform chain
+            cmd += ['--transforms', tdirs[0]]
         if label_vol:
             cmd += ['--label-volume', label_vol]
         elif meshes and not a.no_labels:
