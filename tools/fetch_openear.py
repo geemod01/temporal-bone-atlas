@@ -538,6 +538,9 @@ def main():
             failed.append((spec, '%s: %s' % (type(e).__name__, e))); log('FAILED %s: %s: %s' % (spec, type(e).__name__, e))
     if failed:
         log('specimens that failed: ' + '; '.join('%s (%s)' % f for f in failed))
+        os.makedirs(a.out, exist_ok=True)
+        with open(os.path.join(a.out, 'failed.json'), 'w') as f:
+            json.dump({'failed': [{'specimen': sp, 'reason': why} for sp, why in failed]}, f, indent=1)
     if built:
         log('packs built: ' + ', '.join(built))
     log('done')

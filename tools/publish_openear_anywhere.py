@@ -74,8 +74,8 @@ def upload_asset(release, path, repo, token):
     return r.json().get('browser_download_url')
 
 
-def update_datasets_json(repo, token, entries):
-    """Merge entries into data/datasets.json on main through the contents API (no git needed)."""
+def update_datasets_json(repo, token, entries, remove_ids=()):
+    """Merge entries into data/datasets.json on main through the contents API (no git needed); drop remove_ids."""
     import requests
     h = {'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json'}
     url = 'https://api.github.com/repos/%s/contents/data/datasets.json' % repo
@@ -85,7 +85,7 @@ def update_datasets_json(repo, token, entries):
     if r.status_code == 200:
         j = r.json(); sha = j['sha']
         lib = json.loads(base64.b64decode(j['content']).decode('utf-8'))
-    ids = {e['id'] for e in entries}
+    ids = {e['id'] for e in entries} | set(remove_ids)
     lib['datasets'] = [d for d in lib['datasets'] if d['id'] not in ids] + entries
     lib['datasets'].sort(key=lambda d: d['id'])
     body = {'message': 'Register pack(s): ' + ', '.join(sorted(ids)), 'content': base64.b64encode(json.dumps(lib, indent=1).encode()).decode(), 'branch': 'main'}
@@ -116,8 +116,12 @@ def main():
             d = dict(d)
             d['file'] = 'https://github.com/%s/releases/download/data/%s' % (a.repo, os.path.basename(d['file']))
             entries.append(d)
-        update_datasets_json(a.repo, a.token, entries)
-        print('registered:', ', '.join(e['id'] for e in entries)); return
+        remove = []
+        fj = os.path.join(a.out, 'failed.json')
+        if os.path.exists(fj):
+            remove = ['openear_%s' % x['specimen'] for x in json.load(open(fj))['failed']]
+        update_datasets_json(a.repo, a.token, entries, remove_ids=remove)
+        print('registered:', ', '.join(e['id'] for e in entries), ('| removed: ' + ', '.join(remove)) if remove else ''); return
     if not a.no_install:
         sh([sys.executable, '-m', 'pip', 'install', '-q', 'numpy', 'SimpleITK', 'trimesh', 'fast-simplification', 'requests'])
     sh([sys.executable, os.path.join(HERE, 'fetch_openear.py'), '--specimen', a.specimen, '--spacing', str(a.spacing), '--out', a.out, '--work', a.work])

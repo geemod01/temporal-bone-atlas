@@ -746,10 +746,13 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping,
     id_of = {}
     unmatched = []
     weak = set()
+    NERVE_IDS = {'facial_nerve', 'cochleovestibular_nerve', 'chorda_tympani', 'fn_meatal', 'fn_labyrinthine', 'fn_tympanic', 'fn_mastoid', 'geniculate', 'gspn', 'cochlear_nerve', 'vestibular_nerve', 'jacobson_nerve'}
     for n, v, _ in segs:
         nm = names.get((n, v))
         if nm:
             sid, ok = match_id(nm + '.x', mapping)
+            if re.search(r'nerv|\bn\.', nm, re.I) and sid not in NERVE_IDS:
+                ok = False          # "Vestibucochlear Nerve" must not become the cochlea because it contains 'cochlea'
             id_of[(n, v)] = sid
             if not ok:
                 weak.add((n, v))
@@ -947,6 +950,7 @@ def main(argv=None):
     ap.add_argument('--label-volume', help='segmentation volume (NRRD/NIfTI label map, e.g. OpenEar segmentation) resampled onto the pack grid; preferred over --labels')
     ap.add_argument('--label-names', help='JSON {value: name} for --label-volume when the file carries no names')
     ap.add_argument('--landmarks', help='landmarks.json (from the app or hand-written) to merge')
+    ap.add_argument('--allow-misregistered', action='store_true', help='build even when most surface vertices fall outside the volume')
     ap.add_argument('--orient', default='auto', choices=['auto', 'none'], help="'auto' rotates everything into the anatomical frame estimated from the segmented structures (cochlea at the origin); 'none' keeps the volume's own axes")
     ap.add_argument('--name', default=None)
     ap.add_argument('--side', default='auto', choices=['R', 'L', 'auto'], help='auto = from the anatomy (needs --orient auto); otherwise R or L')
@@ -1001,8 +1005,10 @@ def main(argv=None):
                 log('mesh frame auto: edge strength at vertices %.0f (RAS) vs %.0f (LPS) -> %s' % (g_ras, g_lps, frame))
             else:
                 log('mesh frame auto -> %s' % frame)
-            if max(fr_ras, fr_lps) < 0.5:
-                log('WARNING: meshes mostly fall outside the volume in both frames; check --mesh-scale (units) or the volume choice')
+            if max(fr_ras, fr_lps) < 0.85 and not a.allow_misregistered:
+                raise SystemExit('only %.0f%% of the surface vertices lie inside the volume: the surfaces and the volume are not in the same frame '
+                                 '(a raw scan with a registered segmentation, wrong --mesh-scale units, or the wrong volume). Apply the registration first, '
+                                 'or pass --allow-misregistered to build anyway.' % (100 * max(fr_ras, fr_lps)))
         elif frame == 'AUTO':
             frame = 'RAS'
         for f, v, fc in raw:

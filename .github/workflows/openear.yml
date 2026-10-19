@@ -111,6 +111,12 @@ jobs:
             gh release upload data "$f" --repo ${{ github.repository }} --clobber
             echo "uploaded $f"
           done
+          # a specimen that failed this time must not keep a stale pack on the release
+          if [ -f data/failed.json ]; then
+            for sp in $(python3 -c "import json; print(' '.join(x['specimen'] for x in json.load(open('data/failed.json'))['failed']))"); do
+              gh release delete-asset data "openear_${sp}.tba" --repo ${{ github.repository }} -y 2>/dev/null && echo "removed stale openear_${sp}.tba" || true
+            done
+          fi
           # register the packs in data/datasets.json on main through the contents API: merges with whatever
           # is there, so runs never conflict with commits pushed meanwhile (git pull --rebase on a dirty tree did)
           python3 tools/publish_openear_anywhere.py --register-only --out data --repo ${{ github.repository }} --token "$GH_TOKEN"
