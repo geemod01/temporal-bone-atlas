@@ -6,7 +6,7 @@
    "file": "https://github.com/geemod01/temporal-bone-atlas/releases/download/data/openear_alpha.tba",
    "side": "R",
    "kind": "openear",
-   "bytes": 30996722,
+   "bytes": 30996912,
    "license": "CC BY 4.0",
    "source": "Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724."
   },
@@ -16,7 +16,7 @@
    "file": "https://github.com/geemod01/temporal-bone-atlas/releases/download/data/openear_delta.tba",
    "side": "R",
    "kind": "openear",
-   "bytes": 37950340,
+   "bytes": 37950664,
    "license": "CC BY 4.0",
    "source": "Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724."
   },
@@ -26,7 +26,7 @@
    "file": "https://github.com/geemod01/temporal-bone-atlas/releases/download/data/openear_epsilon.tba",
    "side": "L",
    "kind": "openear",
-   "bytes": 43287029,
+   "bytes": 43287535,
    "license": "CC BY 4.0",
    "source": "Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724."
   },
@@ -36,7 +36,7 @@
    "file": "https://github.com/geemod01/temporal-bone-atlas/releases/download/data/openear_eta.tba",
    "side": "L",
    "kind": "openear",
-   "bytes": 28873857,
+   "bytes": 28874733,
    "license": "CC BY 4.0",
    "source": "Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724."
   },
@@ -46,7 +46,7 @@
    "file": "https://github.com/geemod01/temporal-bone-atlas/releases/download/data/openear_gamma.tba",
    "side": "L",
    "kind": "openear",
-   "bytes": 40906224,
+   "bytes": 40906313,
    "license": "CC BY 4.0",
    "source": "Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724."
   },
@@ -56,7 +56,7 @@
    "file": "https://github.com/geemod01/temporal-bone-atlas/releases/download/data/openear_theta.tba",
    "side": "R",
    "kind": "openear",
-   "bytes": 27015580,
+   "bytes": 27017386,
    "license": "CC BY 4.0",
    "source": "Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724."
   },
@@ -66,7 +66,7 @@
    "file": "https://github.com/geemod01/temporal-bone-atlas/releases/download/data/openear_zeta.tba",
    "side": "R",
    "kind": "openear",
-   "bytes": 38384681,
+   "bytes": 38384997,
    "license": "CC BY 4.0",
    "source": "Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724."
   }
