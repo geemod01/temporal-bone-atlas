@@ -117,7 +117,7 @@ function openMenu(kind, anchor) {
   else if (kind === 'quiz') menuEl.innerHTML = quiz.pickerHtml(depth);
   else if (kind === 'dataset') {
     const ds = store.get('dataset');
-    const lib = library.map(e => `<button class="menu-item lib-item" data-lib="${esc(e.id)}">${esc(e.name)} <span class="lvl">${e.side === 'L' ? 'left' : 'right'}</span> <span class="lvl ${e.cached ? 'above' : ''}" data-libstate="${esc(e.id)}">${e.cached ? 'on this device' : fmtMB(e.bytes)}</span><span class="tour-item-sub">${esc(e.source || e.kind || '')}</span></button>`).join('');
+    const lib = library.map(e => `<button class="menu-item lib-item" data-lib="${esc(e.id)}">${esc(e.name)} <span class="lvl">${e.side === 'L' ? 'left' : 'right'}</span> <span class="lvl ${e.cached ? 'above' : ''}" data-libstate="${esc(e.id)}">${e.cached ? 'on this device' : fmtMB(e.bytes)}</span><span class="tour-item-sub">${e.kind === 'openear' ? 'OpenEar specimen (Sieber et al. 2019, CC BY 4.0): 125 µm CBCT with the published segmentation' : esc(e.source || e.kind || '')}</span></button>`).join('');
     menuEl.innerHTML = `<div class="menu-title">Dataset</div>
       <button class="menu-item" data-ds="phantom">Built-in phantom<span class="tour-item-sub">Synthetic right temporal bone with every structure labelled. Not patient anatomy.</span></button>
       ${lib ? `<div class="menu-title">Real imaging (downloads once, then stays on this device)</div>${lib}` : ''}
