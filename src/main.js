@@ -191,8 +191,8 @@ function setDataset(ds) {
   store.state.hidden = new Set([...DEFAULT_HIDDEN].filter(id => ds.meshById.has(id)));
   store.state.selectedId = null;
   store.set('dataset', ds);
-  // start the cursor on the vestibule if we know where it is, else the volume centre
-  const start = ds.anchorOf('vestibule') || ds.volume.center;
+  // start the cursor on the cochlea (the origin of the real packs), else the vestibule, else the volume centre
+  const start = ds.anchorOf('cochlea') || ds.anchorOf('vestibule') || ds.volume.center;
   store.setCrosshair(start, 'load');
   const chip = app.querySelector('.dataset-chip');
   chip.textContent = ds.kind === 'phantom' ? 'Synthetic phantom' : `${ds.name} (${ds.side === 'L' ? 'left' : 'right'} ear, real imaging)`;

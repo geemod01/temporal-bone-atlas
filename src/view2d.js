@@ -331,6 +331,7 @@ export class SlicePane {
     const [x, y] = this.local(e);
     this.pointers.set(e.pointerId, { x, y });
     this.store.set('activePane', this.plane);
+    if (this.store.get('scrollPlane') !== this.plane) this.store.set('scrollPlane', this.plane);
     this.tip.hidden = true;
     if (this.pointers.size === 2) {
       const pts = [...this.pointers.values()];
@@ -414,6 +415,8 @@ export class SlicePane {
       return;
     }
     const dir = Math.sign(e.deltaY) || Math.sign(e.deltaX);
+    if (this.store.get('scrollPlane') !== this.plane) this.store.set('scrollPlane', this.plane);
+    if (!this.store.get('sectionArmed')) this.store.set('sectionArmed', true);
     if (dir) this.stepSlice(dir > 0 ? -1 : 1);
   }
 }

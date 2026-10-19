@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS = {
   planes3d: true,
   planeOpacity: 0.6,
   boneShell: false,
+  section3d: true,         // cut the 3D model at the plane being scrolled, like a navigation display
   textSize: 'm',           // s | m | l
   reducedMotion: null,     // null = follow system
   authorMode: false,
@@ -32,6 +33,8 @@ export class Store {
       tour: null,               // { tourId, step }
       quiz: null,               // active quiz session
       activePane: 'axial',
+      scrollPlane: 'axial',     // the slice plane the wheel moves (last one scrolled or clicked)
+      sectionArmed: false,      // the 3D section starts with the first scroll, so the model opens intact
       showAllStructures: false
     };
     this.loadSettings();

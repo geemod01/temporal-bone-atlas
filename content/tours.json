@@ -106,7 +106,7 @@
     "title": "Dangerous variants: the preoperative checklist",
     "level": 3,
     "curriculum": "Otology: preoperative CT review",
-    "summary": "A structured pass through the variants that change an operation. Each step shows where to look on the phantom and states the finding to report.",
+    "summary": "A structured pass through the variants that change an operation. Each step shows where to look on the CT and states the finding to report.",
     "steps": [
       {"title": "Facial nerve dehiscence at the oval window", "text": "Look on coronal images above the footplate. Dehiscence is present in about half of bones histologically and CT underestimates it; an exposed or overhanging nerve changes stapes surgery and cholesteatoma dissection.", "focus": "oval_window", "highlight": ["fn_tympanic", "stapes"], "plane": "coronal", "view": "lateral"},
       {"title": "Anterior facial nerve in atresia", "text": "In congenital aural atresia the mastoid segment runs anteriorly and laterally and may cross the round window or the planned canal. The Jahrsdoerfer score counts it.", "focus": "fn_mastoid", "highlight": ["fn_mastoid", "eac", "round_window"], "plane": "axial", "view": "lateral"},

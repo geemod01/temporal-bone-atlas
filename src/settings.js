@@ -135,16 +135,17 @@ export function openHelp(host) {
         <ul>
           <li><b>Click or drag</b> moves the cursor; every other view follows.</li>
           <li><b>Click a labelled structure</b> to open its card.</li>
-          <li><b>Scroll</b> to change slice. <b>Ctrl + scroll</b> (or pinch) zooms around the pointer.</li>
+          <li><b>Scroll</b> to change slice; the other views and the 3D model follow the same level. <b>Ctrl + scroll</b> (or pinch) zooms around the pointer.</li>
           <li><b>Shift + drag</b> adjusts window and level. <b>Right-drag</b> or <b>Alt + drag</b> pans.</li>
           <li><b>Double-click</b> zooms back out to the whole scan. <b>Zoom in</b> on a structure's card frames that structure.</li>
           <li><b>Arrow up / down</b> step slices in the pane under the pointer.</li>
         </ul>
         <h3>In 3D</h3>
         <ul>
-          <li><b>Drag</b> orbits, <b>scroll</b> zooms, <b>right-drag</b> pans.</li>
+          <li><b>Scroll</b> moves the slice you last scrolled or clicked, here too; the model is sectioned at that plane (the framed CT plane) so you scroll through it as through the CT. <b>Ctrl + scroll</b> (or pinch) zooms.</li>
+          <li><b>Drag</b> orbits, <b>right-drag</b> pans.</li>
           <li><b>Click a structure or a CT plane</b> to put the cursor there.</li>
-          <li><b>Layers</b> shows or hides groups, the bone surface and the CT planes.</li>
+          <li><b>Layers</b> shows or hides groups, the bone and dura surfaces, the CT planes and the sectioning.</li>
         </ul>
       </div>
       <div>
@@ -185,7 +186,7 @@ export function openAbout(store, host) {
       <tr><td>Labels</td><td>${ds.labels ? Object.keys(ds.labelIds).length + ' labelled structures' : 'none (landmarks only)'}</td></tr>
     </table>` : '<p>No dataset loaded.</p>'}
     <h3>About the content</h3>
-    <p>Structure cards, tours and quiz questions were drafted from standard references (Gulya and Schuknecht; Swartz and Loevner; Harnsberger; Sanna; Brackmann, Shelton and Arriaga) and the primary papers cited on each card. Every card carries a review status; nothing here replaces attending review before educational use.</p>
+    <p>Structure cards, tours and quiz questions were written from standard references (Gulya and Schuknecht; Swartz and Loevner; Harnsberger; Sanna; Brackmann, Shelton and Arriaga) and the primary papers cited on each card. Sources are listed at the foot of each card.</p>
   </div>`;
   host.appendChild(dlg);
   const close = () => dlg.remove();

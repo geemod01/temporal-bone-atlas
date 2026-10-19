@@ -30,6 +30,8 @@ export class Scene3D {
     this.layersPop = el.querySelector('.layers-pop');
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
     this.renderer.setClearColor(0x06080a, 1);
+    this.renderer.localClippingEnabled = true;
+    this.clipPlane = new THREE.Plane(new THREE.Vector3(0, 0, -1), 0);   // section plane (see updateClip)
     this.renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(32, 1, 0.5, 2000);
@@ -38,7 +40,7 @@ export class Scene3D {
     this.controls.enableDamping = false;
     this.controls.rotateSpeed = 0.8;
     this.controls.zoomSpeed = 0.9;
-    this.controls.addEventListener('change', () => this.requestRender());
+    this.controls.addEventListener('change', () => { this.updateClip(); this.requestRender(); });
     this.scene.add(new THREE.HemisphereLight(0xe3e9f0, 0x1b1f25, 0.85));
     this.scene.add(new THREE.AmbientLight(0xffffff, 0.22));
     this.key = new THREE.DirectionalLight(0xffffff, 1.1);
@@ -54,11 +56,13 @@ export class Scene3D {
     this.ro.observe(el);
     this.bindEvents();
     store.on('dataset', ds => this.setDataset(ds));
-    store.on('crosshair', () => { this.updatePlanes(); this.updateCursor(); this.requestRender(); });
+    store.on('crosshair', () => { this.updatePlanes(); this.updateCursor(); this.updateClip(); this.requestRender(); });
+    store.on('scrollPlane', () => { this.updateClip(); this.updatePlaneOpacity(); this.requestRender(); });
+    store.on('sectionArmed', (on) => { this.updateClip(); this.updatePlaneOpacity(); this.requestRender(); if (on && this.store.get('settings').section3d && !this._sectionHint) { this._sectionHint = true; this.store.emit('toast', 'The 3D model is now sectioned at the slice you scroll; Layers turns this off.'); } });
     store.on('selected', () => this.updateMaterials());
     store.on('hover', () => this.updateMaterials());
     store.on('hidden', () => this.updateVisibility());
-    store.on('settings', (e) => { this.updateVisibility(); this.updatePlaneOpacity(); if (e.key === 'window' || e.key === '*') this.refreshTextures(); });
+    store.on('settings', (e) => { this.updateVisibility(); this.updatePlaneOpacity(); this.updateClip(); if (e.key === 'window' || e.key === '*') this.refreshTextures(); });
     store.on('depth', () => this.updateLabels());
     store.on('tour', () => { this.updateMaterials(); this.updatePlaneOpacity(); });
     store.on('quiz', () => this.updateMaterials());
@@ -87,9 +91,18 @@ export class Scene3D {
         color: new THREE.Color(structureColor(m.id)), roughness: shell ? 0.9 : 0.55, metalness: 0.0,
         transparent: air || shell || membrane, opacity: shell ? 0.16 : air ? 0.22 : membrane ? 0.45 : 1.0, depthWrite: !(air || shell || membrane), side: THREE.DoubleSide
       });
+      mat.clippingPlanes = [];
       const mesh = new THREE.Mesh(g, mat);
       mesh.userData.id = m.id;
       mesh.userData.baseOpacity = mat.opacity;
+      if (!air && !shell && !membrane) {
+        // section cap: the inside walls of a cut closed surface, drawn flat and darker, fill the cut exactly
+        const capMat = new THREE.MeshBasicMaterial({ color: new THREE.Color(structureColor(m.id)).multiplyScalar(0.62), side: THREE.BackSide, clippingPlanes: [], polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 });
+        const cap = new THREE.Mesh(g, capMat);
+        cap.visible = false; cap.renderOrder = 0;
+        mesh.add(cap);
+        mesh.userData.cap = cap;
+      }
       mesh.renderOrder = shell ? 3 : air ? 2 : 0;
       this.scene.add(mesh);
       this.meshes.set(m.id, mesh);
@@ -116,9 +129,38 @@ export class Scene3D {
       mesh.renderOrder = 1;
       this.scene.add(mesh);
       this.planes[k] = mesh;
+      // a thin frame marks the plane the wheel is moving
+      const frame = new THREE.LineSegments(new THREE.EdgesGeometry(geo), new THREE.LineBasicMaterial({ color: 0xe6b042, transparent: true, opacity: 0.85 }));
+      frame.matrixAutoUpdate = false; frame.renderOrder = 4; frame.userData.frameOf = k;
+      mesh.userData.frame = frame;
+      this.scene.add(frame);
     }
     this.volCenter = c;
     this.updatePlanes();
+    this.updateClip();
+  }
+  // Section: everything between the camera and the plane being scrolled is cut away, so scrolling a slice
+  // moves a cut through the 3D model exactly as it moves through the CT.
+  updateClip() {
+    if (!this.ds) return;
+    const s = this.store.get('settings');
+    const on = !!s.section3d && !!this.store.get('sectionArmed');
+    for (const m of this.meshes.values()) {
+      const want = on ? [this.clipPlane] : [];
+      for (const mat of [m.material, m.userData.cap && m.userData.cap.material]) {
+        if (mat && (mat.clippingPlanes || []).length !== want.length) { mat.clippingPlanes = want; mat.needsUpdate = true; }
+      }
+      if (m.userData.cap) m.userData.cap.visible = on;
+    }
+    if (!on) return;
+    const plane = this.store.get('scrollPlane');
+    const a = plane === 'axial' ? 2 : plane === 'coronal' ? 1 : 0;
+    const w = this.store.get('crosshair')[a];
+    const camA = this.camera.position.getComponent(a);
+    const sgn = camA >= w ? 1 : -1;                       // the camera's side of the plane is the one removed
+    const n = new THREE.Vector3(); n.setComponent(a, -sgn);
+    this.clipPlane.normal.copy(n);
+    this.clipPlane.constant = sgn * (w + sgn * 0.08);    // keep the structures lying in the plane itself
   }
   updatePlanes() {
     if (!this.ds || !this.planes.axial) return;
@@ -128,11 +170,14 @@ export class Scene3D {
     set(this.planes.axial, X, Y, Z, new THREE.Vector3(c[0], c[1], ch[2]));
     set(this.planes.coronal, X, Z, new THREE.Vector3(0, -1, 0), new THREE.Vector3(c[0], ch[1], c[2]));
     set(this.planes.sagittal, Y, Z, X, new THREE.Vector3(ch[0], c[1], c[2]));
+    for (const p of Object.values(this.planes)) if (p.userData.frame) { p.userData.frame.matrix.copy(p.matrix); p.userData.frame.matrixWorldNeedsUpdate = true; }
   }
   updatePlaneOpacity() {
     const s = this.store.get('settings'), tour = this.store.get('tour');
+    const active = this.store.get('scrollPlane');
     for (const [k, p] of Object.entries(this.planes)) {
       p.visible = !!s.planes3d;
+      if (p.userData.frame) p.userData.frame.visible = !!s.planes3d && !!s.section3d && !!this.store.get('sectionArmed') && k === active;
       p.material.opacity = (tour && tour.plane && tour.plane !== k) ? Math.min(s.planeOpacity, 0.22) : s.planeOpacity;
     }
     this.requestRender();
@@ -294,6 +339,15 @@ export class Scene3D {
   bindEvents() {
     const el = this.el;
     el.addEventListener('pointerenter', () => this.store.set('activePane', '3d'));
+    // the wheel scrolls slices here too, like in the CT panes; Ctrl/Cmd+wheel (and pinch) zooms
+    el.addEventListener('wheel', (e) => {
+      if (e.ctrlKey || e.metaKey || !this.ds) return;
+      e.preventDefault(); e.stopPropagation();
+      const dir = Math.sign(e.deltaY) || Math.sign(e.deltaX);
+      const pane = this.panes[this.store.get('scrollPlane')] || this.panes.axial;
+      if (!this.store.get('sectionArmed')) this.store.set('sectionArmed', true);
+      if (dir && pane) pane.stepSlice(dir > 0 ? -1 : 1);
+    }, { capture: true, passive: false });
     el.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => this.setView(b.dataset.view)));
     el.querySelector('[data-action="center"]').addEventListener('click', () => this.centerOnCursor());
     el.querySelector('[data-action="layers"]').addEventListener('click', (e) => { e.stopPropagation(); this.toggleLayers(); });
@@ -365,6 +419,7 @@ export class Scene3D {
       return `<label class="layer-row"><input type="checkbox" data-group="${g.key}" ${on ? 'checked' : ''}><span>${g.name}</span></label>`;
     }).join('') +
       `<label class="layer-row"><input type="checkbox" data-setting="boneShell" ${st.settings.boneShell ? 'checked' : ''}><span>Bone and dura (context surfaces)</span></label>` +
+      `<label class="layer-row"><input type="checkbox" data-setting="section3d" ${st.settings.section3d ? 'checked' : ''}><span>Section the model at the slice being scrolled</span></label>` +
       `<label class="layer-row"><input type="checkbox" data-setting="planes3d" ${st.settings.planes3d ? 'checked' : ''}><span>CT slice planes</span></label>` +
       `<label class="layer-row range"><span>Plane opacity</span><input type="range" min="0.2" max="1" step="0.05" value="${st.settings.planeOpacity}" data-setting="planeOpacity"></label>`;
     pop.hidden = false;

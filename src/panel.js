@@ -115,7 +115,7 @@ export class Panel {
     if (hiddenSecs.length) html += `<div class="more-depth">${hiddenSecs.map(esc).join('. ')}. <button class="btn-link" data-action="deeper">Turn the dial up</button></div>`;
     html += `<section class="card-sec sec-sources"><h3>Sources</h3><ul class="sources">${(s.sources || []).map(x => `<li>${esc(x)}</li>`).join('')}</ul></section>`;
     html += `<div class="card-foot">
-      <div class="review ${s.reviewed ? 'ok' : ''}">${s.reviewed ? `Reviewed by ${esc(s.reviewed)}` : 'Not yet reviewed by an attending'}</div>
+      ${s.reviewed ? `<div class="review ok">Reviewed by ${esc(s.reviewed)}</div>` : ''}
       ${s.curriculum && s.curriculum.length ? `<div class="curric">${s.curriculum.map(c => `<span>${esc(c)}</span>`).join('')}</div>` : ''}
       ${st.settings.authorMode ? `<div class="author"><button class="btn-ghost" data-action="setloc">Set location to cursor</button><span class="author-note">${ds && ds.landmarks && ds.landmarks[s.anchor] ? 'Location set' : 'No location yet'}</span></div>` : ''}
     </div></div>`;

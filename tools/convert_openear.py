@@ -385,21 +385,30 @@ def resample_to_ras(img, spacing, crop_ras=None, interpolator=sitk.sitkLinear if
     return np.ascontiguousarray(arr), origin_ras, np.array([spacing] * 3)
 
 
+def resolve_intensity(arr, mode):
+    """Turn 'auto' into an explicit mapping ('hu' or 'scale:a,b') decided on this array, so every volume of a
+    pack (core and context) gets the same mapping."""
+    if mode != 'auto':
+        return mode
+    p1, p50, p99 = np.percentile(arr, [1, 50, 99])
+    if p1 < -500 and p99 < 4000:
+        log('intensity looks like HU already (p1=%.0f, p99=%.0f)' % (p1, p99))
+        return 'hu'
+    log('intensity does not look like HU (p1=%.0f, p50=%.0f, p99=%.0f); mapping p1->-1000 and p99->2200' % (p1, p50, p99))
+    if p99 <= p1:
+        return 'hu'
+    a = 3200.0 / (p99 - p1)
+    return 'scale:%g,%g' % (a, -1000.0 - p1 * a)
+
+
 def intensity_to_hu(arr, mode):
+    mode = resolve_intensity(arr, mode)
     if mode == 'hu':
         return arr
     if mode.startswith('scale:'):
         a, b = [float(x) for x in mode.split(':')[1].split(',')]
         return arr * a + b
-    # auto: decide whether the data already looks like HU
-    p1, p50, p99 = np.percentile(arr, [1, 50, 99])
-    if p1 < -500 and p99 < 4000:
-        log('intensity looks like HU already (p1=%.0f, p99=%.0f)' % (p1, p99))
-        return arr
-    log('intensity does not look like HU (p1=%.0f, p50=%.0f, p99=%.0f); mapping p1->-1000 and p99->2200' % (p1, p50, p99))
-    if p99 <= p1:
-        return arr
-    return (arr - p1) / (p99 - p1) * 3200.0 - 1000.0
+    return arr
 
 
 # --------------------------------------------------------------------------
@@ -1030,6 +1039,7 @@ def main(argv=None):
     ap.add_argument('--context-faces', type=int, default=90000, help='face budget for context surfaces (bone block, dura), which are large')
     ap.add_argument('--spacing', type=float, default=0.3, help='output isotropic voxel size in mm')
     ap.add_argument('--crop', default='auto', help="'auto' (meshes bbox + margin), 'none', or x0,x1,y0,y1,z0,z1 in RAS mm")
+    ap.add_argument('--context-spacing', type=float, default=0.3, help='also store the WHOLE volume at this coarser voxel size as a wide-field context around the cropped core (0 = off)')
     ap.add_argument('--margin', type=float, default=6.0, help='margin around the mesh bbox for auto crop (mm)')
     ap.add_argument('--intensity', default='auto', help="'auto', 'hu', or 'scale:a,b' (HU = a*value + b)")
     ap.add_argument('--labels', action='store_true', help='voxelise meshes into a label volume (enables outlines, click-to-select and quiz checks)')
@@ -1166,10 +1176,28 @@ def main(argv=None):
 
     # --- volume ---
     arr, origin, spacing = resample_to_ras(img, a.spacing, crop, rot=rot, pre=pre)
-    arr = intensity_to_hu(arr, a.intensity)
+    intensity_mode = resolve_intensity(arr, a.intensity)
+    arr = intensity_to_hu(arr, intensity_mode)
     arr = np.clip(arr, -1024, 3071).astype(np.int16)
     dims = [arr.shape[2], arr.shape[1], arr.shape[0]]
     log('output volume %s voxels at %.3f mm, %.1f MB' % (dims, a.spacing, arr.nbytes / 1e6))
+    context = None
+    if a.context_spacing and a.context_spacing > 0 and crop is not None:
+        # the whole scan, coarser: the app shows it around the core so the bone is seen in its entirety
+        carr, corigin, cspacing = resample_to_ras(img, a.context_spacing, None, rot=rot, pre=pre)
+        carr = np.clip(intensity_to_hu(carr, intensity_mode), -1024, 3071).astype(np.int16)
+        # a rotated scan's bounding box is mostly empty corners: keep only the slab that holds the specimen
+        keep = carr > -900
+        if keep.any():
+            lo = [int(np.argmax(keep.any(axis=ax))) for ax in ((1, 2), (0, 2), (0, 1))]          # z, y, x first index
+            hi = [int(keep.shape[i] - np.argmax(keep.any(axis=ax)[::-1])) for i, ax in enumerate(((1, 2), (0, 2), (0, 1)))]
+            lo = [max(0, v - 2) for v in lo]; hi = [min(n, v + 2) for v, n in zip(hi, keep.shape)]
+            carr = np.ascontiguousarray(carr[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]])
+            corigin = corigin + np.array([lo[2], lo[1], lo[0]]) * a.context_spacing
+        del keep
+        cdims = [carr.shape[2], carr.shape[1], carr.shape[0]]
+        context = (carr, corigin, cdims)
+        log('context volume %s voxels at %.2f mm, %.1f MB (the whole scan around the %.0fx%.0fx%.0f mm core)' % (cdims, a.context_spacing, carr.nbytes / 1e6, (dims[0] - 1) * a.spacing, (dims[1] - 1) * a.spacing, (dims[2] - 1) * a.spacing))
 
     # --- labels from a segmentation volume (preferred) ---
     label_ids = {}
@@ -1224,6 +1252,10 @@ def main(argv=None):
         'meshes': [],
         'landmarks': landmarks,
     }
+    if context is not None:
+        carr, corigin, cdims = context
+        blobs.append(('context', delta_encode_int16(carr).astype('<i2').tobytes()))
+        header['context'] = {'blob': 'context', 'dims': cdims, 'spacing': [float(a.context_spacing)] * 3, 'origin': [float(x) for x in corigin], 'dtype': 'int16', 'units': 'HU', 'encoding': 'delta-x'}
     if labels is not None:
         blobs.append(('labels', labels.tobytes()))
         header['labels'] = {'blob': 'labels', 'dims': dims, 'spacing': [float(a.spacing)] * 3, 'origin': [float(x) for x in origin], 'dtype': 'uint8'}

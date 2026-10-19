@@ -1,5 +1,5 @@
 // Reader for the .tba data pack (see tools/tbapack.py) and helpers for building a dataset object.
-import { Volume } from './volume.js';
+import { Volume, CompositeVolume, OffsetLabels } from './volume.js';
 
 export async function gunzip(bytes) {
   // bytes: Uint8Array (gzip). Uses the browser's DecompressionStream.
@@ -36,22 +36,27 @@ export async function parsePack(bytes) {
     const n = b.length / Ctor.BYTES_PER_ELEMENT;
     return new Ctor(bodyAligned.buffer, bodyAligned.byteOffset + b.offset, n);
   };
-  const vmeta = header.volume;
-  let vdata = blob(vmeta.blob, DTYPES[vmeta.dtype] || Int16Array);
-  if (vmeta.encoding === 'delta-x') {
-    // lossless: cumulative sum along x with 16-bit wrap-around
-    const out = new Int16Array(vdata.length), nx = vmeta.dims[0];
-    for (let row = 0; row < vdata.length; row += nx) {
-      let acc = 0;
-      for (let i = 0; i < nx; i++) { acc = (acc + vdata[row + i]) & 0xffff; out[row + i] = acc; }
+  const readVolume = (vmeta) => {
+    let vdata = blob(vmeta.blob, DTYPES[vmeta.dtype] || Int16Array);
+    if (vmeta.encoding === 'delta-x') {
+      // lossless: cumulative sum along x with 16-bit wrap-around
+      const out = new Int16Array(vdata.length), nx = vmeta.dims[0];
+      for (let row = 0; row < vdata.length; row += nx) {
+        let acc = 0;
+        for (let i = 0; i < nx; i++) { acc = (acc + vdata[row + i]) & 0xffff; out[row + i] = acc; }
+      }
+      vdata = out; // Int16Array view reinterprets the uint16 bits as signed
     }
-    vdata = out; // Int16Array view reinterprets the uint16 bits as signed
-  }
-  const volume = new Volume({ dims: vmeta.dims, spacing: vmeta.spacing, origin: vmeta.origin, data: vdata, dtype: vmeta.dtype });
+    return new Volume({ dims: vmeta.dims, spacing: vmeta.spacing, origin: vmeta.origin, data: vdata, dtype: vmeta.dtype });
+  };
+  const core = readVolume(header.volume);
+  // a wide-field context (the whole scan, coarser) wraps the core into one larger grid for the viewer
+  const volume = header.context ? new CompositeVolume(core, readVolume(header.context)) : core;
   let labels = null;
   if (header.labels) {
     const l = header.labels;
     labels = new Volume({ dims: l.dims, spacing: l.spacing, origin: l.origin, data: blob(l.blob, Uint8Array), dtype: 'uint8' });
+    if (header.context) labels = new OffsetLabels(labels, volume);
   }
   const meshes = (header.meshes || []).map(m => ({
     id: m.id, nv: m.nv, nf: m.nf, centroid: m.centroid, bbox: m.bbox,
