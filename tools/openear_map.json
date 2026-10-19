@@ -1,233 +1,242 @@
 {
-  "cochlea": [
-    "01_scala",
-    "02_scala",
-    "cochlea-",
-    "cochlea.",
-    "cochlea_",
-    "inner_ear",
-    "innerear",
-    "scala",
-    "scala tympani",
-    "scala vestibuli",
-    "scala_tympani",
-    "scala_vestibuli",
-    "scalatympani",
-    "scalavestibuli"
-  ],
-  "vestibule": [
-    "vestibule",
-    "vestibul"
-  ],
-  "scc_lateral": [
-    "lateral_semicircular",
-    "lateralsemicircular",
-    "lateral_scc",
-    "lscc",
-    "hscc",
-    "horizontal_canal",
-    "lateralcanal",
-    "lateral canal"
-  ],
-  "scc_superior": [
-    "superior_semicircular",
-    "superiorsemicircular",
-    "superior_scc",
-    "sscc",
-    "anterior_canal",
-    "superiorcanal",
-    "superior canal"
-  ],
-  "scc_posterior": [
-    "posterior_semicircular",
-    "posteriorsemicircular",
-    "posterior_scc",
-    "pscc",
-    "posteriorcanal",
-    "posterior canal"
-  ],
-  "iac": [
-    "internal_auditory",
-    "internalauditory",
-    "iac",
-    "meatus"
-  ],
-  "fn_tympanic": [
-    "facial_tympanic",
-    "tympanic_segment",
-    "facialnerve_tympanic",
-    "fn_tympanic",
-    "facial nerve tympanic"
-  ],
-  "fn_mastoid": [
-    "facial_mastoid",
-    "mastoid_segment",
-    "facialnerve_mastoid",
-    "fn_mastoid",
-    "facial nerve mastoid",
-    "facial_nerve_mastoid"
-  ],
-  "fn_labyrinthine": [
-    "labyrinthine",
-    "fn_lab"
-  ],
-  "fn_meatal": [
-    "meatal",
-    "fn_meatal",
-    "intracanalicular"
-  ],
-  "facial_nerve": [
-    "06_facial",
-    "facial nerve",
-    "facial.",
-    "facial.stl",
-    "facial_nerve",
-    "facialnerve",
-    "n_facialis",
-    "nervus_facialis",
-    "nfacialis"
-  ],
-  "chorda_tympani": [
-    "07_chorda",
-    "chorda",
-    "chorda tympani"
-  ],
-  "malleus": [
-    "malleus"
-  ],
-  "incus": [
-    "incus"
-  ],
-  "stapes": [
-    "stapes"
-  ],
-  "tympanic_membrane": [
-    "09_tympanic",
-    "drum",
-    "eardrum",
-    "membrana",
-    "tympanic membrane",
-    "tympanic_membrane",
-    "tympanicmembrane"
-  ],
-  "eac": [
-    "auditory_canal",
-    "eac",
-    "ear_canal",
-    "earcanal",
-    "external auditory canal",
-    "external_auditory",
-    "external_auditory_canal",
-    "externalauditory",
-    "meatus_externus"
-  ],
-  "sigmoid_sinus": [
-    "11_sinus",
-    "dura",
-    "sigmoid",
-    "sinus-dura",
-    "sinus_dura",
-    "sinusdura"
-  ],
-  "jugular_bulb": [
-    "jugular"
-  ],
-  "carotid_canal": [
-    "10_carotis",
-    "carotid",
-    "carotis",
-    "carotis interna",
-    "ica"
-  ],
-  "bone_shell": [
-    "bone",
-    "temporal_bone",
-    "temporalbone",
-    "skull"
-  ],
-  "mastoid_cells": [
-    "mastoid_cells",
-    "air_cells",
-    "aircells",
-    "pneumat"
-  ],
-  "tympanic_cavity": [
-    "tympanic_cavity",
-    "middle_ear",
-    "middleear",
-    "tympanum",
-    "mesotympanum"
-  ],
-  "eustachian_tube": [
-    "eustachian",
-    "tuba"
-  ],
-  "endolymphatic_sac": [
-    "endolymphatic",
-    "saccus"
-  ],
-  "vestibular_aqueduct": [
-    "vestibular_aqueduct",
-    "aqueductus_vestibuli"
-  ],
-  "cochlear_aqueduct": [
-    "cochlear_aqueduct",
-    "aqueductus_cochleae"
-  ],
-  "geniculate": [
-    "geniculate"
-  ],
-  "gspn": [
-    "petrosal",
-    "gspn"
-  ],
-  "tensor_tympani": [
-    "tensor"
-  ],
-  "stapedius": [
-    "stapedius"
-  ],
-  "round_window": [
-    "round_window",
-    "roundwindow",
-    "fenestra_cochleae"
-  ],
-  "oval_window": [
-    "oval_window",
-    "ovalwindow",
-    "fenestra_vestibuli",
-    "footplate"
-  ],
-  "cochleariform_process": [
-    "cochleariform"
-  ],
-  "epitympanum": [
-    "epitympanum",
-    "attic"
-  ],
-  "facial_recess": [
-    "facial_recess",
-    "facialrecess"
-  ],
-  "sinus_tympani": [
-    "sinus_tympani",
-    "sinustympani"
-  ],
-  "petrous_apex": [
-    "petrous_apex",
-    "apex"
-  ],
-  "labyrinth": [
-    "semicircular",
-    "labyrinth",
-    "canals"
-  ],
-  "cochleovestibular_nerve": [
-    "cochleovestibular",
-    "vestibulocochlear",
-    "cochleo-vestibular",
-    "cn viii",
-    "nervus vestibulocochlearis",
-    "08_cochleovestibular"
-  ]
+ "cochlea": [
+  "01_scala",
+  "02_scala",
+  "cochlea-",
+  "cochlea.",
+  "cochlea_",
+  "inner_ear",
+  "innerear",
+  "scala",
+  "scala tympani",
+  "scala vestibuli",
+  "scala_tympani",
+  "scala_vestibuli",
+  "scalatympani",
+  "scalavestibuli"
+ ],
+ "vestibule": [
+  "vestibule",
+  "vestibul"
+ ],
+ "scc_lateral": [
+  "lateral_semicircular",
+  "lateralsemicircular",
+  "lateral_scc",
+  "lscc",
+  "hscc",
+  "horizontal_canal",
+  "lateralcanal",
+  "lateral canal"
+ ],
+ "scc_superior": [
+  "superior_semicircular",
+  "superiorsemicircular",
+  "superior_scc",
+  "sscc",
+  "anterior_canal",
+  "superiorcanal",
+  "superior canal"
+ ],
+ "scc_posterior": [
+  "posterior_semicircular",
+  "posteriorsemicircular",
+  "posterior_scc",
+  "pscc",
+  "posteriorcanal",
+  "posterior canal"
+ ],
+ "iac": [
+  "internal_auditory",
+  "internalauditory",
+  "iac",
+  "meatus",
+  "internal auditory",
+  "internal acoustic",
+  "internal_acoustic",
+  "internal auditory canal",
+  "internal_auditory_canal"
+ ],
+ "fn_tympanic": [
+  "facial_tympanic",
+  "tympanic_segment",
+  "facialnerve_tympanic",
+  "fn_tympanic",
+  "facial nerve tympanic"
+ ],
+ "fn_mastoid": [
+  "facial_mastoid",
+  "mastoid_segment",
+  "facialnerve_mastoid",
+  "fn_mastoid",
+  "facial nerve mastoid",
+  "facial_nerve_mastoid"
+ ],
+ "fn_labyrinthine": [
+  "labyrinthine",
+  "fn_lab"
+ ],
+ "fn_meatal": [
+  "meatal",
+  "fn_meatal",
+  "intracanalicular"
+ ],
+ "facial_nerve": [
+  "06_facial",
+  "facial nerve",
+  "facial.",
+  "facial.stl",
+  "facial_nerve",
+  "facialnerve",
+  "n_facialis",
+  "nervus_facialis",
+  "nfacialis"
+ ],
+ "chorda_tympani": [
+  "07_chorda",
+  "chorda",
+  "chorda tympani"
+ ],
+ "malleus": [
+  "malleus"
+ ],
+ "incus": [
+  "incus"
+ ],
+ "stapes": [
+  "stapes"
+ ],
+ "tympanic_membrane": [
+  "09_tympanic",
+  "drum",
+  "eardrum",
+  "membrana",
+  "tympanic membrane",
+  "tympanic_membrane",
+  "tympanicmembrane"
+ ],
+ "eac": [
+  "auditory_canal",
+  "eac",
+  "ear_canal",
+  "earcanal",
+  "external auditory canal",
+  "external_auditory",
+  "external_auditory_canal",
+  "externalauditory",
+  "meatus_externus",
+  "outer ear",
+  "outer_ear",
+  "ear canal",
+  "auditory canal"
+ ],
+ "sigmoid_sinus": [
+  "11_sinus",
+  "dura",
+  "sigmoid",
+  "sinus-dura",
+  "sinus_dura",
+  "sinusdura"
+ ],
+ "jugular_bulb": [
+  "jugular"
+ ],
+ "carotid_canal": [
+  "10_carotis",
+  "carotid",
+  "carotis",
+  "carotis interna",
+  "ica"
+ ],
+ "bone_shell": [
+  "bone",
+  "temporal_bone",
+  "temporalbone",
+  "skull"
+ ],
+ "mastoid_cells": [
+  "mastoid_cells",
+  "air_cells",
+  "aircells",
+  "pneumat"
+ ],
+ "tympanic_cavity": [
+  "tympanic_cavity",
+  "middle_ear",
+  "middleear",
+  "tympanum",
+  "mesotympanum"
+ ],
+ "eustachian_tube": [
+  "eustachian",
+  "tuba"
+ ],
+ "endolymphatic_sac": [
+  "endolymphatic",
+  "saccus"
+ ],
+ "vestibular_aqueduct": [
+  "vestibular_aqueduct",
+  "aqueductus_vestibuli"
+ ],
+ "cochlear_aqueduct": [
+  "cochlear_aqueduct",
+  "aqueductus_cochleae"
+ ],
+ "geniculate": [
+  "geniculate"
+ ],
+ "gspn": [
+  "petrosal",
+  "gspn"
+ ],
+ "tensor_tympani": [
+  "tensor"
+ ],
+ "stapedius": [
+  "stapedius"
+ ],
+ "round_window": [
+  "round_window",
+  "roundwindow",
+  "fenestra_cochleae"
+ ],
+ "oval_window": [
+  "oval_window",
+  "ovalwindow",
+  "fenestra_vestibuli",
+  "footplate"
+ ],
+ "cochleariform_process": [
+  "cochleariform"
+ ],
+ "epitympanum": [
+  "epitympanum",
+  "attic"
+ ],
+ "facial_recess": [
+  "facial_recess",
+  "facialrecess"
+ ],
+ "sinus_tympani": [
+  "sinus_tympani",
+  "sinustympani"
+ ],
+ "petrous_apex": [
+  "petrous_apex",
+  "apex"
+ ],
+ "labyrinth": [
+  "semicircular",
+  "labyrinth",
+  "canals"
+ ],
+ "cochleovestibular_nerve": [
+  "cochleovestibular",
+  "vestibulocochlear",
+  "cochleo-vestibular",
+  "cn viii",
+  "nervus vestibulocochlearis",
+  "08_cochleovestibular"
+ ]
 }
