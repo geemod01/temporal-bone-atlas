@@ -1,0 +1,14 @@
+{
+ "datasets": [
+  {
+   "id": "openear_delta",
+   "name": "OpenEar Delta",
+   "file": "https://github.com/geemod01/temporal-bone-atlas/releases/download/data/openear_delta.tba",
+   "side": "R",
+   "kind": "openear",
+   "bytes": 37222523,
+   "license": "CC BY 4.0",
+   "source": "Sieber D et al. The OpenEar library of 3D models of the human temporal bone. Sci Data 2019. Zenodo record 1473724."
+  }
+ ]
+}
