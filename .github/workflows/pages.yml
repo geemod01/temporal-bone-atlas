@@ -33,11 +33,15 @@ jobs:
         with:
           python-version: "3.11"
       - run: npm ci
-      - run: pip install numpy scipy scikit-image nibabel fast-simplification
-      - name: Generate the phantom pack
-        run: python3 tools/make_phantom.py
-      - name: Build the app and assemble site/
-        run: python3 build.py --site
+      - name: Fetch the published data packs so the site serves them itself (same origin)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data
+          gh release download data --repo ${{ github.repository }} --pattern '*.tba' --dir data --clobber || echo "no data release yet"
+          ls -la data
+      - name: Build the app and assemble site/ (the site carries no synthetic phantom; the single file in dist/ still does)
+        run: python3 build.py --site --no-pack
       - name: Configure Pages (enables it on first run when permissions allow)
         uses: actions/configure-pages@v5
         continue-on-error: true

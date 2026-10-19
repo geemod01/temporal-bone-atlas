@@ -45,7 +45,7 @@ app.innerHTML = `
   </main>
   <div class="toast" hidden></div>
   <div class="phantom-banner" hidden>This is the <b>synthetic phantom</b>: computer-generated, not patient anatomy. Use it to learn the controls; open real imaging from the dataset menu. <button class="btn-link" data-act="open-real">Open real imaging</button></div>
-  <div class="loading"><div class="loading-box"><div class="spinner"></div><div class="loading-text">Decoding the built-in phantom</div></div></div>
+  <div class="loading"><div class="loading-box"><div class="spinner"></div><div class="loading-text">Loading</div></div><div class="empty-state" hidden></div></div>
   <input type="file" class="file-input" multiple accept=".tba,.nii,.nii.gz,.gz,.json,.stl" hidden>`;
 
 const viewer = app.querySelector('.viewer');
@@ -119,8 +119,8 @@ function openMenu(kind, anchor) {
     const ds = store.get('dataset');
     const lib = library.map(e => `<button class="menu-item lib-item" data-lib="${esc(e.id)}">${esc(e.name)} <span class="lvl">${e.side === 'L' ? 'left' : 'right'}</span> <span class="lvl ${e.cached ? 'above' : ''}" data-libstate="${esc(e.id)}">${e.cached ? 'on this device' : fmtMB(e.bytes)}</span><span class="tour-item-sub">${e.kind === 'openear' ? 'OpenEar specimen (Sieber et al. 2019, CC BY 4.0): 125 µm CBCT with the published segmentation' : esc(e.source || e.kind || '')}</span></button>`).join('');
     menuEl.innerHTML = `<div class="menu-title">Dataset</div>
-      <button class="menu-item" data-ds="phantom">Built-in phantom<span class="tour-item-sub">Synthetic right temporal bone with every structure labelled. Not patient anatomy.</span></button>
       ${lib ? `<div class="menu-title">Real imaging (downloads once, then stays on this device)</div>${lib}` : ''}
+      ${window.__TBA_PACK__ ? `<button class="menu-item" data-ds="phantom">Built-in phantom<span class="tour-item-sub">Synthetic right temporal bone with every structure labelled. Not patient anatomy.</span></button>` : ''}
       <button class="menu-item" data-ds="open">Open a data pack or NIfTI<span class="tour-item-sub">A .tba pack from the converter, or a .nii/.nii.gz volume; add a landmarks .json alongside if you have one.</span></button>
       <button class="menu-item" data-ds="about">About this dataset<span class="tour-item-sub">${ds ? esc(ds.name) : ''}</span></button>`;
   }
@@ -185,7 +185,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ---------- dataset loading ----------
-function showLoading(text) { const l = app.querySelector('.loading'); l.hidden = false; l.querySelector('.loading-text').textContent = text; }
+function showLoading(text) { const l = app.querySelector('.loading'); l.hidden = false; l.querySelector('.loading-text').textContent = text; if (!l.querySelector('.empty-state').hidden) resetLoading(); }
 function hideLoading() { app.querySelector('.loading').hidden = true; }
 function setDataset(ds) {
   store.state.hidden = new Set([...DEFAULT_HIDDEN].filter(id => ds.meshById.has(id)));
@@ -207,7 +207,7 @@ function setDataset(ds) {
 }
 async function loadEmbedded() {
   const b64 = window.__TBA_PACK__;
-  if (!b64) { hideLoading(); store.emit('toast', 'No built-in dataset in this build. Open a data pack.'); return; }
+  if (!b64) { showEmptyState('This copy of the atlas has no built-in dataset. Open a .tba data pack.'); return; }
   showLoading('Decoding the built-in phantom');
   try {
     const ds = await parsePack(base64ToBytes(b64));
@@ -254,6 +254,7 @@ app.addEventListener('drop', (e) => { e.preventDefault(); app.classList.remove('
 
 // ---------- dataset library (data/datasets.json next to the page) ----------
 let library = [];
+let libraryDefault = null;
 const fmtMB = (b) => b ? `${(b / 1e6).toFixed(b < 10e6 ? 1 : 0)} MB` : '';
 async function cacheOpen() { try { if (typeof caches === 'undefined' || !location.protocol.startsWith('http')) return null; return await caches.open('tba-packs-v1'); } catch (e) { return null; } }
 async function loadLibrary() {
@@ -264,6 +265,7 @@ async function loadLibrary() {
     if (!r.ok) return;
     const j = await r.json();
     library = (j.datasets || []).map(e => ({ ...e, url: new URL(e.file, url).href }));
+    libraryDefault = j.default || null;
     const c = await cacheOpen();
     if (c) for (const e of library) e.cached = !!(await c.match(e.url));
   } catch (e) { /* no library: file:// or not hosted with data */ }
@@ -288,7 +290,12 @@ async function loadLibraryEntry(e) {
     let bytes = null;
     if (c) { const hit = await c.match(e.url); if (hit) bytes = new Uint8Array(await hit.arrayBuffer()); }
     if (!bytes) {
-      bytes = await fetchWithProgress(e.url, (got, total) => showLoading(`Downloading ${e.name}: ${fmtMB(got)}${total ? ` of ${fmtMB(total)}` : ''}`));
+      const progress = (got, total) => showLoading(`Downloading ${e.name}: ${fmtMB(got)}${total ? ` of ${fmtMB(total)}` : ''}`);
+      try { bytes = await fetchWithProgress(e.url, progress); }
+      catch (err) {
+        if (!e.mirror) throw err;
+        bytes = await fetchWithProgress(new URL(e.mirror, location.href).href, progress);   // second copy of the pack elsewhere
+      }
       if (c) { try { await c.put(e.url, new Response(bytes, { headers: { 'Content-Type': 'application/octet-stream' } })); e.cached = true; } catch (err) { /* storage full or disallowed */ } }
     }
     const ds = await parsePack(bytes);
@@ -296,8 +303,30 @@ async function loadLibraryEntry(e) {
     setDataset(ds);
     try { localStorage.setItem('tba.lastDataset', e.id); } catch (err) { /* ignore */ }
     if (e.cached) store.emit('toast', `${e.name} is saved on this device; it opens offline from now on.`);
-  } catch (err) { hideLoading(); console.error(err); store.emit('toast', `Could not load ${e.name}: ${err.message}`); }
+  } catch (err) {
+    console.error(err);
+    if (store.get('dataset')) { hideLoading(); store.emit('toast', `Could not load ${e.name}: ${err.message}`); }
+    else showEmptyState(`${e.name} could not be downloaded: ${err.message}.`, e);
+  }
 }
+// Nothing is loaded and the download failed: say so, offer a retry and the other specimens. Never a stand-in.
+function showEmptyState(message, entry) {
+  const l = app.querySelector('.loading'); l.hidden = false;
+  l.querySelector('.spinner').hidden = true; l.querySelector('.loading-text').hidden = true;
+  const box = l.querySelector('.empty-state'); box.hidden = false;
+  const others = library.filter(e => !entry || e.id !== entry.id);
+  box.innerHTML = `<h2>Real imaging could not be loaded</h2>
+    <p class="empty-msg">${esc(message)}</p>
+    <p class="empty-hint">${navigator.onLine === false ? 'You appear to be offline. Packs you opened before are kept on this device; others need a connection once.' : 'Check the connection and try again; a pack is 27-43 MB and is kept on this device after the first download.'}</p>
+    <div class="empty-actions">
+      ${entry ? `<button class="btn-primary" data-retry="${esc(entry.id)}">Retry ${esc(entry.name)}</button>` : ''}
+      ${others.map(e => `<button class="btn-ghost" data-retry="${esc(e.id)}">${esc(e.name)} <span class="lvl">${e.side === 'L' ? 'left' : 'right'}${e.cached ? ', on this device' : ''}</span></button>`).join('')}
+      <button class="btn-ghost" data-open-file>Open a data pack from this computer</button>
+    </div>`;
+  box.querySelectorAll('[data-retry]').forEach(b => b.addEventListener('click', () => { resetLoading(); loadLibraryEntry(library.find(e => e.id === b.dataset.retry)); }));
+  box.querySelector('[data-open-file]').addEventListener('click', () => fileInput.click());
+}
+function resetLoading() { const l = app.querySelector('.loading'); l.querySelector('.spinner').hidden = false; l.querySelector('.loading-text').hidden = false; l.querySelector('.empty-state').hidden = true; }
 async function removeCached(e) { const c = await cacheOpen(); if (c) { await c.delete(e.url); e.cached = false; } }
 window.__tbaLibrary = { loadLibrary, loadLibraryEntry, removeCached, get: () => library };
 
@@ -308,19 +337,21 @@ async function boot() {
   await loadLibrary();
   const url = params.get('data');
   if (url && library.find(e => e.id === url)) { await loadLibraryEntry(library.find(e => e.id === url)); return; }
-  if (!url && url !== 'phantom' && library.length) {
-    // real imaging available: open it by default (last used if remembered, else the first entry)
+  if (url === 'phantom' && window.__TBA_PACK__) { await loadEmbedded(); return; }
+  if (!url && library.length) {
+    // real imaging: the last one used, else the library's default, else the first entry; never a stand-in
     let pick = null;
     try { const last = localStorage.getItem('tba.lastDataset'); pick = library.find(e => e.id === last) || null; } catch (e) { /* ignore */ }
-    await loadLibraryEntry(pick || library[0]);
-    if (store.get('dataset')) return;
+    await loadLibraryEntry(pick || library.find(e => e.id === libraryDefault) || library[0]);
+    return;
   }
-  if (url) {
+  if (url && url !== 'phantom') {
     showLoading('Fetching ' + url);
     try { const r = await fetch(url); const bytes = new Uint8Array(await r.arrayBuffer()); const ds = url.toLowerCase().includes('.nii') ? buildDataset({ name: url, kind: 'volume', side: 'R', notes: '', volume: await parseNifti(bytes), labels: null, labelIds: {}, meshes: [], landmarks: {} }) : await parsePack(bytes); setDataset(ds); return; }
-    catch (err) { console.error(err); store.emit('toast', 'Could not fetch ' + url + '; loading the phantom instead.'); }
+    catch (err) { console.error(err); showEmptyState('Could not fetch ' + url + ': ' + err.message); return; }
   }
-  await loadEmbedded();
+  if (window.__TBA_PACK__) { await loadEmbedded(); return; }
+  showEmptyState(library.length ? 'No dataset selected.' : 'This copy of the atlas has no imaging in it. Open a .tba data pack, or use the hosted site, which comes with the OpenEar specimens.');
 }
 boot();
 

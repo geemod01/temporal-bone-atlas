@@ -2,7 +2,7 @@
 
 A single-file, browser-based temporal bone CT atlas for otolaryngology training: three synced orthogonal CT views and a 3D scene driven by one cursor, with a structure card for everything the cursor touches, guided tours that follow the curriculum, and a quiz that doubles as a study instrument.
 
-Open `dist/TemporalBoneAtlas.html` in a current browser (Chrome, Edge, Safari 16.4+, Firefox 113+). It works offline from the file; nothing is sent anywhere.
+Use the hosted site, or open `dist/TemporalBoneAtlas.html` in a current browser (Chrome, Edge, Safari 16.4+, Firefox 113+); the file works offline and nothing is sent anywhere.
 
 The hosted site (https://geemod01.github.io/temporal-bone-atlas/) opens on **real imaging**: all eight OpenEar specimens (Sieber et al., Sci Data 2019, CC BY 4.0), each a 125 µm CBCT of a cadaveric temporal bone with the published micro-slicing segmentation and surfaces, resliced into true anatomical planes at 0.15 mm (27-43 MB per ear, downloaded once and kept in the browser):
 
@@ -19,7 +19,9 @@ The hosted site (https://geemod01.github.io/temporal-bone-atlas/) opens on **rea
 
 The segmentations do not include the vestibule, the semicircular canals or the IAC as separate pieces; those cards fall back to the cochlea / cochleovestibular nerve surfaces for *Locate*, and the CT shows them.
 
-The single-file build ships with a **synthetic phantom**: a procedurally generated right temporal bone with the correct topology and relationships (facial nerve segments, ossicles, labyrinth, IAC, sigmoid, jugular bulb, carotid, mastoid cells), every structure labelled. It is not patient anatomy; it exists so the app works with no download, and it is what the tours and quizzes were written against.
+The hosted site serves the packs itself (same origin: GitHub's release downloads redirect without CORS headers, so a page cannot fetch them directly); the deploy pulls them from the `data` release. The site carries no synthetic data: it opens on OpenEar Delta (or the specimen you used last) and, if a download fails, shows a retry screen with the other specimens instead of a stand-in.
+
+Only the single-file build (`dist/TemporalBoneAtlas.html`, for use without any hosting) still embeds the **synthetic phantom**: a procedurally generated right temporal bone with the correct topology and relationships, every structure labelled, not patient anatomy. It is also the ground truth for the converter's self-tests.
 
 ## What is in the box
 

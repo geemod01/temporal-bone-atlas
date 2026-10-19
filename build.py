@@ -50,6 +50,8 @@ def main():
     ap.add_argument('--out', default='dist/TemporalBoneAtlas.html')
     ap.add_argument('--site', action='store_true', help='also assemble site/ (index.html + data/) for static hosting')
     a = ap.parse_args()
+    if a.site and a.no_pack and a.out == 'dist/TemporalBoneAtlas.html':
+        a.out = 'dist/site-index.html'        # keep the single-file build (with its phantom) intact
     os.makedirs(os.path.join(ROOT, 'dist'), exist_ok=True)
     run_esbuild(dev=a.dev)
     js = open(os.path.join(ROOT, 'dist', 'app.js'), encoding='utf-8').read()
@@ -66,20 +68,30 @@ def main():
         f.write(html)
     print('wrote %s (%.1f MB)' % (out, os.path.getsize(out) / 1e6))
     if a.site:
+        import json
         import shutil
         site = os.path.join(ROOT, 'site')
         os.makedirs(os.path.join(site, 'data'), exist_ok=True)
         shutil.copyfile(out, os.path.join(site, 'index.html'))
         data = os.path.join(ROOT, 'data')
+        packs = set()
         if os.path.isdir(data):
             for f in os.listdir(data):
-                if f.endswith('.tba') or f == 'datasets.json':
-                    shutil.copyfile(os.path.join(data, f), os.path.join(site, 'data', f))
-        if not os.path.exists(os.path.join(site, 'data', 'datasets.json')):
-            with open(os.path.join(site, 'data', 'datasets.json'), 'w') as f:
-                f.write('{"datasets": []}\n')
+                if f.endswith('.tba'):
+                    shutil.copyfile(os.path.join(data, f), os.path.join(site, 'data', f)); packs.add(f)
+        lib = {'datasets': []}
+        if os.path.exists(os.path.join(data, 'datasets.json')):
+            lib = json.load(open(os.path.join(data, 'datasets.json')))
+        # packs present next to the page are served from the site itself (same origin: a browser can fetch them;
+        # GitHub's release downloads redirect without CORS headers). The original URL stays as a mirror.
+        for d in lib['datasets']:
+            name = os.path.basename(d['file'])
+            if name in packs and d['file'] != name:
+                d['mirror'] = d['file']; d['file'] = name
+        with open(os.path.join(site, 'data', 'datasets.json'), 'w') as f:
+            json.dump(lib, f, indent=1)
         open(os.path.join(site, '.nojekyll'), 'w').close()
-        print('site assembled in %s' % site)
+        print('site assembled in %s: %d pack(s) served locally, %d entr%s in the library' % (site, len(packs), len(lib['datasets']), 'y' if len(lib['datasets']) == 1 else 'ies'))
 
 
 if __name__ == '__main__':

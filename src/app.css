@@ -246,6 +246,13 @@ ul.pitfalls li { border-left: 2px solid rgba(224,122,95,0.5); list-style: none; 
 .toast { position: fixed; left: 50%; top: calc(var(--top-h) + 12px); transform: translateX(-50%); background: var(--surface-3); border: 1px solid var(--line-strong); color: var(--text); padding: 7px 14px; border-radius: 999px; z-index: 60; box-shadow: 0 8px 24px rgba(0,0,0,0.5); max-width: 90vw; }
 .loading { position: fixed; inset: 0; background: rgba(15,19,23,0.85); display: flex; align-items: center; justify-content: center; z-index: 70; }
 .loading-box { display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--text-2); }
+.empty-state { max-width: min(560px, 92vw); background: var(--bg-2, #181d22); border: 1px solid var(--line-strong); border-radius: 12px; padding: 22px 24px; color: var(--text); text-align: left; }
+.empty-state h2 { margin: 0 0 8px; font-size: calc(var(--fs) + 5px); font-weight: 600; }
+.empty-state .empty-msg { margin: 0 0 6px; color: var(--warn); }
+.empty-state .empty-hint { margin: 0 0 14px; color: var(--text-2); font-size: calc(var(--fs) - 0.5px); }
+.empty-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.empty-actions .btn-primary { background: var(--accent); color: #111; border: 0; border-radius: 8px; padding: 8px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+.empty-actions .btn-ghost { padding: 7px 12px; }
 .spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid var(--line-strong); border-top-color: var(--accent); animation: spin 0.9s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .reduced-motion .spinner { animation-duration: 2s; }
