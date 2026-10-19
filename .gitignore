@@ -6,3 +6,6 @@ __pycache__/
 work/
 site/
 data/*.tba
+tools/tests/_work/
+dist/*.html
+dist/*.tba

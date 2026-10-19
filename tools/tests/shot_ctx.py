@@ -1,0 +1,32 @@
+import sys
+from playwright.sync_api import sync_playwright
+url, out, ds_id = sys.argv[1], sys.argv[2], sys.argv[3]
+with sync_playwright() as p:
+    b = p.chromium.launch(args=['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader'])
+    page = b.new_page(viewport={'width': 1440, 'height': 900})
+    errs = []; page.on('pageerror', lambda e: errs.append(str(e))); page.on('console', lambda m: errs.append(m.text) if m.type == 'error' else None)
+    page.goto(url + '?data=' + ds_id)
+    page.wait_for_selector('.loading', state='hidden', timeout=240000)
+    page.wait_for_timeout(1000)
+    print(page.evaluate("() => { const ds = window.__tba.store.get('dataset'); const v = ds.volume; return JSON.stringify({dims: v.dims, off: v.off, core: v.core && v.core.dims, ctx: v.context && v.context.dims, extent: v.extent.map(x => +x.toFixed(1)), crosshair: window.__tba.store.get('crosshair').map(x => +x.toFixed(1))}); }"))
+    page.evaluate("() => { window.__tba.panel.open('facial_nerve', true); }"); page.wait_for_timeout(600)
+    print('label under cursor:', page.evaluate("() => window.__tba.store.get('dataset').labelAt(window.__tba.store.get('crosshair'))"))
+    page.screenshot(path=out + '_ctx.png')
+    # wheel over the 3D view: steps the scrolled plane (axial by default)
+    before = page.evaluate("() => window.__tba.store.get('crosshair')[2]")
+    box = page.query_selector('canvas.gl').bounding_box()
+    page.mouse.move(box['x'] + box['width'] / 2, box['y'] + box['height'] / 2)
+    for _ in range(20): page.mouse.wheel(0, -100)
+    page.wait_for_timeout(600)
+    after = page.evaluate("() => window.__tba.store.get('crosshair')[2]")
+    print('z before/after 20 wheel steps over 3D: %.2f -> %.2f (scrollPlane %s)' % (before, after, page.evaluate("() => window.__tba.store.get('scrollPlane')")))
+    page.screenshot(path=out + '_section.png', clip={'x': 546, 'y': 478, 'width': 540, 'height': 420})
+    # scroll the coronal pane: scrollPlane switches, section follows
+    cb = page.query_selector('[data-slot="coronal"] canvas').bounding_box()
+    page.mouse.move(cb['x'] + cb['width'] / 2, cb['y'] + cb['height'] / 2)
+    for _ in range(10): page.mouse.wheel(0, 100)
+    page.wait_for_timeout(600)
+    print('after coronal wheel: scrollPlane', page.evaluate("() => window.__tba.store.get('scrollPlane')"), 'crosshair', page.evaluate("() => window.__tba.store.get('crosshair').map(x => +x.toFixed(1))"))
+    page.screenshot(path=out + '_section_cor.png', clip={'x': 546, 'y': 478, 'width': 540, 'height': 420})
+    print('errors:', errs[:5])
+    b.close()
