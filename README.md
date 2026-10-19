@@ -49,7 +49,7 @@ Comprehensive content, few features, everything reachable from the cursor.
 6. **Settings fit on one screen.** Layout, window presets, laterality mirror, label density (2D and 3D), CT planes in 3D, bone surface, click behaviour, text size, motion, author mode.
 7. **Governance is visible.** Every card lists sources and a review status (all cards currently *Not yet reviewed by an attending*). Reviewing a card means setting its `reviewed` field in `content/*.json`.
 
-The cursor is shared by the three CT panes and the 3D scene; scrolling anywhere, the 3D view included, moves the plane last scrolled or clicked, and the 3D model is sectioned at that plane (capped cuts, framed CT plane) so one scrolls through the model as through the CT. Ctrl/Cmd+wheel zooms; the Layers menu turns the sectioning off.
+The cursor is shared by the three CT panes and the 3D scene; scrolling anywhere, the 3D view included, moves the plane last scrolled or clicked, and the CT plane in the scene follows while the whole model stays visible. The Layers menu can optionally section the model at that plane (capped cuts, framed CT plane). Ctrl/Cmd+wheel zooms.
 
 ## Using the app
 

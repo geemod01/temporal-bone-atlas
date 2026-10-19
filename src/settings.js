@@ -142,10 +142,10 @@ export function openHelp(host) {
         </ul>
         <h3>In 3D</h3>
         <ul>
-          <li><b>Scroll</b> moves the slice you last scrolled or clicked, here too; the model is sectioned at that plane (the framed CT plane) so you scroll through it as through the CT. <b>Ctrl + scroll</b> (or pinch) zooms.</li>
+          <li><b>Scroll</b> moves the slice you last scrolled or clicked, here too, and the CT plane in the scene follows. <b>Ctrl + scroll</b> (or pinch) zooms.</li>
           <li><b>Drag</b> orbits, <b>right-drag</b> pans.</li>
           <li><b>Click a structure or a CT plane</b> to put the cursor there.</li>
-          <li><b>Layers</b> shows or hides groups, the bone and dura surfaces, the CT planes and the sectioning.</li>
+          <li><b>Layers</b> shows or hides groups, the bone and dura surfaces and the CT planes, and can section the model at the slice being scrolled (off by default: the whole model stays visible).</li>
         </ul>
       </div>
       <div>

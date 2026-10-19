@@ -10,7 +10,7 @@ const DEFAULT_SETTINGS = {
   planes3d: true,
   planeOpacity: 0.6,
   boneShell: false,
-  section3d: true,         // cut the 3D model at the plane being scrolled, like a navigation display
+  sectionModel: false,        // optional: cut the 3D model at the plane being scrolled (Layers menu); the model is whole by default
   textSize: 'm',           // s | m | l
   reducedMotion: null,     // null = follow system
   authorMode: false,

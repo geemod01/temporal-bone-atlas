@@ -58,7 +58,7 @@ export class Scene3D {
     store.on('dataset', ds => this.setDataset(ds));
     store.on('crosshair', () => { this.updatePlanes(); this.updateCursor(); this.updateClip(); this.requestRender(); });
     store.on('scrollPlane', () => { this.updateClip(); this.updatePlaneOpacity(); this.requestRender(); });
-    store.on('sectionArmed', (on) => { this.updateClip(); this.updatePlaneOpacity(); this.requestRender(); if (on && this.store.get('settings').section3d && !this._sectionHint) { this._sectionHint = true; this.store.emit('toast', 'The 3D model is now sectioned at the slice you scroll; Layers turns this off.'); } });
+    store.on('sectionArmed', (on) => { this.updateClip(); this.updatePlaneOpacity(); this.requestRender(); if (on && this.store.get('settings').sectionModel && !this._sectionHint) { this._sectionHint = true; this.store.emit('toast', 'The 3D model is sectioned at the slice you scroll (Layers menu to turn this off).'); } });
     store.on('selected', () => this.updateMaterials());
     store.on('hover', () => this.updateMaterials());
     store.on('hidden', () => this.updateVisibility());
@@ -144,7 +144,7 @@ export class Scene3D {
   updateClip() {
     if (!this.ds) return;
     const s = this.store.get('settings');
-    const on = !!s.section3d && !!this.store.get('sectionArmed');
+    const on = !!s.sectionModel && !!this.store.get('sectionArmed');
     for (const m of this.meshes.values()) {
       const want = on ? [this.clipPlane] : [];
       for (const mat of [m.material, m.userData.cap && m.userData.cap.material]) {
@@ -177,7 +177,7 @@ export class Scene3D {
     const active = this.store.get('scrollPlane');
     for (const [k, p] of Object.entries(this.planes)) {
       p.visible = !!s.planes3d;
-      if (p.userData.frame) p.userData.frame.visible = !!s.planes3d && !!s.section3d && !!this.store.get('sectionArmed') && k === active;
+      if (p.userData.frame) p.userData.frame.visible = !!s.planes3d && !!s.sectionModel && !!this.store.get('sectionArmed') && k === active;
       p.material.opacity = (tour && tour.plane && tour.plane !== k) ? Math.min(s.planeOpacity, 0.22) : s.planeOpacity;
     }
     this.requestRender();
@@ -419,7 +419,7 @@ export class Scene3D {
       return `<label class="layer-row"><input type="checkbox" data-group="${g.key}" ${on ? 'checked' : ''}><span>${g.name}</span></label>`;
     }).join('') +
       `<label class="layer-row"><input type="checkbox" data-setting="boneShell" ${st.settings.boneShell ? 'checked' : ''}><span>Bone and dura (context surfaces)</span></label>` +
-      `<label class="layer-row"><input type="checkbox" data-setting="section3d" ${st.settings.section3d ? 'checked' : ''}><span>Section the model at the slice being scrolled</span></label>` +
+      `<label class="layer-row"><input type="checkbox" data-setting="sectionModel" ${st.settings.sectionModel ? 'checked' : ''}><span>Section the model at the slice being scrolled (off: the whole model stays visible)</span></label>` +
       `<label class="layer-row"><input type="checkbox" data-setting="planes3d" ${st.settings.planes3d ? 'checked' : ''}><span>CT slice planes</span></label>` +
       `<label class="layer-row range"><span>Plane opacity</span><input type="range" min="0.2" max="1" step="0.05" value="${st.settings.planeOpacity}" data-setting="planeOpacity"></label>`;
     pop.hidden = false;
