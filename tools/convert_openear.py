@@ -741,21 +741,23 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping,
     log('label volume: %d segment%s on the pack grid%s' % (len(segs), '' if len(segs) == 1 else 's',
         (': ' + ', '.join('%s%d=%s' % ('L%d/' % n if N > 1 else '', v, names.get((n, v), '?')) for n, v, _ in segs)) if names
         else ' (no segment names in the header; matching them to the surfaces by overlap)'))
-    # segment -> atlas id
+    # segment -> atlas id: by name first; segments with no name, or a name no pattern knows, are matched to
+    # the surface that overlaps them (OpenEar's headers say "RW", "Sinus", "Duct"...)
     id_of = {}
     unmatched = []
+    weak = set()
     for n, v, _ in segs:
         nm = names.get((n, v))
         if nm:
             sid, ok = match_id(nm + '.x', mapping)
             id_of[(n, v)] = sid
             if not ok:
-                unmatched.append((n, v, nm, sid))
-    if meshes and len(id_of) < len(segs):
-        # overlap-based matching for unnamed segments: which mesh's vertices fall inside each one
+                weak.add((n, v))
+    if meshes and (len(id_of) - len(weak)) < len(segs):
+        # overlap-based matching: which mesh's vertices fall inside each segment
         bbox_voxels = {m['id']: float(np.prod(np.maximum(m['v'].max(0) - m['v'].min(0), spacing) / spacing)) for m in meshes}
         for n, v, cnt in segs:
-            if (n, v) in id_of:
+            if (n, v) in id_of and (n, v) not in weak:
                 continue
             arr = layers[n]
             best, best_frac = None, 0.0
@@ -775,15 +777,22 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping,
                 frac = hits / (7.0 * len(idx))
                 if frac > best_frac:
                     best, best_frac = m['id'], frac
+            nm = names.get((n, v))
+            tag = ('%s (%s)' % ('layer %d value %d' % (n, v) if N > 1 else 'value %d' % v, nm)) if nm else ('layer %d value %d' % (n, v) if N > 1 else 'value %d' % v)
             if best and best_frac > 0.05:
                 id_of[(n, v)] = best
-                log('  %s%d -> %s (by overlap %.0f%%)' % ('layer %d value ' % n if N > 1 else 'value ', v, best, best_frac * 100))
+                log('  %s -> %s (by overlap %.0f%%)' % (tag, best, best_frac * 100))
+            elif (n, v) in weak:
+                unmatched.append((n, v, nm, id_of[(n, v)]))     # keeps the sanitised name as its id
             elif meshes and cnt > 2.0 * max(bbox_voxels.values()):
                 id_of[(n, v)] = 'bone'   # bigger than any structure and matching none: the bone block
-                log('  %s%d (%d voxels) is larger than every surface and matches none: treating it as bone' % ('layer %d value ' % n if N > 1 else 'value ', v, cnt))
+                log('  %s (%d voxels) is larger than every surface and matches none: treating it as bone' % (tag, cnt))
             else:
                 id_of[(n, v)] = 'label_%d' % v if N == 1 else 'label_%d_%d' % (n, v)
                 unmatched.append((n, v, None, id_of[(n, v)]))
+    else:
+        for n, v in weak:
+            unmatched.append((n, v, names.get((n, v)), id_of[(n, v)]))
     # composite: largest segments first so the smallest structure wins wherever layers overlap
     order = sorted(segs, key=lambda t: -t[2])
     ids = []
@@ -806,6 +815,12 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping,
     label_ids = {str(i + 1): sid for i, sid in enumerate(ids)}
     for n, v, nm, sid in unmatched:
         log('  unmatched segment %d (%s) kept as %s' % (v, nm, sid))
+    sources = {}
+    for n, v, _ in segs:
+        sid = id_of[(n, v)]
+        if sid in ids and names.get((n, v)):
+            sources.setdefault(sid, []).append(names[(n, v)])
+    labels_from_volume.sources = sources
     return labels, label_ids
 
 
@@ -1099,6 +1114,7 @@ def main(argv=None):
                          'report': rot['report']} if rot else {'source': 'volume axes as stored'}),
         'volume': {'blob': 'volume', 'dims': dims, 'spacing': [float(a.spacing)] * 3, 'origin': [float(x) for x in origin], 'dtype': 'int16', 'units': 'HU', 'encoding': 'delta-x'},
         'labelIds': label_ids,
+        'labelSources': getattr(labels_from_volume, 'sources', {}),   # original segment names behind each label id
         'meshes': [],
         'landmarks': landmarks,
     }

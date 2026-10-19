@@ -103,9 +103,21 @@ def main():
     ap.add_argument('--token', default=os.environ.get('GITHUB_TOKEN') or os.environ.get('GH_TOKEN'))
     ap.add_argument('--no-install', action='store_true')
     ap.add_argument('--no-upload', action='store_true', help='build the pack(s) only')
+    ap.add_argument('--register-only', action='store_true', help='skip building/uploading: merge the entries of --out/datasets.json (files already on the release) into data/datasets.json on main')
     ap.add_argument('--work', default=os.path.join(ROOT, 'work'))
     ap.add_argument('--out', default=os.path.join(ROOT, 'data'))
     a = ap.parse_args()
+    if a.register_only:
+        if not a.token:
+            raise SystemExit('a GitHub token is required: --token or GITHUB_TOKEN')
+        lib = json.load(open(os.path.join(a.out, 'datasets.json')))
+        entries = []
+        for d in lib['datasets']:
+            d = dict(d)
+            d['file'] = 'https://github.com/%s/releases/download/data/%s' % (a.repo, os.path.basename(d['file']))
+            entries.append(d)
+        update_datasets_json(a.repo, a.token, entries)
+        print('registered:', ', '.join(e['id'] for e in entries)); return
     if not a.no_install:
         sh([sys.executable, '-m', 'pip', 'install', '-q', 'numpy', 'SimpleITK', 'trimesh', 'fast-simplification', 'requests'])
     sh([sys.executable, os.path.join(HERE, 'fetch_openear.py'), '--specimen', a.specimen, '--spacing', str(a.spacing), '--out', a.out, '--work', a.work])

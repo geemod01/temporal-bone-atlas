@@ -111,24 +111,9 @@ jobs:
             gh release upload data "$f" --repo ${{ github.repository }} --clobber
             echo "uploaded $f"
           done
-          # rewrite datasets.json so each entry's file is the release download URL
-          python3 - <<'PY'
-          import json, os
-          repo = os.environ.get("GITHUB_REPOSITORY", "${{ github.repository }}")
-          p = "data/datasets.json"
-          lib = json.load(open(p))
-          for d in lib["datasets"]:
-              name = os.path.basename(d["file"])
-              d["file"] = "https://github.com/%s/releases/download/data/%s" % (repo, name)
-          json.dump(lib, open(p, "w"), indent=1)
-          print(open(p).read())
-          PY
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase origin main || true
-          git add data/datasets.json
-          git commit -m "Register OpenEar pack(s): ${{ inputs.specimen }} at ${{ inputs.spacing }} mm" || echo "nothing to commit"
-          git push
+          # register the packs in data/datasets.json on main through the contents API: merges with whatever
+          # is there, so runs never conflict with commits pushed meanwhile (git pull --rebase on a dirty tree did)
+          python3 tools/publish_openear_anywhere.py --register-only --out data --repo ${{ github.repository }} --token "$GH_TOKEN"
       - name: Upload pack as workflow artifact (also downloadable from this run)
         if: ${{ !inputs.probe_only }}
         uses: actions/upload-artifact@v4

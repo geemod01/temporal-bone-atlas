@@ -292,6 +292,9 @@ def _stream_member(hf, zi, target):
     of thousands of small range reads.
     """
     import struct as st
+    if zi.compress_size == 0:                      # empty files (OpenEar's note files): nothing to request
+        open(target, 'wb').close()
+        return
     # local file header: 30 bytes + name + extra
     hf.seek(zi.header_offset)
     hdr = hf.read(30)
@@ -393,6 +396,12 @@ def extract_needed(zf, dest, budget_bytes=9 * 1024 ** 3, prefer='embedded', hf=N
         log('  %d request%s for %d files' % (len(runs), '' if len(runs) == 1 else 's', len(chosen)))
         for run in runs:
             t0 = time.time()
+            if all(zi.compress_size == 0 for zi in run):
+                for zi in run:
+                    target = os.path.join(dest, zi.filename)
+                    os.makedirs(os.path.dirname(target), exist_ok=True)
+                    open(target, 'wb').close()
+                continue
             if len(run) == 1:
                 target = os.path.join(dest, run[0].filename)
                 os.makedirs(os.path.dirname(target), exist_ok=True)
