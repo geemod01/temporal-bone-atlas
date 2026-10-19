@@ -632,12 +632,19 @@ def segment_names(src, names_json):
         m = re.match(r'Segment(\d+)_(Name|LabelValue|Layer)$', k)
         if m:
             seg.setdefault(int(m.group(1)), {})[m.group(2)] = v
-    for d in seg.values():
-        if 'Name' in d and 'LabelValue' in d:
-            try:
+    for i, d in sorted(seg.items()):
+        if 'Name' not in d:
+            continue
+        try:
+            if 'LabelValue' in d:
                 names[(int(d.get('Layer', 0)), int(d['LabelValue']))] = d['Name']
-            except ValueError:
-                pass
+            elif N > 1 and i < N:
+                # Slicer before 4.11 (OpenEar's files): one binary layer per segment, no LabelValue/Layer fields
+                names[(i, 1)] = d['Name']
+            elif N == 1:
+                names[(0, i + 1)] = d['Name']
+        except ValueError:
+            pass
     if not names:
         for k, v in meta.items():
             m = re.match(r'(?:label|value)[_ ]?(\d+)$', k, re.I)
@@ -677,7 +684,8 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping)
         log('  WARNING: no label voxels inside the pack grid; check that the segmentation is registered to the volume')
         return None, {}
     log('label volume: %d segment%s on the pack grid%s' % (len(segs), '' if len(segs) == 1 else 's',
-        (': ' + ', '.join('%s%d=%s' % ('L%d/' % n if N > 1 else '', v, names.get((n, v), '?')) for n, v, _ in segs)) if names else ''))
+        (': ' + ', '.join('%s%d=%s' % ('L%d/' % n if N > 1 else '', v, names.get((n, v), '?')) for n, v, _ in segs)) if names
+        else ' (no segment names in the header; matching them to the surfaces by overlap)'))
     # segment -> atlas id
     id_of = {}
     unmatched = []
@@ -690,12 +698,15 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping)
                 unmatched.append((n, v, nm, sid))
     if meshes and len(id_of) < len(segs):
         # overlap-based matching for unnamed segments: which mesh's vertices fall inside each one
-        for n, v, _ in segs:
+        bbox_voxels = {m['id']: float(np.prod(np.maximum(m['v'].max(0) - m['v'].min(0), spacing) / spacing)) for m in meshes}
+        for n, v, cnt in segs:
             if (n, v) in id_of:
                 continue
             arr = layers[n]
             best, best_frac = None, 0.0
             for m in meshes:
+                if cnt > 1.5 * bbox_voxels[m['id']]:
+                    continue   # a segment cannot be bigger than the bounding box of its own surface (rules out bone)
                 pts = m['v'][::max(1, len(m['v']) // 4000)]
                 idx = np.round((pts - origin) / spacing).astype(int)
                 ok = np.all((idx >= 0) & (idx < np.array(dims)), axis=1)
@@ -711,7 +722,10 @@ def labels_from_volume(path, names_json, origin, spacing, dims, meshes, mapping)
                     best, best_frac = m['id'], frac
             if best and best_frac > 0.05:
                 id_of[(n, v)] = best
-                log('  label %d -> %s (by overlap %.0f%%)' % (v, best, best_frac * 100))
+                log('  %s%d -> %s (by overlap %.0f%%)' % ('layer %d value ' % n if N > 1 else 'value ', v, best, best_frac * 100))
+            elif meshes and cnt > 2.0 * max(bbox_voxels.values()):
+                id_of[(n, v)] = 'bone'   # bigger than any structure and matching none: the bone block
+                log('  %s%d (%d voxels) is larger than every surface and matches none: treating it as bone' % ('layer %d value ' % n if N > 1 else 'value ', v, cnt))
             else:
                 id_of[(n, v)] = 'label_%d' % v if N == 1 else 'label_%d_%d' % (n, v)
                 unmatched.append((n, v, None, id_of[(n, v)]))
