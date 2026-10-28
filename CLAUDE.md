@@ -56,4 +56,6 @@ pip as `python -m pip`; the Bash tool and the hooks in `.claude/settings.json` r
 - Packs are in the anatomical frame (estimated from structures) with the cochlea at the origin; keep that contract.
 - Don't commit build artifacts (`dist/*.html`, `*.tba`) — the history once carried 300 MB of them.
 - Content claims come from standard references and the papers cited on each card; keep `sources` per card.
-- Permission rules in `.claude/settings.json` are the owner's: propose additions, don't write them (auto mode refuses).
+- Permission rules in `.claude/settings.json` are the owner's: propose additions; write them only on the owner's
+  explicit go-ahead (auto mode refuses otherwise).
+- One machine at a time (Windows PC, Mac): two sessions rewriting STATE.md conflict at the second `/handoff`.

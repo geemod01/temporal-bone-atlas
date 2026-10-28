@@ -165,7 +165,13 @@ non-slice member and small text files.
     resolves it with `shutil.which` (keep that in `run_esbuild`). Claude Code's shell and the hooks run in Git Bash,
     so the hooks stay POSIX. PowerShell's execution policy and the rest: SETUP.md "Windows notes".
 13. **Permission rules are the owner's.** Auto mode refuses Claude editing the allowlist in `.claude/settings.json`
-    (self-modification); propose the lines and let the owner add them.
+    (self-modification); propose the lines, and write them only on the owner's explicit go-ahead in the chat
+    (that went through for the `python` rules on 28 Oct).
+14. **Two machines, one repo.** The owner works from a Windows PC and a Mac; the repo is the only shared memory
+    (chat history, packs, `node_modules` and the phantom stay local). `/resume` pulls with `--ff-only` so a
+    surprise (unpushed or diverged work) stops the session instead of being merged; `/handoff` pulls with
+    `--rebase --autostash` before pushing. Work on one machine at a time: a concurrent commit (7329cc4) arrived
+    mid-handoff on 27 Oct and merged only because it touched another part of SETUP.md.
 
 ## 5. Verification habits that worked
 - Headless Chromium (Playwright, `--use-gl=angle --use-angle=swiftshader`) against a locally served `site/` with
