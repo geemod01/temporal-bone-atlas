@@ -1,7 +1,13 @@
 # Temporal Bone Atlas — working notes for Claude Code
 
-Read `docs/HANDOFF.md` first: it is the complete history, the decisions and the reasons behind them, the
-pitfalls already hit, and the roadmap. This file is the short operational version.
+## Session protocol (fresh context every session, no compaction)
+- Start: `/resume` — reads `docs/STATE.md` (current state + ordered next steps) and the latest `docs/sessions/*.md`,
+  checks git and CI, runs the quick tests, continues with the top step or the task given after `/resume`.
+- End, or when `/context` passes ~60 %: `/handoff` — writes the session note, rewrites `docs/STATE.md`, commits, pushes.
+  Then the next session starts clean. If compaction is ever about to happen, `/handoff` first.
+- `docs/HANDOFF.md` holds the complete history, decisions and reasons, pitfalls, and the roadmap: read the sections
+  the current step touches, not the whole file. `docs/claude-code/SETUP.md` is the owner's VS Code guide.
+- One session, one goal. Mid-change work is never left unexplained: it goes under "Open / next" in the session note.
 
 ## What this is
 A browser-based temporal bone CT atlas for ENT training: three synced orthogonal CT panes + a 3D scene driven by

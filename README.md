@@ -51,6 +51,10 @@ Comprehensive content, few features, everything reachable from the cursor.
 
 The cursor is shared by the three CT panes and the 3D scene; scrolling anywhere, the 3D view included, moves the plane last scrolled or clicked, and the CT plane in the scene follows while the whole model stays visible. The Layers menu can optionally section the model at that plane (capped cuts, framed CT plane). Ctrl/Cmd+wheel zooms.
 
+## Developing with Claude Code
+
+`docs/claude-code/SETUP.md` describes the session workflow (`/resume`, `/handoff`, `/verify`, `docs/STATE.md`); `CLAUDE.md` is loaded automatically.
+
 ## Using the app
 
 * **Slices**: click or drag moves the cursor in all views; scroll changes slice; Ctrl+scroll or pinch zooms; Shift+drag adjusts window/level; right-drag or Alt+drag pans; double-click resets.

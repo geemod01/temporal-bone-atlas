@@ -1,0 +1,52 @@
+# Working on this project in VS Code with Claude Code
+
+The idea: every session starts with a fresh context window and gets its bearings from three small files, and
+every session ends by refreshing those files. Nothing is ever left to compaction.
+
+```
+docs/STATE.md              what is true now + the ordered next steps   (dashboard, ~60 lines)
+docs/sessions/<date>-*.md  one note per session: what changed, why, how verified, what is open
+docs/HANDOFF.md            the long-form reasons, pitfalls and roadmap (rarely changes)
+CLAUDE.md                  loaded automatically by Claude Code: layout, commands, rules
+```
+
+Two slash commands drive it (they live in `.claude/commands/` and are committed, so every clone has them):
+- `/resume` — reads STATE + the last session note, checks git and the last CI runs, runs the quick tests, then continues.
+- `/handoff` — writes the session note, rewrites STATE, updates CLAUDE.md/HANDOFF if a rule changed, commits, pushes.
+- `/verify` — the offline checks on demand.
+
+## One-time setup (about 10 minutes)
+1. Install VS Code and the **Claude Code** extension (Extensions → search "Claude Code", publisher Anthropic); sign in.
+   Also install Node 20+, Python 3.11+, git, and the GitHub CLI (`gh`).
+2. Clone without the heavy history:
+   ```
+   git clone --filter=blob:none https://github.com/geemod01/temporal-bone-atlas
+   cd temporal-bone-atlas
+   npm ci
+   pip install numpy SimpleITK trimesh fast-simplification requests scipy scikit-image nibabel playwright
+   playwright install chromium
+   gh auth login        # for Actions logs/dispatch; VS Code's GitHub sign-in covers git push
+   ```
+3. Install the project's Claude Code settings (hooks that print STATE into every new session and warn before
+   compaction; permissions so routine commands don't prompt; force-push refused):
+   ```
+   mkdir -p .claude && cp docs/claude-code/settings.example.json .claude/settings.json
+   ```
+   Claude Code will ask you once to trust the folder and its hooks. Review the file first; it is short.
+4. Open the folder in VS Code (File → Open Folder). Claude Code treats the folder as the project and reads
+   `CLAUDE.md` on its own.
+
+## Every session
+1. Open Claude Code (the panel, or `claude` in the VS Code terminal). Type `/resume`. It reports where things stand
+   and starts the top item in STATE, or the task you add after `/resume` (e.g. `/resume sigmoid extraction`).
+2. Keep the session to one goal. Watch `/context`; around 60 % used, or when the goal is reached, type `/handoff`.
+3. Start the next session fresh: `/clear` (or close the panel and open a new session), then `/resume`.
+   Never accept compaction — if Claude Code says it is compacting, `/handoff` first.
+4. The site deploys itself on push to `main` (not for `*.md`-only changes). Pack rebuilds: Actions → "Build OpenEar
+   packs" (or `gh workflow run openear.yml -f specimen=delta`), ~2 min per specimen, ~30 min for `all`.
+
+## Habits that keep sessions cheap
+- Ask for `/verify` only when something changed; its browser step takes a minute.
+- Point Claude at files rather than letting it search: the layout in `CLAUDE.md` is accurate.
+- For long investigations, ask for a plan first (Claude Code's plan mode) so the context holds decisions, not dumps.
+- Logs: `gh run view <id> --log | grep -i "error\|wrote data\|FAILED"` rather than the whole log.

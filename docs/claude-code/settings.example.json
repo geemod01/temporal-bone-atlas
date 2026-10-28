@@ -1,0 +1,53 @@
+{
+  "_comment": "Copy this file to .claude/settings.json (project-shared) or .claude/settings.local.json (just you). Hooks: the current state is printed into every new session; a warning fires if Claude Code is about to compact. Permissions: the project's routine commands run without prompts; force-pushes are refused.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume|clear",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f docs/STATE.md ]; then echo '=== docs/STATE.md (current state; /resume to continue, /handoff before stopping) ==='; cat docs/STATE.md; fi"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Compaction is starting. This project avoids compaction: run /handoff, then open a fresh session and /resume.'"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(npm ci)",
+      "Bash(npm run build)",
+      "Bash(python3 build.py*)",
+      "Bash(python3 tools/tests/*)",
+      "Bash(python3 tools/selftest_labels.py*)",
+      "Bash(python3 tools/make_phantom.py*)",
+      "Bash(python3 tools/convert_openear.py*)",
+      "Bash(python3 -m http.server*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git pull*)",
+      "Bash(git push origin main)",
+      "Bash(gh run list*)",
+      "Bash(gh run view*)",
+      "Bash(gh workflow run*)",
+      "Bash(gh release download*)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git push -f*)"
+    ]
+  }
+}

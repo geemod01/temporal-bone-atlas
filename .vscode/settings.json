@@ -1,0 +1,4 @@
+{
+  "files.exclude": { "node_modules": true, "site": true, "phantom": true, "tools/tests/_work": true, "**/__pycache__": true },
+  "search.exclude": { "node_modules": true, "site": true, "dist": true, "data/*.tba": true }
+}
