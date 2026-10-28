@@ -17,7 +17,7 @@ Two slash commands drive it (they live in `.claude/commands/` and are committed,
 
 ## One-time setup (about 10 minutes)
 1. Install VS Code and the **Claude Code** extension (Extensions → search "Claude Code", publisher Anthropic); sign in.
-   Also install Node 20+, Python 3.11+, git, and the GitHub CLI (`gh`).
+   Also install Node 20+, Python 3.11+, git, and the GitHub CLI (`gh`). On Windows, read the notes after step 4 first.
 2. Clone without the heavy history:
    ```
    git clone --filter=blob:none https://github.com/geemod01/temporal-bone-atlas
@@ -27,12 +27,10 @@ Two slash commands drive it (they live in `.claude/commands/` and are committed,
    playwright install chromium
    gh auth login        # for Actions logs/dispatch; VS Code's GitHub sign-in covers git push
    ```
-3. Install the project's Claude Code settings (hooks that print STATE into every new session and warn before
-   compaction; permissions so routine commands don't prompt; force-push refused):
-   ```
-   mkdir -p .claude && cp docs/claude-code/settings.example.json .claude/settings.json
-   ```
-   Claude Code will ask you once to trust the folder and its hooks. Review the file first; it is short.
+3. The project's Claude Code settings come with the clone in `.claude/settings.json`: hooks that print STATE into
+   every new session and warn before compaction; permissions so routine commands don't prompt; force-push refused.
+   Claude Code asks you once to trust the folder and its hooks; review the file first, it is short. Personal
+   additions go in `.claude/settings.local.json`, which git ignores.
 4. Open the folder in VS Code (File → Open Folder). Claude Code treats the folder as the project and reads
    `CLAUDE.md` on its own.
 
@@ -41,7 +39,9 @@ Two slash commands drive it (they live in `.claude/commands/` and are committed,
   `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once (no admin), or use `npm.cmd`, or switch the terminal
   to Command Prompt / Git Bash.
 - `python3` is not a command on Windows: use `python` (or `py -3`) wherever this project's docs say `python3`, and
-  `python -m pip install ...` for pip. Tell Claude Code this once per machine; `CLAUDE.md` commands assume `python3`.
+  `python -m pip install ...` for pip. `CLAUDE.md` says the same, so Claude Code needs no reminder after `/resume`.
+- Install Python from python.org and Git for Windows: Claude Code runs its shell commands and this project's hooks
+  in Git for Windows' Git Bash.
 - `playwright install chromium` and `gh auth login` work as written.
 
 ## Every session

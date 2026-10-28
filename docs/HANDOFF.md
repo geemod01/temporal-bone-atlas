@@ -160,6 +160,12 @@ non-slice member and small text files.
     build artifacts are untracked; if the clone is still heavy, rewrite history with `git filter-repo --path dist
     --invert-paths` (no collaborators yet).
 11. Settings persist per browser; a changed default needs a new key (done for `sectionModel`).
+12. **Windows** (the owner's machine from 27 Oct): `python3` is the Microsoft Store alias, so commands run as
+    `python` / `python -m pip`; `npx` is `npx.cmd`, which `subprocess` cannot start by its bare name, so `build.py`
+    resolves it with `shutil.which` (keep that in `run_esbuild`). Claude Code's shell and the hooks run in Git Bash,
+    so the hooks stay POSIX. PowerShell's execution policy and the rest: SETUP.md "Windows notes".
+13. **Permission rules are the owner's.** Auto mode refuses Claude editing the allowlist in `.claude/settings.json`
+    (self-modification); propose the lines and let the owner add them.
 
 ## 5. Verification habits that worked
 - Headless Chromium (Playwright, `--use-gl=angle --use-angle=swiftshader`) against a locally served `site/` with
@@ -229,3 +235,4 @@ python3 build.py --site --no-pack && (cd site && python3 -m http.server 8772)
 ```
 `gh auth login` for Actions dispatch (`gh workflow run openear.yml -f specimen=delta`) and logs (`gh run view --log`).
 The Zenodo archives are 4–14 GB; never download them whole — `fetch_openear.py` reads ~250 MB per specimen by ranges.
+Windows, and the session workflow (`/resume`, `/handoff`, the committed settings): `docs/claude-code/SETUP.md`.

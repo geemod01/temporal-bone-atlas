@@ -45,6 +45,8 @@ cd site && python3 -m http.server 8772     # then: python3 tools/tests/shot_boot
 Push to `main` deploys the site (README-only pushes are ignored). Packs are rebuilt with Actions → "Build OpenEar packs"
 (`specimen=all` ≈ 30 min; registration goes through the contents API, so pushing during a run is safe).
 Python deps for the tools: `numpy SimpleITK trimesh fast-simplification requests` (+ `scipy scikit-image nibabel` for the phantom).
+Windows (the owner's machine): `python3` there is the Microsoft Store alias, so run every `python3` above as `python` and
+pip as `python -m pip`; the Bash tool and the hooks in `.claude/settings.json` run in Git Bash.
 
 ## Rules that exist for a reason (details in HANDOFF)
 - Never put PHI or patient imaging in this repo, in the release or on the Pages site. Institutional scans need
@@ -54,3 +56,4 @@ Python deps for the tools: `numpy SimpleITK trimesh fast-simplification requests
 - Packs are in the anatomical frame (estimated from structures) with the cochlea at the origin; keep that contract.
 - Don't commit build artifacts (`dist/*.html`, `*.tba`) — the history once carried 300 MB of them.
 - Content claims come from standard references and the papers cited on each card; keep `sources` per card.
+- Permission rules in `.claude/settings.json` are the owner's: propose additions, don't write them (auto mode refuses).

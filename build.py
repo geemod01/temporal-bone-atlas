@@ -8,6 +8,7 @@ Usage: python3 build.py [--pack dist/phantom.tba] [--no-pack] [--dev]
 import argparse
 import base64
 import os
+import shutil
 import subprocess
 import sys
 
@@ -22,7 +23,8 @@ FONTS = [
 
 
 def run_esbuild(dev=False):
-    cmd = ['npx', 'esbuild', 'src/main.js', '--bundle', '--format=iife', '--target=es2020', '--loader:.json=json',
+    # on Windows npx is npx.cmd, which subprocess does not find by its bare name
+    cmd = [shutil.which('npx') or 'npx', 'esbuild', 'src/main.js', '--bundle', '--format=iife', '--target=es2020', '--loader:.json=json',
            '--outfile=dist/app.js', '--log-level=warning']
     if not dev:
         cmd.append('--minify')
@@ -69,7 +71,6 @@ def main():
     print('wrote %s (%.1f MB)' % (out, os.path.getsize(out) / 1e6))
     if a.site:
         import json
-        import shutil
         site = os.path.join(ROOT, 'site')
         os.makedirs(os.path.join(site, 'data'), exist_ok=True)
         shutil.copyfile(out, os.path.join(site, 'index.html'))
@@ -81,7 +82,7 @@ def main():
                     shutil.copyfile(os.path.join(data, f), os.path.join(site, 'data', f)); packs.add(f)
         lib = {'datasets': []}
         if os.path.exists(os.path.join(data, 'datasets.json')):
-            lib = json.load(open(os.path.join(data, 'datasets.json')))
+            lib = json.load(open(os.path.join(data, 'datasets.json'), encoding='utf-8'))
         # packs present next to the page are served from the site itself (same origin: a browser can fetch them;
         # GitHub's release downloads redirect without CORS headers). The original URL stays as a mirror.
         for d in lib['datasets']:
