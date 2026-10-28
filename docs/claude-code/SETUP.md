@@ -36,6 +36,14 @@ Two slash commands drive it (they live in `.claude/commands/` and are committed,
 4. Open the folder in VS Code (File → Open Folder). Claude Code treats the folder as the project and reads
    `CLAUDE.md` on its own.
 
+### Windows notes
+- "running scripts is disabled on this system" when typing `npm ...`: PowerShell's execution policy. Run
+  `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` once (no admin), or use `npm.cmd`, or switch the terminal
+  to Command Prompt / Git Bash.
+- `python3` is not a command on Windows: use `python` (or `py -3`) wherever this project's docs say `python3`, and
+  `python -m pip install ...` for pip. Tell Claude Code this once per machine; `CLAUDE.md` commands assume `python3`.
+- `playwright install chromium` and `gh auth login` work as written.
+
 ## Every session
 1. Open Claude Code (the panel, or `claude` in the VS Code terminal). Type `/resume`. It reports where things stand
    and starts the top item in STATE, or the task you add after `/resume` (e.g. `/resume sigmoid extraction`).
