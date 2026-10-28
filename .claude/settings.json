@@ -1,5 +1,5 @@
 {
-  "_comment": "Project-shared Claude Code settings, committed; personal additions go in .claude/settings.local.json (git-ignored). Hooks: the current state is printed into every new session; a warning fires if Claude Code is about to compact. Permissions: the project's routine commands run without prompts; force-pushes are refused.",
+  "_comment": "Project-shared Claude Code settings, committed; personal additions go in .claude/settings.local.json (git-ignored). Hooks: the current state is printed into every new session; a warning fires if Claude Code is about to compact. Permissions: the project's routine commands run without prompts (each python3 rule has a python twin for Windows, where python3 is the Microsoft Store alias); force-pushes are refused.",
   "hooks": {
     "SessionStart": [
       {
@@ -33,6 +33,12 @@
       "Bash(python3 tools/make_phantom.py*)",
       "Bash(python3 tools/convert_openear.py*)",
       "Bash(python3 -m http.server*)",
+      "Bash(python build.py*)",
+      "Bash(python tools/tests/*)",
+      "Bash(python tools/selftest_labels.py*)",
+      "Bash(python tools/make_phantom.py*)",
+      "Bash(python tools/convert_openear.py*)",
+      "Bash(python -m http.server*)",
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",

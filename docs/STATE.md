@@ -26,10 +26,6 @@ Updated: 2026-10-27 · Last session note: `docs/sessions/2026-10-27-claude-code-
 5. Patient-scan track — governance first (IRB/QI, de-identification, private host); plan in HANDOFF §6. Do not start
    without the owner's go-ahead.
 
-## Waiting on the owner
-- `python` twins of the `python3` allow rules in `.claude/settings.json` (six lines in the 2026-10-27 session note).
-  Claude may not add permissions itself; until they exist, routine `python …` commands prompt on Windows.
-
 ## Blocked / caveats
 - The git history still carries ~300 MB of old build artifacts; clone with `--filter=blob:none` or rewrite history
   with `git filter-repo --path dist --invert-paths` (owner's call; needs a force-push, which the shared settings deny).

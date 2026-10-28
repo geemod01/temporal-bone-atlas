@@ -53,6 +53,13 @@ Two slash commands drive it (they live in `.claude/commands/` and are committed,
 4. The site deploys itself on push to `main` (not for `*.md`-only changes). Pack rebuilds: Actions → "Build OpenEar
    packs" (or `gh workflow run openear.yml -f specimen=delta`), ~2 min per specimen, ~30 min for `all`.
 
+### Working from more than one machine (Windows PC, Mac)
+The project's memory is the repository, not the chat: any clone continues where the last pushed `/handoff` left
+off, because `/resume` pulls first. End every session with `/handoff` (it pushes), and don't work on both machines
+at once (two sessions rewriting STATE.md conflict). Chat history, `node_modules`, downloaded packs (`data/*.tba`),
+the phantom and `site/` stay on each machine. On a Mac the docs' `python3` commands work as written; with
+Homebrew's Python, install the deps in a virtual environment (it refuses a global `pip install`).
+
 ## Habits that keep sessions cheap
 - Ask for `/verify` only when something changed; its browser step takes a minute.
 - Point Claude at files rather than letting it search: the layout in `CLAUDE.md` is accurate.

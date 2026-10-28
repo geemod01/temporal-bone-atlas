@@ -74,8 +74,9 @@ closing `/resume` is the next session's first act.
 - Next session: `/clear`, then `/resume`. Expect a clean tree and a green "Build and deploy the site" run for this
   handoff commit (`build.py` changed, so it deploys; that also exercises `shutil.which('npx')` on the Linux runner).
   That closes STATE step 1.
-- Owner's decision: `python` twins of the `python3` allow rules, so routine commands stop prompting on Windows. Add
-  them after `"Bash(python3 -m http.server*)",` in `.claude/settings.json`:
+- Done 28 Oct at the owner's explicit request (follow-up commit, which also made `/resume` pull first for
+  multi-machine work): `python` twins of the `python3` allow rules, so routine commands stop prompting on Windows,
+  after `"Bash(python3 -m http.server*)",` in `.claude/settings.json`:
   `"Bash(python build.py*)", "Bash(python tools/tests/*)", "Bash(python tools/selftest_labels.py*)",`
   `"Bash(python tools/make_phantom.py*)", "Bash(python tools/convert_openear.py*)", "Bash(python -m http.server*)",`
 - Small app fix: `src/main.js:320` (the boot-failure screen's hint) says "a pack is 27-43 MB"; the packs are

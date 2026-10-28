@@ -1,7 +1,7 @@
 # Temporal Bone Atlas — working notes for Claude Code
 
 ## Session protocol (fresh context every session, no compaction)
-- Start: `/resume` — reads `docs/STATE.md` (current state + ordered next steps) and the latest `docs/sessions/*.md`,
+- Start: `/resume` — pulls `origin main` (the owner works from a Windows PC and a Mac), reads `docs/STATE.md` (current state + ordered next steps) and the latest `docs/sessions/*.md`,
   checks git and CI, runs the quick tests, continues with the top step or the task given after `/resume`.
 - End, or when `/context` passes ~60 %: `/handoff` — writes the session note, rewrites `docs/STATE.md`, commits, pushes.
   Then the next session starts clean. If compaction is ever about to happen, `/handoff` first.
