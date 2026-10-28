@@ -10,15 +10,15 @@ Updated: 2026-10-28 · Last session note: `docs/sessions/2026-10-28-multi-machin
   alias: use `python` (CLAUDE.md); the `python …` permission rules are in `.claude/settings.json`.
 - Windows clone is fully set up (deps, `gh`, phantom, Delta + Zeta packs locally); `/verify` passed there on
   2026-10-27. The Mac has not been set up yet.
-- Last green runs: site deploy for f4d4db1 (the `build.py` npx fix, green on the Linux runner); "Build OpenEar packs"
-  `all` with the context layer. The deploy of 8269088 was still running at the last handoff: check it.
+- Last green runs: site deploys for f4d4db1 (the `build.py` npx fix, green on the Linux runner) and 8269088 (run
+  40726081625); "Build OpenEar packs" `all` with the context layer. Later handoff commits are Markdown-only (no deploy).
 - Nothing is half-done in the code.
 - Attending feedback received (see `docs/HANDOFF.md` §6): sigmoid not highlighted in 3D; wants patient scans and
   anomaly detection next. Owner has asked for NO work on that yet beyond planning.
 
 ## Next steps, in order
-1. Close the workflow check: this `/resume` is the first run of its pull step. Expect "Already up to date", a clean
-   tree and a green deploy for 8269088. Same session, if wanted: the stale hint at `src/main.js:320` ("a pack is
+1. Close the workflow check: this `/resume` is the first run of its pull step. Expect "Already up to date" and a clean
+   tree. Same session, if wanted: the stale hint at `src/main.js:320` ("a pack is
    27-43 MB"; the packs are 33–52 MB).
 2. Sigmoid sinus as its own structure (attending's note): try the bone-enclosure extraction from the `sinus_dura`
    segment on Delta (the pack's CT + label volume are enough to prototype; `tools/tbapack.read_pack`), validate by eye
